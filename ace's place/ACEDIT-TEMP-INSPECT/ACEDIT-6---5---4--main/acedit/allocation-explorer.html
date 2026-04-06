@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACEDIT Allocation Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --surface-raised: #1a1a25;
+  --surface-bright: #222230;
+  --border: #2a2a3a;
+  --border-light: #3a3a4f;
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #484f58;
+
+  /* CYM palette */
+  --cyan: #00DBC0;
+  --cyan-light: #33E8D4;
+  --cyan-dim: #007A6B;
+  --yellow: #DBB800;
+  --yellow-light: #E8CC33;
+  --yellow-dim: #7A6700;
+  --magenta: #DB0098;
+  --magenta-light: #E833B3;
+  --magenta-dim: #7A0055;
+
+  /* Family colors */
+  --hexagonal: #00DBC0;
+  --pentagonal: #DB0098;
+  --cubic: #DBB800;
+
+  --green: #3fb950;
+  --red: #f85149;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Nav Bar ─── */
+.nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 32px;
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-bar a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+
+.nav-bar a:hover {
+  color: var(--cyan);
+}
+
+.nav-bar .nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.nav-bar .nav-sep {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ─── Layout ─── */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+section {
+  margin-bottom: 48px;
+}
+
+h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+h2 .section-num {
+  color: var(--cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 12px;
+  vertical-align: middle;
+}
+
+h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* ─── Block Map Overview ─── */
+.block-map-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.pua-bar {
+  width: 100%;
+  height: 56px;
+  background: #1a1a22;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+}
+
+.pua-bar .block-segment {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.pua-bar .block-segment:hover {
+  filter: brightness(1.3);
+}
+
+.block-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 8px;
+}
+
+.block-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  font-size: 12px;
+  transition: border-color 0.2s;
+}
+
+.block-legend-item:hover {
+  border-color: var(--border-light);
+}
+
+.block-color-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.block-legend-name {
+  font-weight: 700;
+  min-width: 100px;
+}
+
+.block-legend-range {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.block-legend-count {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-left: auto;
+}
+
+/* ─── APL Token Calculator ─── */
+.calculator-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.calc-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.calc-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  min-width: 80px;
+}
+
+.calc-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.calc-btn {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 36px;
+  text-align: center;
+}
+
+.calc-btn:hover {
+  border-color: var(--cyan-dim);
+  color: var(--text-primary);
+}
+
+.calc-btn.active {
+  background: var(--cyan);
+  color: #000;
+  border-color: var(--cyan);
+  font-weight: 700;
+}
+
+.calc-result {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.calc-result .codepoint {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+
+.calc-result .glyph-name {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.calc-result .formula {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+.calc-result .formula .val {
+  color: var(--cyan-light);
+}
+
+.calc-result .formula .op {
+  color: var(--text-secondary);
+}
+
+/* ─── Name Validator ─── */
+.validator-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.validator-input-wrap {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.validator-input {
+  width: 100%;
+  background: var(--surface-raised);
+  border: 2px solid var(--border);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.validator-input:focus {
+  border-color: var(--cyan-dim);
+}
+
+.validator-input.canonical {
+  border-color: var(--green);
+}
+
+.validator-input.safe {
+  border-color: var(--yellow);
+}
+
+.validator-input.invalid {
+  border-color: var(--red);
+}
+
+.validator-result {
+  padding: 16px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  min-height: 60px;
+}
+
+.validator-result .status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.validator-result .status-badge.canonical {
+  background: rgba(63, 185, 80, 0.15);
+  color: var(--green);
+  border: 1px solid rgba(63, 185, 80, 0.3);
+}
+
+.validator-result .status-badge.safe {
+  background: rgba(219, 184, 0, 0.15);
+  color: var(--yellow);
+  border: 1px solid rgba(219, 184, 0, 0.3);
+}
+
+.validator-result .status-badge.invalid {
+  background: rgba(248, 81, 73, 0.15);
+  color: var(--red);
+  border: 1px solid rgba(248, 81, 73, 0.3);
+}
+
+.validator-result .detail {
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.validator-result .canonical-form {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.validator-examples {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.validator-example-btn {
+  background: var(--surface-bright);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.validator-example-btn:hover {
+  border-color: var(--border-light);
+  color: var(--text-secondary);
+}
+
+/* ─── Codepoint Grid ─── */
+.grid-controls {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.grid-controls select {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+}
+
+.grid-controls select:focus {
+  border-color: var(--cyan-dim);
+}
+
+.grid-controls label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.grid-wrapper {
+  display: flex;
+  gap: 20px;
+}
+
+.grid-scroll {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.grid-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.grid-scroll::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+.grid-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.codepoint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18px, 1fr));
+  gap: 2px;
+}
+
+.cp-cell {
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.15s;
+  position: relative;
+}
+
+.cp-cell:hover {
+  transform: scale(1.6);
+  z-index: 10;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+}
+
+.cp-cell.selected {
+  outline: 2px solid #fff;
+  outline-offset: 1px;
+  z-index: 11;
+}
+
+.grid-detail-panel {
+  width: 280px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.detail-codepoint {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 4px;
+}
+
+.detail-name {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  word-break: break-all;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.detail-row .label {
+  color: var(--text-muted);
+}
+
+.detail-row .value {
+  color: var(--text-primary);
+}
+
+.detail-placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* ─── Statistics Panel ─── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.stat-card h3 {
+  margin-bottom: 16px;
+}
+
+.stat-big {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--cyan);
+  line-height: 1;
+}
+
+.stat-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.stat-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.stat-bar-label {
+  min-width: 100px;
+  color: var(--text-secondary);
+}
+
+.stat-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--surface-bright);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.stat-bar-count {
+  min-width: 40px;
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.stat-formula {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  padding: 12px;
+  background: var(--surface-raised);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.stat-formula .num {
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+.stat-formula .sym {
+  color: var(--text-muted);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+  .nav-bar {
+    padding: 12px 16px;
+    gap: 12px;
+  }
+  .grid-wrapper {
+    flex-direction: column;
+  }
+  .grid-detail-panel {
+    width: 100%;
+  }
+  .calc-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ─── Nav Bar ─── -->
+<nav class="nav-bar">
+  <span class="nav-title">ACEDIT</span>
+  <span class="nav-sep">/</span>
+  <a href="../index.html">Home</a>
+  <span class="nav-sep">/</span>
+  <a href="specimen/index.html">Specimen</a>
+  <span class="nav-sep">/</span>
+  <a href="#" style="color: var(--cyan);">Allocation Explorer</a>
+  <span class="nav-sep">/</span>
+  <a href="constants-dashboard.html">Constants</a>
+  <span class="nav-sep">/</span>
+  <a href="features-reference.html">Features</a>
+  <span class="nav-sep">/</span>
+  <a href="geometry-workbench.html">Geometry</a>
+  <span class="nav-sep">/</span>
+  <a href="pipeline-monitor.html">Pipeline</a>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- Section 1: Block Map Overview -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="block-map">
+  <h2><span class="section-num">01</span>Block Map Overview</h2>
+  <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
+    PUA address space U+E000 &ndash; U+F8FF &middot; 6,400 total codepoints &middot; 1,094 allocated &middot; 5,306 reserved
+  </p>
+  <div class="block-map-container">
+    <div class="pua-bar" id="puaBar"></div>
+    <div class="block-legend" id="blockLegend"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- Section 2: APL Token Calculator -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="calculator">
+  <h2><span class="section-num">02</span>APL Token Calculator</h2>
+  <div class="calculator-container">
+    <div class="calc-row">
+      <span class="calc-label">Machine</span>
+      <div class="calc-buttons" id="machineButtons"></div>
+    </div>
+    <div class="calc-row">
+      <span class="calc-label">Spiral</span>
+      <div class="calc-buttons" id="spiralButtons"></div>
+    </div>
+    <div class="calc-row">
+      <span class="calc-label">Operator</span>
+      <div class="calc-buttons" id="operatorButtons"></div>
+    </div>
+    <div class="calc-row">
+      <span class="calc-label">Domain</span>
+      <div class="calc-buttons" id="domainButtons"></div>
+    </div>
+    <div class="calc-result" id="calcResult"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- Section 3: Name Validator -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="validator">
+  <h2><span class="section-num">03</span>Name Validator</h2>
+  <div class="validator-container">
+    <div class="validator-input-wrap">
+      <input
+        type="text"
+        class="validator-input"
+        id="validatorInput"
+        placeholder="Type a glyph name, e.g. acedit.apl.m3s1o2d4"
+        spellcheck="false"
+        autocomplete="off"
+      >
+    </div>
+    <div class="validator-result" id="validatorResult">
+      <span style="color: var(--text-muted);">Type a name above to validate.</span>
+    </div>
+    <div class="validator-examples" id="validatorExamples"></div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- Section 4: Codepoint Grid -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="codepoint-grid">
+  <h2><span class="section-num">04</span>Codepoint Grid</h2>
+  <div class="grid-controls">
+    <label>Block</label>
+    <select id="filterBlock">
+      <option value="ALL">All blocks</option>
+    </select>
+    <label>Family</label>
+    <select id="filterFamily">
+      <option value="ALL">All families</option>
+      <option value="hexagonal">Hexagonal</option>
+      <option value="pentagonal">Pentagonal</option>
+      <option value="cubic">Cubic</option>
+    </select>
+    <label>Machine</label>
+    <select id="filterMachine">
+      <option value="ALL">All</option>
+    </select>
+    <span id="gridCount" style="margin-left: auto; font-size: 12px; color: var(--text-muted);"></span>
+  </div>
+  <div class="grid-wrapper">
+    <div class="grid-scroll">
+      <div class="codepoint-grid" id="cpGrid"></div>
+    </div>
+    <div class="grid-detail-panel" id="gridDetail">
+      <div class="detail-placeholder">Click a cell to inspect</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<!-- Section 5: Statistics Panel -->
+<!-- ═══════════════════════════════════════════════════════════════════════ -->
+<section id="statistics">
+  <h2><span class="section-num">05</span>Statistics</h2>
+  <div class="stats-grid" id="statsGrid"></div>
+</section>
+
+</div><!-- .container -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// Data generation - mirrors generate_allocation.py
+// ═══════════════════════════════════════════════════════════════════════════
+
+const BLOCKS = [
+  { name: "APL_CORE",   start: 0xE000, end: 0xE3CB, count: 972,  color: "#00DBC0",  colorLabel: "Cyan" },
+  { name: "UCF_SIGIL",  start: 0xE3CC, end: 0xE3F2, count: 39,   color: "#33E8D4",  colorLabel: "Cyan lighter" },
+  { name: "CHRONICLE",  start: 0xE3F3, end: 0xE40E, count: 28,   color: "#55F0E0",  colorLabel: "Cyan lighter" },
+  { name: "GOVERNANCE", start: 0xE40F, end: 0xE41B, count: 13,   color: "#DBB800",  colorLabel: "Yellow" },
+  { name: "GEOMETRY",   start: 0xE41C, end: 0xE42E, count: 19,   color: "#DB0098",  colorLabel: "Magenta" },
+  { name: "SPECTRAL",   start: 0xE42F, end: 0xE43A, count: 12,   color: "#E833B3",  colorLabel: "Magenta lighter" },
+  { name: "FUNNEL",     start: 0xE43B, end: 0xE441, count: 7,    color: "#E8CC33",  colorLabel: "Yellow lighter" },
+  { name: "LATTICE",    start: 0xE442, end: 0xE445, count: 4,    color: "#F0D955",  colorLabel: "Yellow lighter" },
+];
+
+const FAMILY_MAP = {
+  APL_CORE:   "hexagonal",
+  UCF_SIGIL:  "hexagonal",
+  CHRONICLE:  "hexagonal",
+  GOVERNANCE: "cubic",
+  GEOMETRY:   "pentagonal",
+  SPECTRAL:   "pentagonal",
+  FUNNEL:     "cubic",
+  LATTICE:    "cubic",
+};
+
+const FAMILY_COLORS = {
+  hexagonal:  "#00DBC0",
+  pentagonal: "#DB0098",
+  cubic:      "#DBB800",
+};
+
+const OPERATOR_NAMES = ["group", "multiply", "power", "divide", "add", "null"];
+
+const PUA_START = 0xE000;
+const PUA_END   = 0xF8FF;
+const PUA_TOTAL = PUA_END - PUA_START + 1; // 6400
+
+// Generate all entries
+function generateAllEntries() {
+  const entries = [];
+
+  // APL_CORE: 9 machines x 3 spirals x 6 operators x 6 domains = 972
+  for (let m = 0; m < 9; m++) {
+    for (let s = 0; s < 3; s++) {
+      for (let o = 0; o < 6; o++) {
+        for (let d = 0; d < 6; d++) {
+          const cp = 0xE000 + (m * 108) + (s * 36) + (o * 6) + d;
+          entries.push({
+            codepoint: cp,
+            name: `acedit.apl.m${m}s${s}o${o}d${d}`,
+            block: "APL_CORE",
+            family: "hexagonal",
+            machine: m,
+            spiral: s,
+            operator: o,
+            domain: d,
+          });
+        }
+      }
+    }
+  }
+
+  // Sequential blocks
+  const seqBlocks = ["UCF_SIGIL", "CHRONICLE", "GOVERNANCE", "GEOMETRY", "SPECTRAL", "FUNNEL", "LATTICE"];
+  const blockNamePrefixes = {
+    UCF_SIGIL:  "ucf_sigil",
+    CHRONICLE:  "chronicle",
+    GOVERNANCE: "governance",
+    GEOMETRY:   "geometry",
+    SPECTRAL:   "spectral",
+    FUNNEL:     "funnel",
+    LATTICE:    "lattice",
+  };
+
+  for (const blk of seqBlocks) {
+    const info = BLOCKS.find(b => b.name === blk);
+    for (let i = 0; i < info.count; i++) {
+      const cp = info.start + i;
+      entries.push({
+        codepoint: cp,
+        name: `acedit.${blockNamePrefixes[blk]}.${String(i).padStart(3, '0')}`,
+        block: blk,
+        family: FAMILY_MAP[blk],
+        machine: null,
+        spiral: null,
+        operator: null,
+        domain: null,
+      });
+    }
+  }
+
+  return entries;
+}
+
+const ALL_ENTRIES = generateAllEntries();
+
+function cpHex(cp) {
+  return "U+" + cp.toString(16).toUpperCase().padStart(4, "0");
+}
+
+function getBlockColor(blockName) {
+  const b = BLOCKS.find(bl => bl.name === blockName);
+  return b ? b.color : "#333";
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Section 1: Block Map Overview
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderBlockMap() {
+  const bar = document.getElementById("puaBar");
+  const legend = document.getElementById("blockLegend");
+
+  for (const blk of BLOCKS) {
+    const leftPct  = ((blk.start - PUA_START) / PUA_TOTAL) * 100;
+    const widthPct = (blk.count / PUA_TOTAL) * 100;
+
+    const seg = document.createElement("div");
+    seg.className = "block-segment";
+    seg.style.left  = leftPct + "%";
+    seg.style.width = Math.max(widthPct, 0.4) + "%";
+    seg.style.backgroundColor = blk.color;
+    seg.title = `${blk.name}\n${cpHex(blk.start)}–${cpHex(blk.end)}\n${blk.count} codepoints`;
+    if (widthPct > 4) {
+      seg.textContent = blk.name;
+    }
+    bar.appendChild(seg);
+  }
+
+  for (const blk of BLOCKS) {
+    const item = document.createElement("div");
+    item.className = "block-legend-item";
+    item.innerHTML = `
+      <div class="block-color-swatch" style="background: ${blk.color}"></div>
+      <span class="block-legend-name">${blk.name}</span>
+      <span class="block-legend-range">${cpHex(blk.start)} &ndash; ${cpHex(blk.end)}</span>
+      <span class="block-legend-count">${blk.count}</span>
+    `;
+    legend.appendChild(item);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Section 2: APL Token Calculator
+// ═══════════════════════════════════════════════════════════════════════════
+
+const calcState = { machine: 0, spiral: 0, operator: 0, domain: 0 };
+
+function renderCalculator() {
+  const machineDiv  = document.getElementById("machineButtons");
+  const spiralDiv   = document.getElementById("spiralButtons");
+  const operatorDiv = document.getElementById("operatorButtons");
+  const domainDiv   = document.getElementById("domainButtons");
+
+  for (let i = 0; i <= 8; i++) {
+    const btn = document.createElement("button");
+    btn.className = "calc-btn" + (i === 0 ? " active" : "");
+    btn.textContent = i;
+    btn.dataset.param = "machine";
+    btn.dataset.value = i;
+    btn.onclick = () => setCalc("machine", i);
+    machineDiv.appendChild(btn);
+  }
+
+  for (let i = 0; i <= 2; i++) {
+    const btn = document.createElement("button");
+    btn.className = "calc-btn" + (i === 0 ? " active" : "");
+    btn.textContent = i;
+    btn.dataset.param = "spiral";
+    btn.dataset.value = i;
+    btn.onclick = () => setCalc("spiral", i);
+    spiralDiv.appendChild(btn);
+  }
+
+  for (let i = 0; i <= 5; i++) {
+    const btn = document.createElement("button");
+    btn.className = "calc-btn" + (i === 0 ? " active" : "");
+    btn.textContent = OPERATOR_NAMES[i];
+    btn.dataset.param = "operator";
+    btn.dataset.value = i;
+    btn.onclick = () => setCalc("operator", i);
+    operatorDiv.appendChild(btn);
+  }
+
+  for (let i = 0; i <= 5; i++) {
+    const btn = document.createElement("button");
+    btn.className = "calc-btn" + (i === 0 ? " active" : "");
+    btn.textContent = i;
+    btn.dataset.param = "domain";
+    btn.dataset.value = i;
+    btn.onclick = () => setCalc("domain", i);
+    domainDiv.appendChild(btn);
+  }
+
+  updateCalcResult();
+}
+
+function setCalc(param, value) {
+  calcState[param] = value;
+  const container = {
+    machine: "machineButtons",
+    spiral: "spiralButtons",
+    operator: "operatorButtons",
+    domain: "domainButtons",
+  }[param];
+  document.querySelectorAll(`#${container} .calc-btn`).forEach(btn => {
+    btn.classList.toggle("active", parseInt(btn.dataset.value) === value);
+  });
+  updateCalcResult();
+}
+
+function updateCalcResult() {
+  const m = calcState.machine;
+  const s = calcState.spiral;
+  const o = calcState.operator;
+  const d = calcState.domain;
+
+  const base = 0xE000;
+  const mPart = m * 108;
+  const sPart = s * 36;
+  const oPart = o * 6;
+  const dPart = d;
+  const cp = base + mPart + sPart + oPart + dPart;
+
+  const name = `acedit.apl.m${m}s${s}o${o}d${d}`;
+
+  document.getElementById("calcResult").innerHTML = `
+    <div class="codepoint">${cpHex(cp)}</div>
+    <div class="glyph-name">${name}</div>
+    <div class="formula">
+      <span class="val">E000</span>
+      <span class="op"> + </span>
+      <span class="op">(</span><span class="val">${m}</span><span class="op"> &times; 108) + </span>
+      <span class="op">(</span><span class="val">${s}</span><span class="op"> &times; 36) + </span>
+      <span class="op">(</span><span class="val">${o}</span><span class="op"> &times; 6) + </span>
+      <span class="val">${d}</span>
+      <br>
+      <span class="op">= E000 + </span>
+      <span class="val">${mPart}</span>
+      <span class="op"> + </span>
+      <span class="val">${sPart}</span>
+      <span class="op"> + </span>
+      <span class="val">${oPart}</span>
+      <span class="op"> + </span>
+      <span class="val">${dPart}</span>
+      <span class="op"> = E000 + </span>
+      <span class="val">${mPart + sPart + oPart + dPart}</span>
+      <span class="op"> = </span>
+      <span class="val">${cpHex(cp)}</span>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Section 3: Name Validator
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Port the regex from naming.py
+const _BODY_CANONICAL =
+  "apl\\.m[0-8]s[0-2]o[0-5]d[0-5]" +
+  "|ucf\\.\\d{3}" +
+  "|chron\\.\\d{3}" +
+  "|gov\\.[a-z_]+" +
+  "|geo\\.\\d{3}" +
+  "|spec\\.\\d{3}" +
+  "|funnel\\.[SRKCPFA]" +
+  "|lat\\.[RDCA]";
+
+const _BODY_SAFE = _BODY_CANONICAL.replace(/\\\./g, "-");
+
+const CANONICAL_RE = new RegExp("^acedit\\.(" + _BODY_CANONICAL + ")$");
+const SAFE_RE      = new RegExp("^acedit-(" + _BODY_SAFE + ")$");
+
+function validateName(name) {
+  if (CANONICAL_RE.test(name)) return "canonical";
+  if (SAFE_RE.test(name)) return "safe";
+  return "invalid";
+}
+
+function normalizeName(name) {
+  const kind = validateName(name);
+  if (kind === "canonical") return name;
+  if (kind === "safe") {
+    const parts = name.split("-");
+    // rejoin first two dashes as dots
+    return parts[0] + "." + parts[1] + "." + parts.slice(2).join("-");
+  }
+  return null;
+}
+
+function renderValidator() {
+  const input = document.getElementById("validatorInput");
+  const result = document.getElementById("validatorResult");
+  const examples = document.getElementById("validatorExamples");
+
+  const exampleNames = [
+    "acedit.apl.m3s1o2d4",
+    "acedit.apl.m0s0o0d0",
+    "acedit.apl.m8s2o5d5",
+    "acedit.ucf.007",
+    "acedit.gov.sacred_acorn",
+    "acedit.funnel.S",
+    "acedit.lat.R",
+    "acedit-apl-m3s1o2d4",
+    "acedit-gov-sacred_acorn",
+    "acedit-funnel-K",
+    "acedit.apl.m9s0o0d0",
+    "foobar.apl.m0s0o0d0",
+  ];
+
+  for (const ex of exampleNames) {
+    const btn = document.createElement("button");
+    btn.className = "validator-example-btn";
+    btn.textContent = ex;
+    btn.onclick = () => {
+      input.value = ex;
+      input.dispatchEvent(new Event("input"));
+    };
+    examples.appendChild(btn);
+  }
+
+  input.addEventListener("input", () => {
+    const name = input.value.trim();
+    if (!name) {
+      input.className = "validator-input";
+      result.innerHTML = '<span style="color: var(--text-muted);">Type a name above to validate.</span>';
+      return;
+    }
+
+    const kind = validateName(name);
+    input.className = "validator-input " + kind;
+
+    let html = `<div class="status-badge ${kind}">${kind}</div>`;
+
+    if (kind === "canonical") {
+      const matchedRe = CANONICAL_RE.exec(name);
+      html += `<div class="detail">Regex match: <code>acedit.${matchedRe[1]}</code></div>`;
+      html += `<div class="detail">This is already in canonical form.</div>`;
+    } else if (kind === "safe") {
+      const canonical = normalizeName(name);
+      const matchedRe = SAFE_RE.exec(name);
+      html += `<div class="detail">Regex match: <code>acedit-${matchedRe[1]}</code></div>`;
+      html += `<div class="detail">Canonical form: <span class="canonical-form">${canonical}</span></div>`;
+    } else {
+      // Try to give a helpful explanation
+      let reason = "Does not match any known glyph name pattern.";
+      if (name.startsWith("acedit.apl.")) {
+        const m = name.match(/^acedit\.apl\.m(\d+)s(\d+)o(\d+)d(\d+)$/);
+        if (m) {
+          const [, mv, sv, ov, dv] = m.map(Number);
+          const issues = [];
+          if (mv < 0 || mv > 8) issues.push("machine must be 0-8");
+          if (sv < 0 || sv > 2) issues.push("spiral must be 0-2");
+          if (ov < 0 || ov > 5) issues.push("operator must be 0-5");
+          if (dv < 0 || dv > 5) issues.push("domain must be 0-5");
+          if (issues.length) reason = "Out of range: " + issues.join(", ");
+        } else {
+          reason = "APL name format: acedit.apl.m{0-8}s{0-2}o{0-5}d{0-5}";
+        }
+      } else if (!name.startsWith("acedit")) {
+        reason = 'Name must start with "acedit."';
+      }
+      html += `<div class="detail">${reason}</div>`;
+      html += `<div class="detail" style="margin-top:6px; color: var(--text-muted);">
+        Canonical pattern: <code>acedit.{block}.{id}</code><br>
+        Safe pattern: <code>acedit-{block}-{id}</code>
+      </div>`;
+    }
+
+    result.innerHTML = html;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Section 4: Codepoint Grid
+// ═══════════════════════════════════════════════════════════════════════════
+
+let gridCells = [];
+let selectedEntry = null;
+
+function renderGrid() {
+  const grid = document.getElementById("cpGrid");
+  const filterBlock   = document.getElementById("filterBlock");
+  const filterFamily  = document.getElementById("filterFamily");
+  const filterMachine = document.getElementById("filterMachine");
+
+  // Populate block filter
+  for (const blk of BLOCKS) {
+    const opt = document.createElement("option");
+    opt.value = blk.name;
+    opt.textContent = blk.name;
+    filterBlock.appendChild(opt);
+  }
+
+  // Populate machine filter
+  for (let i = 0; i <= 8; i++) {
+    const opt = document.createElement("option");
+    opt.value = String(i);
+    opt.textContent = `Machine ${i}`;
+    filterMachine.appendChild(opt);
+  }
+
+  function buildGrid() {
+    const blockVal   = filterBlock.value;
+    const familyVal  = filterFamily.value;
+    const machineVal = filterMachine.value;
+
+    const filtered = ALL_ENTRIES.filter(e => {
+      if (blockVal !== "ALL" && e.block !== blockVal) return false;
+      if (familyVal !== "ALL" && e.family !== familyVal) return false;
+      if (machineVal !== "ALL") {
+        if (e.machine === null) return false;
+        if (e.machine !== parseInt(machineVal)) return false;
+      }
+      return true;
+    });
+
+    grid.innerHTML = "";
+    gridCells = [];
+
+    for (const entry of filtered) {
+      const cell = document.createElement("div");
+      cell.className = "cp-cell";
+      cell.style.backgroundColor = FAMILY_COLORS[entry.family];
+      cell.title = `${cpHex(entry.codepoint)} ${entry.name}`;
+      cell.addEventListener("click", () => selectCell(entry, cell));
+      grid.appendChild(cell);
+      gridCells.push({ cell, entry });
+    }
+
+    document.getElementById("gridCount").textContent = `${filtered.length} codepoint${filtered.length !== 1 ? 's' : ''}`;
+
+    // Re-select if current selection is still in view
+    if (selectedEntry) {
+      const found = gridCells.find(gc => gc.entry.codepoint === selectedEntry.codepoint);
+      if (found) {
+        found.cell.classList.add("selected");
+      }
+    }
+  }
+
+  filterBlock.addEventListener("change", buildGrid);
+  filterFamily.addEventListener("change", buildGrid);
+  filterMachine.addEventListener("change", buildGrid);
+
+  buildGrid();
+}
+
+function selectCell(entry, cell) {
+  // Remove old selection
+  gridCells.forEach(gc => gc.cell.classList.remove("selected"));
+  cell.classList.add("selected");
+  selectedEntry = entry;
+
+  const panel = document.getElementById("gridDetail");
+  const blockInfo = BLOCKS.find(b => b.name === entry.block);
+
+  let detailRows = `
+    <div class="detail-row"><span class="label">Block</span><span class="value">${entry.block}</span></div>
+    <div class="detail-row"><span class="label">Family</span><span class="value" style="color:${FAMILY_COLORS[entry.family]}">${entry.family}</span></div>
+  `;
+
+  if (entry.block === "APL_CORE") {
+    detailRows += `
+      <div class="detail-row"><span class="label">Machine</span><span class="value">${entry.machine}</span></div>
+      <div class="detail-row"><span class="label">Spiral</span><span class="value">${entry.spiral}</span></div>
+      <div class="detail-row"><span class="label">Operator</span><span class="value">${entry.operator} (${OPERATOR_NAMES[entry.operator]})</span></div>
+      <div class="detail-row"><span class="label">Domain</span><span class="value">${entry.domain}</span></div>
+    `;
+  }
+
+  detailRows += `
+    <div class="detail-row"><span class="label">Decimal</span><span class="value">${entry.codepoint}</span></div>
+    <div class="detail-row"><span class="label">Offset</span><span class="value">+${entry.codepoint - 0xE000}</span></div>
+  `;
+
+  panel.innerHTML = `
+    <div class="detail-codepoint" style="color:${blockInfo.color}">${cpHex(entry.codepoint)}</div>
+    <div class="detail-name">${entry.name}</div>
+    ${detailRows}
+  `;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Section 5: Statistics Panel
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderStatistics() {
+  const grid = document.getElementById("statsGrid");
+  const totalAllocated = ALL_ENTRIES.length;
+  const pct = ((totalAllocated / PUA_TOTAL) * 100).toFixed(1);
+
+  // Block breakdown
+  const blockCounts = {};
+  const familyCounts = { hexagonal: 0, pentagonal: 0, cubic: 0 };
+  for (const e of ALL_ENTRIES) {
+    blockCounts[e.block] = (blockCounts[e.block] || 0) + 1;
+    familyCounts[e.family]++;
+  }
+
+  // Card 1: Total allocation
+  const card1 = document.createElement("div");
+  card1.className = "stat-card";
+  card1.innerHTML = `
+    <h3>Total Allocation</h3>
+    <div class="stat-big">${totalAllocated.toLocaleString()}</div>
+    <div class="stat-sub">of ${PUA_TOTAL.toLocaleString()} codepoints (${pct}%)</div>
+    <div style="margin-top:16px; height:12px; background: var(--surface-bright); border-radius:6px; overflow:hidden;">
+      <div style="width:${pct}%; height:100%; background: linear-gradient(90deg, var(--cyan), var(--magenta)); border-radius:6px;"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:4px;">
+      <span>Allocated: ${totalAllocated}</span>
+      <span>Reserved: ${PUA_TOTAL - totalAllocated}</span>
+    </div>
+  `;
+  grid.appendChild(card1);
+
+  // Card 2: Per-block breakdown
+  const card2 = document.createElement("div");
+  card2.className = "stat-card";
+  let blockBarsHTML = '<h3>Block Breakdown</h3>';
+  const maxBlockCount = Math.max(...Object.values(blockCounts));
+  for (const blk of BLOCKS) {
+    const count = blockCounts[blk.name] || 0;
+    const barW = (count / maxBlockCount) * 100;
+    blockBarsHTML += `
+      <div class="stat-bar-row">
+        <span class="stat-bar-label">${blk.name}</span>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill" style="width:${barW}%; background:${blk.color}"></div>
+        </div>
+        <span class="stat-bar-count">${count}</span>
+      </div>
+    `;
+  }
+  card2.innerHTML = blockBarsHTML;
+  grid.appendChild(card2);
+
+  // Card 3: Family distribution
+  const card3 = document.createElement("div");
+  card3.className = "stat-card";
+  const maxFam = Math.max(...Object.values(familyCounts));
+  let famHTML = '<h3>Family Distribution</h3>';
+  for (const [fam, count] of Object.entries(familyCounts)) {
+    const barW = (count / maxFam) * 100;
+    famHTML += `
+      <div class="stat-bar-row">
+        <span class="stat-bar-label" style="color:${FAMILY_COLORS[fam]}">${fam}</span>
+        <div class="stat-bar-track">
+          <div class="stat-bar-fill" style="width:${barW}%; background:${FAMILY_COLORS[fam]}"></div>
+        </div>
+        <span class="stat-bar-count">${count}</span>
+      </div>
+    `;
+  }
+  card3.innerHTML = famHTML;
+  grid.appendChild(card3);
+
+  // Card 4: APL addressing formula
+  const card4 = document.createElement("div");
+  card4.className = "stat-card";
+  card4.innerHTML = `
+    <h3>APL Addressing</h3>
+    <div class="stat-formula">
+      <span class="num">9</span> <span class="sym">machines &times;</span>
+      <span class="num">3</span> <span class="sym">spirals &times;</span>
+      <span class="num">6</span> <span class="sym">operators &times;</span>
+      <span class="num">6</span> <span class="sym">domains</span>
+      <span class="sym"> = </span>
+      <span class="num">972</span>
+    </div>
+    <div style="margin-top:16px; font-size:12px; color:var(--text-secondary); line-height:1.8;">
+      <div>Stride per machine: <span style="color:var(--cyan)">108</span> = 3 &times; 36</div>
+      <div>Stride per spiral: <span style="color:var(--cyan)">36</span> = 6 &times; 6</div>
+      <div>Stride per operator: <span style="color:var(--cyan)">6</span></div>
+      <div>Domain: <span style="color:var(--cyan)">1</span> (unit offset)</div>
+    </div>
+    <div style="margin-top:16px; font-size:12px; color:var(--text-muted);">
+      U+E000 + (m &times; 108) + (s &times; 36) + (o &times; 6) + d
+    </div>
+  `;
+  grid.appendChild(card4);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Initialize
+// ═══════════════════════════════════════════════════════════════════════════
+
+document.addEventListener("DOMContentLoaded", () => {
+  renderBlockMap();
+  renderCalculator();
+  renderValidator();
+  renderGrid();
+  renderStatistics();
+});
+</script>
+
+</body>
+</html>

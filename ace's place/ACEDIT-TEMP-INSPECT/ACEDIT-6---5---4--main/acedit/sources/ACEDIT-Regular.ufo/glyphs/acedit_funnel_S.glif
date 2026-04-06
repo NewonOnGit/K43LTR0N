@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<glyph name="acedit.funnel.S" format="2">
+  <advance width="618" />
+  <unicode hex="E43B" />
+  <outline>
+    <contour>
+      <point x="189" y="453" type="line" />
+      <point x="429" y="453" type="line" />
+      <point x="429" y="425" type="line" />
+      <point x="189" y="425" type="line" />
+    </contour>
+    <contour>
+      <point x="443" y="439" type="line" />
+      <point x="443" y="179" type="line" />
+      <point x="415" y="179" type="line" />
+      <point x="415" y="439" type="line" />
+    </contour>
+    <contour>
+      <point x="429" y="165" type="line" />
+      <point x="189" y="165" type="line" />
+      <point x="189" y="193" type="line" />
+      <point x="429" y="193" type="line" />
+    </contour>
+    <contour>
+      <point x="175" y="179" type="line" />
+      <point x="175" y="439" type="line" />
+      <point x="203" y="439" type="line" />
+      <point x="203" y="179" type="line" />
+    </contour>
+  </outline>
+</glyph>

@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='utf-8'?>
+<glyph name="acedit.apl.m6s2o2d3" format="2">
+  <advance width="618" />
+  <unicode hex="E2DF" />
+  <outline>
+    <contour>
+      <point x="76" y="538" type="line" />
+      <point x="566" y="538" type="line" />
+      <point x="566" y="566" type="line" />
+      <point x="76" y="566" type="line" />
+    </contour>
+    <contour>
+      <point x="356" y="573" type="line" />
+      <point x="338.5" y="603.311" type="line" />
+      <point x="303.5" y="603.311" type="line" />
+      <point x="286" y="573" type="line" />
+      <point x="303.5" y="542.689" type="line" />
+      <point x="338.5" y="542.689" type="line" />
+    </contour>
+    <contour>
+      <point x="324.5" y="566.938" type="line" />
+      <point x="317.5" y="566.938" type="line" />
+      <point x="314" y="573" type="line" />
+      <point x="317.5" y="579.062" type="line" />
+      <point x="324.5" y="579.062" type="line" />
+      <point x="328" y="573" type="line" />
+    </contour>
+    <contour>
+      <point x="53.7631" y="227.25" type="line" />
+      <point x="87.7631" y="286.14" type="line" />
+      <point x="78.2369" y="291.64" type="line" />
+      <point x="44.2369" y="232.75" type="line" />
+    </contour>
+    <contour>
+      <point x="87.7631" y="291.64" type="line" />
+      <point x="53.7631" y="350.529" type="line" />
+      <point x="44.2369" y="345.029" type="line" />
+      <point x="78.2369" y="286.14" type="line" />
+    </contour>
+    <contour>
+      <point x="53.7631" y="345.029" type="line" />
+      <point x="87.7631" y="403.919" type="line" />
+      <point x="78.2369" y="409.419" type="line" />
+      <point x="44.2369" y="350.529" type="line" />
+    </contour>
+    <contour>
+      <point x="87.7631" y="232.75" type="line" />
+      <point x="53.7631" y="291.64" type="line" />
+      <point x="44.2369" y="286.14" type="line" />
+      <point x="78.2369" y="227.25" type="line" />
+    </contour>
+    <contour>
+      <point x="53.7631" y="286.14" type="line" />
+      <point x="87.7631" y="345.029" type="line" />
+      <point x="78.2369" y="350.529" type="line" />
+      <point x="44.2369" y="291.64" type="line" />
+    </contour>
+    <contour>
+      <point x="87.7631" y="350.529" type="line" />
+      <point x="53.7631" y="409.419" type="line" />
+      <point x="44.2369" y="403.919" type="line" />
+      <point x="78.2369" y="345.029" type="line" />
+    </contour>
+    <contour>
+      <point x="303.376" y="196" type="line" />
+      <point x="234.094" y="316" type="line" />
+      <point x="258.342" y="330" type="line" />
+      <point x="327.624" y="210" type="line" />
+    </contour>
+    <contour>
+      <point x="303.376" y="210" type="line" />
+      <point x="372.658" y="330" type="line" />
+      <point x="396.906" y="316" type="line" />
+      <point x="327.624" y="196" type="line" />
+    </contour>
+    <contour>
+      <point x="303.376" y="276" type="line" />
+      <point x="245.641" y="376" type="line" />
+      <point x="269.889" y="390" type="line" />
+      <point x="327.624" y="290" type="line" />
+    </contour>
+    <contour>
+      <point x="303.376" y="290" type="line" />
+      <point x="361.111" y="390" type="line" />
+      <point x="385.359" y="376" type="line" />
+      <point x="327.624" y="276" type="line" />
+    </contour>
+    <contour>
+      <point x="303.376" y="346" type="line" />
+      <point x="257.188" y="426" type="line" />
+      <point x="281.436" y="440" type="line" />
+      <point x="327.624" y="360" type="line" />
+    </contour>
+    <contour>
+      <point x="303.376" y="360" type="line" />
+      <point x="349.564" y="440" type="line" />
+      <point x="373.812" y="426" type="line" />
+      <point x="327.624" y="346" type="line" />
+    </contour>
+    <contour>
+      <point x="100.25" y="59.7631" type="line" />
+      <point x="536.25" y="311.488" type="line" />
+      <point x="541.75" y="301.962" type="line" />
+      <point x="105.75" y="50.2369" type="line" />
+    </contour>
+  </outline>
+</glyph>

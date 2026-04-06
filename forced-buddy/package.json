@@ -1,0 +1,22 @@
+{
+  "name": "forced-buddy",
+  "version": "1.0.0",
+  "description": "Framework-derived companion for Claude Code. Zero branching. f'' = f.",
+  "type": "module",
+  "bin": {
+    "forced-buddy": "./dist/cli.js"
+  },
+  "scripts": {
+    "start": "tsx src/cli.ts",
+    "build": "tsc && node -e \"require('fs').copyFileSync('src/finder/worker.mjs','dist/finder/worker.mjs')\"",
+    "postinstall": "npm run build 2>/dev/null || true",
+    "dev": "tsx src/cli.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0",
+    "@types/node": "^22.0.0"
+  },
+  "license": "WTFPL",
+  "keywords": ["claude-code", "companion", "self-reference", "framework"]
+}

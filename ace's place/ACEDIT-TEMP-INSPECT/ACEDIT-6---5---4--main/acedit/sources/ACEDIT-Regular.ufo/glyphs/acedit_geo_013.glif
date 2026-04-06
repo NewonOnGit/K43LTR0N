@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<glyph name="acedit.geo.013" format="2">
+  <advance width="618" />
+  <unicode hex="E429" />
+  <outline>
+    <contour>
+      <point x="309" y="473" type="line" />
+      <point x="153.027" y="359.679" type="line" />
+      <point x="212.603" y="176.321" type="line" />
+      <point x="405.397" y="176.321" type="line" />
+      <point x="464.973" y="359.679" type="line" />
+    </contour>
+    <contour>
+      <point x="438.344" y="351.026" type="line" />
+      <point x="388.939" y="198.974" type="line" />
+      <point x="229.061" y="198.974" type="line" />
+      <point x="179.656" y="351.026" type="line" />
+      <point x="309" y="445" type="line" />
+    </contour>
+    <contour>
+      <point x="242.975" y="323.034" type="line" />
+      <point x="275.25" y="250.543" type="line" />
+      <point x="354.166" y="258.838" type="line" />
+      <point x="370.664" y="336.455" type="line" />
+      <point x="301.944" y="376.13" type="line" />
+    </contour>
+  </outline>
+</glyph>

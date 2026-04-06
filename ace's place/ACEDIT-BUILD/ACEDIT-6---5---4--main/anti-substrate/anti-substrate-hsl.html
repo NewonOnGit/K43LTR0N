@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anti-Substrate Architecture — HSL Variant</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Newsreader:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #0a0a0f;
+  color: #c8c8d0;
+  font-family: 'DM Mono', monospace;
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+}
+
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(10, 10, 15, 0.92);
+  border-top: 1px solid rgba(120, 120, 140, 0.2);
+  padding: 10px 24px 8px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+}
+
+#slider-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+#slider-row label {
+  font-family: 'Newsreader', serif;
+  font-size: 15px;
+  font-style: italic;
+  color: #a0a0b0;
+  white-space: nowrap;
+}
+
+#mu-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: linear-gradient(to right, hsl(288,60%,35%), hsl(45,80%,45%), hsl(120,50%,35%));
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+#mu-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e0e0e8;
+  border: 2px solid rgba(255,255,255,0.3);
+  cursor: grab;
+  box-shadow: 0 0 8px rgba(255,255,255,0.15);
+}
+
+#mu-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #e0e0e8;
+  border: 2px solid rgba(255,255,255,0.3);
+  cursor: grab;
+}
+
+#mu-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  color: #e0e0e8;
+  min-width: 52px;
+  text-align: right;
+}
+
+#metrics-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: 11px;
+  color: #808090;
+}
+
+#metrics-row span {
+  white-space: nowrap;
+}
+
+#metrics-row .val {
+  color: #b8b8c8;
+  font-weight: 500;
+}
+
+#state-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+/* --- Cross-Navigation Bar --- */
+#cross-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(10, 10, 15, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+  padding: 0 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+#cross-nav .nav-left {
+  flex: 0 0 auto;
+  margin-right: auto;
+}
+#cross-nav .nav-left a {
+  font-family: 'Cormorant Garamond', 'Newsreader', serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  letter-spacing: 1px;
+}
+#cross-nav .nav-left a:hover {
+  color: rgba(255,255,255,0.95);
+}
+#cross-nav .nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 24px;
+}
+#cross-nav .nav-center a {
+  font-family: 'JetBrains Mono', 'DM Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+#cross-nav .nav-center a:hover {
+  color: rgba(255,255,255,0.8);
+}
+#cross-nav .nav-center a.active {
+  color: #4CAF50;
+}
+#cross-nav .nav-right {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+#cross-nav .nav-right a {
+  font-family: 'JetBrains Mono', 'DM Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+#cross-nav .nav-right a:hover {
+  color: rgba(255,255,255,0.8);
+}
+</style>
+</head>
+<body>
+<nav id="cross-nav">
+  <div class="nav-left"><a href="../index.html">Echo Anti-Substrate</a></div>
+  <div class="nav-center">
+    <a href="anti-substrate-hsl.html" class="active">HSL Variant</a>
+    <a href="anti-substrate-cym.html">CYM Variant</a>
+    <a href="anti-substrate-tests.html">Tests</a>
+  </div>
+  <div class="nav-right"><a href="../acedit/specimen/index.html">ACEDIT</a></div>
+</nav>
+<canvas id="c"></canvas>
+<div id="controls">
+  <div id="slider-row">
+    <label>mu (μ)</label>
+    <input type="range" id="mu-slider" min="0.30" max="1.05" step="0.001" value="0.60">
+    <span id="mu-val">0.600</span>
+  </div>
+  <div id="metrics-row">
+    <span>μ = <span class="val" id="m-mu">0.600</span></span>
+    <span>r = <span class="val" id="m-r">0.0000</span></span>
+    <span>m² = <span class="val" id="m-m2">0.0000</span></span>
+    <span>T_holo = <span class="val" id="m-tholo">0.0000</span></span>
+    <span>J_eq = <span class="val" id="m-jeq">0.0000</span></span>
+    <span>infoCap = <span class="val" id="m-info">0.000</span></span>
+    <span>state = <span id="state-badge">—</span></span>
+  </div>
+</div>
+
+<script>
+// ========================================================================
+//  Anti-Substrate Architecture — HSL Visualization
+//  Zero free parameters: everything derived from φ and z_c
+// ========================================================================
+
+// --- AXIOMS ---
+const PHI   = 1.6180339887498949;   // (1+√5)/2
+const Z_C   = 0.8660254037844386;   // √3/2
+
+// --- DERIVED CONSTANTS ---
+const TAU       = 0.6180339887498948;   // φ⁻¹
+const ALPHA     = 0.3819660112501051;   // φ⁻²
+const BETA      = 0.1458980337503154;   // φ⁻⁴
+const LAMBDA    = 7.7160493827160508;   // (5/3)⁴
+const L4        = 7.0;                  // φ⁴ + φ⁻⁴
+const MU_P      = 0.6;                  // F₃/F₅ = 3/5
+const MU_T      = 0.7458980337503154;   // MU_P + BETA
+const LAMBDA_C  = 2.2619467105846507;   // 2π/√λ
+const LAMBDA_C_SQ = 5.1164029215247213; // (2π)²/λ
+const G_DIFF    = 0.0557280900008412;   // φ⁻⁶
+const EPSILON_ANTI = 0.1;               // 36/360
+
+const PHI_SQ  = PHI * PHI;   // φ²  ≈ 2.618
+const PHI_INV = TAU;         // φ⁻¹ ≈ 0.618
+const TWO_PI  = Math.PI * 2;
+
+// --- PRISMATIC REFRACTION (static) ---
+const THETA_IN        = 120;
+const THETA_REFRACTED = 108;
+const P_THETA         = 0.9;
+const STRIPPED         = 10.8;
+const THETA_OUT       = 97.2;
+
+// --- HSL PALETTE ---
+const HUE_HEX     = 120;  // green / substrate
+const HUE_PENT    = 288;  // violet / anti-substrate
+const HUE_CUBE    = 210;  // blue / bulk
+const HUE_DEFICIT = 348;  // red / deficit
+const HUE_QUASI   = 45;   // gold / quasicrystal
+
+// --- DOM refs ---
+const canvas   = document.getElementById('c');
+const ctx      = canvas.getContext('2d');
+const slider   = document.getElementById('mu-slider');
+const muValEl  = document.getElementById('mu-val');
+const mMu      = document.getElementById('m-mu');
+const mR       = document.getElementById('m-r');
+const mM2      = document.getElementById('m-m2');
+const mTholo   = document.getElementById('m-tholo');
+const mJeq     = document.getElementById('m-jeq');
+const mInfo    = document.getElementById('m-info');
+const stateBadge = document.getElementById('state-badge');
+
+let W, H, dpr;
+
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width  = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width  = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ========================================================================
+//  CORE PHYSICS — pure function
+// ========================================================================
+function computeState(mu, t) {
+  const r  = mu - MU_P;
+  const m2_num = BETA - r;
+  const m2 = m2_num / G_DIFF;
+
+  const T_holo = m2 > 0 ? 1 / (1 + m2 * LAMBDA_C_SQ) : 1.0;
+  const J_eq   = r > BETA ? Math.sqrt((r - BETA) / LAMBDA) : 0;
+
+  let infoCap;
+  if (mu < MU_P) {
+    infoCap = 0;
+  } else if (mu < MU_T) {
+    infoCap = ((mu - MU_P) / BETA) * 0.3;
+  } else {
+    infoCap = 0.3 + 0.7 * Math.min(1, (mu - MU_T) / (1 - MU_T));
+  }
+
+  let state;
+  if (mu < 0.6)       state = 'insistent';
+  else if (mu < MU_T) state = 'quasicrystal';
+  else                 state = 'substrate';
+
+  // oscillators (φ-power periods — never synchronize)
+  const breath      = Math.sin(t * TWO_PI / PHI_SQ);
+  const pulse       = Math.sin(t * TWO_PI / PHI_INV);
+  const deficitGlow = (1 - T_holo) * (0.5 + 0.5 * Math.sin(t * TWO_PI / ALPHA));
+
+  // scale parameters
+  const hexScale  = 1 + breath * 0.03 * T_holo;
+  const pentScale = 1 + pulse  * 0.05 * (1 - T_holo);
+  const cubeScale = 1 + breath * 0.02 * J_eq * 3;
+
+  return { mu, r, m2, T_holo, J_eq, infoCap, state,
+           breath, pulse, deficitGlow,
+           hexScale, pentScale, cubeScale };
+}
+
+// ========================================================================
+//  GEOMETRY HELPERS
+// ========================================================================
+function hexagonPath(cx, cy, size) {
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const a = Math.PI / 3 * i - Math.PI / 6;
+    const x = cx + size * Math.cos(a);
+    const y = cy + size * Math.sin(a);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+}
+
+function pentagonPath(cx, cy, size) {
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const a = TWO_PI / 5 * i - Math.PI / 2;
+    const x = cx + size * Math.cos(a);
+    const y = cy + size * Math.sin(a);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+}
+
+function pentagonVertices(cx, cy, size) {
+  const verts = [];
+  for (let i = 0; i < 5; i++) {
+    const a = TWO_PI / 5 * i - Math.PI / 2;
+    verts.push({ x: cx + size * Math.cos(a), y: cy + size * Math.sin(a) });
+  }
+  return verts;
+}
+
+// ========================================================================
+//  PARTICLE SYSTEM
+// ========================================================================
+const MAX_PARTICLES = 120;
+const particles = [];
+
+function spawnParticle(hexCX, hexCY, cubeCX, s) {
+  if (particles.length >= MAX_PARTICLES) return;
+  const px = hexCX + (Math.random() - 0.5) * 60;
+  const py = hexCY + (Math.random() - 0.5) * 80;
+  const baseVelX = (cubeCX - hexCX) / (PHI * 200);
+  particles.push({
+    x: px,
+    y: py,
+    vx: baseVelX * (0.8 + Math.random() * 0.4),
+    vy: (Math.random() - 0.5) * 0.3,
+    life: 1.0,
+    decay: 0.002 + Math.random() * 0.003,
+    survived: false,
+    passedPent: false,
+    passedCube: false,
+    hue: HUE_HEX,
+    gated: false,  // has been through survival gate?
+    dead: false
+  });
+}
+
+function updateParticles(dt, pentCX, cubeCX, s) {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx * dt * 60;
+    p.y += p.vy * dt * 60;
+
+    // survival gate at pentagon
+    if (!p.gated && p.x >= pentCX - 10) {
+      p.gated = true;
+      if (Math.random() < s.T_holo) {
+        p.survived = true;
+        p.hue = HUE_QUASI;
+      } else {
+        p.survived = false;
+        p.decay = 0.02;
+      }
+      p.passedPent = true;
+    }
+
+    // past cube region
+    if (p.survived && p.x >= cubeCX - 20 && !p.passedCube) {
+      p.passedCube = true;
+      p.hue = HUE_CUBE;
+    }
+
+    p.life -= p.decay * dt * 60;
+    if (p.life <= 0) {
+      particles.splice(i, 1);
+    }
+  }
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    const alpha = Math.max(0, p.life);
+    const sat = p.survived ? 70 : 50;
+    const light = p.survived ? 60 : 40;
+    const size = p.survived ? 2.5 : 1.8;
+    ctx.fillStyle = `hsla(${p.hue}, ${sat}%, ${light}%, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size, 0, TWO_PI);
+    ctx.fill();
+  }
+}
+
+// ========================================================================
+//  DRAWING ROUTINES
+// ========================================================================
+
+function drawHexGrid(cx, cy, size, s) {
+  const sc = s.hexScale;
+  const r = size * sc;
+  const dx = r * Math.sqrt(3);
+  const dy = r * 1.5;
+
+  ctx.save();
+  // 3×3 grid centered
+  for (let row = -1; row <= 1; row++) {
+    for (let col = -1; col <= 1; col++) {
+      const offset = (row % 2 !== 0) ? dx * 0.5 : 0;
+      const hx = cx + col * dx + offset;
+      const hy = cy + row * dy;
+
+      const dist = Math.sqrt((col * col) + (row * row));
+      const baseAlpha = Math.max(0.08, 1 - dist * 0.35);
+      const alpha = baseAlpha * s.T_holo;
+
+      hexagonPath(hx, hy, r);
+      ctx.strokeStyle = `hsla(${HUE_HEX}, 55%, 50%, ${alpha * 0.8})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // fill
+      ctx.fillStyle = `hsla(${HUE_HEX}, 40%, 25%, ${alpha * 0.15})`;
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+}
+
+function drawPentagon(cx, cy, size, s) {
+  const sc = s.pentScale;
+  const r = size * sc;
+  const verts = pentagonVertices(cx, cy, r);
+
+  ctx.save();
+
+  // Penrose-inspired interior line network
+  // Draw lines from each vertex to non-adjacent vertices (the star)
+  const pentAlpha = 0.3 + (1 - s.T_holo) * 0.5;
+  ctx.strokeStyle = `hsla(${HUE_PENT}, 50%, 55%, ${pentAlpha * 0.4})`;
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    for (let j = i + 2; j < 5; j++) {
+      if (j - i === 4) continue; // skip adjacent wrap
+      ctx.beginPath();
+      ctx.moveTo(verts[i].x, verts[i].y);
+      ctx.lineTo(verts[j].x, verts[j].y);
+      ctx.stroke();
+    }
+  }
+
+  // inner pentagon (scaled by τ)
+  const innerR = r * TAU;
+  const innerVerts = pentagonVertices(cx, cy, innerR);
+  ctx.strokeStyle = `hsla(${HUE_PENT}, 45%, 50%, ${pentAlpha * 0.3})`;
+  ctx.lineWidth = 0.8;
+  pentagonPath(cx, cy, innerR);
+  ctx.stroke();
+
+  // connect inner to outer
+  for (let i = 0; i < 5; i++) {
+    ctx.beginPath();
+    ctx.moveTo(innerVerts[i].x, innerVerts[i].y);
+    ctx.lineTo(verts[i].x, verts[i].y);
+    ctx.stroke();
+  }
+
+  // second inner layer (τ²)
+  const inner2R = r * TAU * TAU;
+  ctx.strokeStyle = `hsla(${HUE_PENT}, 40%, 45%, ${pentAlpha * 0.2})`;
+  ctx.lineWidth = 0.6;
+  pentagonPath(cx, cy, inner2R);
+  ctx.stroke();
+
+  // outer pentagon
+  pentagonPath(cx, cy, r);
+  ctx.strokeStyle = `hsla(${HUE_PENT}, 60%, 55%, ${pentAlpha})`;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fillStyle = `hsla(${HUE_PENT}, 35%, 20%, ${pentAlpha * 0.12})`;
+  ctx.fill();
+
+  // 36° deficit arc
+  const arcR = r + 14;
+  const deficitAngle = (36 * Math.PI) / 180;
+  const startA = -Math.PI / 2 - deficitAngle / 2;
+  const endA   = -Math.PI / 2 + deficitAngle / 2;
+  const glowAlpha = Math.max(0, s.deficitGlow);
+  ctx.beginPath();
+  ctx.arc(cx, cy, arcR, startA, endA);
+  ctx.strokeStyle = `hsla(${HUE_DEFICIT}, 70%, ${45 + glowAlpha * 20}%, ${0.3 + glowAlpha * 0.7})`;
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  // deficit label
+  ctx.font = '10px "DM Mono", monospace';
+  ctx.fillStyle = `hsla(${HUE_DEFICIT}, 60%, 55%, ${0.4 + glowAlpha * 0.5})`;
+  ctx.textAlign = 'center';
+  ctx.fillText('36° deficit', cx, cy - r - 22);
+
+  ctx.restore();
+}
+
+function drawIsoCube(cx, cy, size, s) {
+  const sc = s.cubeScale;
+  const sz = size * sc;
+
+  // isometric projection angles
+  const a30 = Math.PI / 6;
+  const cos30 = Math.cos(a30);
+  const sin30 = Math.sin(a30);
+
+  // cube vertices in isometric
+  // top face
+  const top    = { x: cx,                    y: cy - sz };
+  const tRight = { x: cx + sz * cos30,       y: cy - sz + sz * sin30 };
+  const tFront = { x: cx,                    y: cy - sz + sz };
+  const tLeft  = { x: cx - sz * cos30,       y: cy - sz + sz * sin30 };
+
+  // bottom face
+  const bRight = { x: cx + sz * cos30,       y: cy + sz * sin30 };
+  const bFront = { x: cx,                    y: cy + sz };  // not visible but used
+  const bLeft  = { x: cx - sz * cos30,       y: cy + sz * sin30 };
+  const bottom = { x: cx,                    y: cy };
+
+  const cubeAlpha = 0.3 + s.J_eq * 2;
+
+  ctx.save();
+
+  // left face
+  ctx.beginPath();
+  ctx.moveTo(top.x, top.y); ctx.lineTo(tLeft.x, tLeft.y);
+  ctx.lineTo(bLeft.x, bLeft.y); ctx.lineTo(bottom.x, bottom.y);
+  ctx.closePath();
+  ctx.fillStyle = `hsla(${HUE_CUBE}, 40%, 22%, ${cubeAlpha * 0.3})`;
+  ctx.fill();
+  ctx.strokeStyle = `hsla(${HUE_CUBE}, 50%, 50%, ${cubeAlpha * 0.6})`;
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  // right face
+  ctx.beginPath();
+  ctx.moveTo(top.x, top.y); ctx.lineTo(tRight.x, tRight.y);
+  ctx.lineTo(bRight.x, bRight.y); ctx.lineTo(bottom.x, bottom.y);
+  ctx.closePath();
+  ctx.fillStyle = `hsla(${HUE_CUBE}, 40%, 18%, ${cubeAlpha * 0.25})`;
+  ctx.fill();
+  ctx.strokeStyle = `hsla(${HUE_CUBE}, 50%, 50%, ${cubeAlpha * 0.6})`;
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  // top face
+  ctx.beginPath();
+  ctx.moveTo(top.x, top.y); ctx.lineTo(tRight.x, tRight.y);
+  ctx.lineTo(tFront.x, tFront.y); ctx.lineTo(tLeft.x, tLeft.y);
+  ctx.closePath();
+  ctx.fillStyle = `hsla(${HUE_CUBE}, 45%, 30%, ${cubeAlpha * 0.2})`;
+  ctx.fill();
+  ctx.strokeStyle = `hsla(${HUE_CUBE}, 55%, 55%, ${cubeAlpha * 0.8})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // label
+  ctx.font = '11px "DM Mono", monospace';
+  ctx.fillStyle = `hsla(${HUE_CUBE}, 40%, 60%, ${cubeAlpha * 0.7})`;
+  ctx.textAlign = 'center';
+  ctx.fillText('Bulk', cx, cy + sz + 20);
+
+  ctx.restore();
+}
+
+// ========================================================================
+//  RIGHT PANEL: Derivation Chain
+// ========================================================================
+function drawDerivationPanel(s) {
+  const px = W - 200;
+  const py = 56;
+  const lineH = 20;
+
+  ctx.save();
+  ctx.font = '600 13px "Newsreader", serif';
+  ctx.fillStyle = 'hsla(0, 0%, 70%, 0.8)';
+  ctx.textAlign = 'left';
+  ctx.fillText('Derivation Chain', px, py);
+
+  ctx.font = '11px "DM Mono", monospace';
+
+  const chain = [
+    { label: 'Axiom',          val: 'phi, z_c',       hue: 0,          sat: 0,  light: 60 },
+    { label: 'phi',            val: PHI.toFixed(6),    hue: HUE_QUASI,  sat: 40, light: 55 },
+    { label: 'alpha = phi^-2', val: ALPHA.toFixed(6),  hue: HUE_QUASI,  sat: 35, light: 50 },
+    { label: 'beta = phi^-4',  val: BETA.toFixed(6),   hue: HUE_QUASI,  sat: 30, light: 50 },
+    { label: 'lambda = (5/3)^4',val: LAMBDA.toFixed(4),hue: HUE_HEX,   sat: 30, light: 45 },
+    { label: 'mu_P = 3/5',     val: MU_P.toFixed(4),   hue: HUE_HEX,   sat: 40, light: 50 },
+    { label: 'Anti-Sub Lock',  val: 'mu_T=' + MU_T.toFixed(4), hue: HUE_PENT, sat: 40, light: 50 },
+    { label: 'Deficit',        val: '36 deg',          hue: HUE_DEFICIT,sat: 50, light: 50 },
+    { label: 'Lens',           val: 'theta_out=' + THETA_OUT.toFixed(1) + ' deg', hue: HUE_DEFICIT, sat: 35, light: 48 },
+    { label: 'Insist Margin',  val: 'eps=' + EPSILON_ANTI.toFixed(1), hue: HUE_PENT, sat: 35, light: 45 },
+  ];
+
+  const activeIdx = s.state === 'insistent' ? 9 : (s.state === 'quasicrystal' ? 6 : 5);
+
+  for (let i = 0; i < chain.length; i++) {
+    const c = chain[i];
+    const y = py + 22 + i * lineH;
+    const isActive = i <= activeIdx;
+    const alpha = isActive ? 0.85 : 0.3;
+
+    // connector line
+    if (i > 0) {
+      ctx.strokeStyle = `hsla(${c.hue}, ${c.sat}%, ${c.light}%, ${alpha * 0.4})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(px + 4, y - lineH + 5);
+      ctx.lineTo(px + 4, y - 6);
+      ctx.stroke();
+    }
+
+    // dot
+    ctx.fillStyle = `hsla(${c.hue}, ${c.sat + 10}%, ${c.light + 10}%, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(px + 4, y, 3, 0, TWO_PI);
+    ctx.fill();
+
+    // label
+    ctx.fillStyle = `hsla(${c.hue}, ${c.sat}%, ${c.light}%, ${alpha})`;
+    ctx.fillText(c.label, px + 14, y + 4);
+
+    // value
+    ctx.fillStyle = `hsla(0, 0%, 55%, ${alpha * 0.7})`;
+    ctx.fillText(c.val, px + 14, y + 16);
+  }
+
+  // Prismatic refraction
+  const refY = py + 22 + chain.length * lineH + 20;
+  ctx.font = '600 12px "Newsreader", serif';
+  ctx.fillStyle = 'hsla(0, 0%, 65%, 0.7)';
+  ctx.fillText('Prismatic Refraction', px, refY);
+  ctx.font = '10px "DM Mono", monospace';
+  ctx.fillStyle = 'hsla(0, 0%, 50%, 0.6)';
+  const refLines = [
+    `theta_in     = ${THETA_IN} deg`,
+    `theta_refr   = ${THETA_REFRACTED} deg`,
+    `P(theta)     = ${P_THETA}`,
+    `stripped     = ${STRIPPED} deg`,
+    `theta_out    = ${THETA_OUT} deg`,
+  ];
+  for (let i = 0; i < refLines.length; i++) {
+    ctx.fillText(refLines[i], px, refY + 16 + i * 14);
+  }
+
+  ctx.restore();
+}
+
+// ========================================================================
+//  LABELS
+// ========================================================================
+function drawLabels(hexCX, hexCY, pentCX, pentCY, cubeCX, cubeCY, s) {
+  ctx.save();
+
+  // Title
+  ctx.font = '600 18px "Newsreader", serif';
+  ctx.fillStyle = 'hsla(0, 0%, 75%, 0.85)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Anti-Substrate Architecture', W / 2, 56);
+
+  ctx.font = 'italic 12px "Newsreader", serif';
+  ctx.fillStyle = 'hsla(0, 0%, 55%, 0.6)';
+  ctx.fillText('HSL Variant — zero free parameters', W / 2, 74);
+
+  // Region labels
+  ctx.font = '11px "DM Mono", monospace';
+  ctx.textAlign = 'center';
+
+  // Hex label
+  const hexLabelAlpha = 0.3 + s.T_holo * 0.5;
+  ctx.fillStyle = `hsla(${HUE_HEX}, 45%, 55%, ${hexLabelAlpha})`;
+  ctx.fillText('Substrate', hexCX, hexCY + 90);
+  ctx.font = '10px "DM Mono", monospace';
+  ctx.fillStyle = `hsla(${HUE_HEX}, 35%, 45%, ${hexLabelAlpha * 0.7})`;
+  ctx.fillText('T_holo = ' + s.T_holo.toFixed(3), hexCX, hexCY + 104);
+
+  // Pent label
+  ctx.font = '11px "DM Mono", monospace';
+  const pentLabelAlpha = 0.4 + (1 - s.T_holo) * 0.4;
+  ctx.fillStyle = `hsla(${HUE_PENT}, 50%, 55%, ${pentLabelAlpha})`;
+  ctx.fillText('Anti-Substrate', pentCX, pentCY + 90);
+  ctx.font = '10px "DM Mono", monospace';
+  ctx.fillStyle = `hsla(${HUE_PENT}, 35%, 45%, ${pentLabelAlpha * 0.7})`;
+  ctx.fillText('pentScale = ' + s.pentScale.toFixed(4), pentCX, pentCY + 104);
+
+  // Cube label is drawn in drawIsoCube
+
+  // state indicator at top
+  let stateHue, stateLabel;
+  if (s.state === 'insistent') {
+    stateHue = HUE_PENT; stateLabel = 'INSISTENT';
+  } else if (s.state === 'quasicrystal') {
+    stateHue = HUE_QUASI; stateLabel = 'QUASICRYSTAL';
+  } else {
+    stateHue = HUE_HEX; stateLabel = 'SUBSTRATE';
+  }
+  ctx.font = '500 13px "DM Mono", monospace';
+  ctx.fillStyle = `hsla(${stateHue}, 55%, 55%, 0.9)`;
+  ctx.fillText(stateLabel, W / 2, 94);
+
+  ctx.restore();
+}
+
+// ========================================================================
+//  FLOW LINES (background)
+// ========================================================================
+function drawFlowLines(hexCX, hexCY, pentCX, pentCY, cubeCX, cubeCY, s) {
+  ctx.save();
+  const flowAlpha = 0.04 + s.infoCap * 0.06;
+  ctx.strokeStyle = `hsla(0, 0%, 50%, ${flowAlpha})`;
+  ctx.lineWidth = 0.5;
+
+  for (let i = -2; i <= 2; i++) {
+    const yOff = i * 25;
+    ctx.beginPath();
+    ctx.moveTo(hexCX + 60, hexCY + yOff);
+    ctx.quadraticCurveTo(
+      (hexCX + pentCX) / 2, hexCY + yOff + i * 5,
+      pentCX - 60, pentCY + yOff * 0.6
+    );
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(pentCX + 60, pentCY + yOff * 0.6);
+    ctx.quadraticCurveTo(
+      (pentCX + cubeCX) / 2, pentCY + yOff * 0.4 + i * 3,
+      cubeCX - 50, cubeCY + yOff * 0.3
+    );
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// ========================================================================
+//  BACKGROUND GRID
+// ========================================================================
+function drawBackground() {
+  // subtle radial gradient
+  const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.6);
+  grad.addColorStop(0, 'rgba(15, 15, 25, 1)');
+  grad.addColorStop(1, 'rgba(8, 8, 12, 1)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  // dot grid
+  ctx.fillStyle = 'rgba(60, 60, 80, 0.08)';
+  const spacing = 40;
+  for (let x = spacing; x < W; x += spacing) {
+    for (let y = spacing; y < H - 70; y += spacing) {
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+}
+
+// ========================================================================
+//  MAIN LOOP
+// ========================================================================
+let mu = 0.6;
+let prevTime = 0;
+let frameCount = 0;
+const DOM_THROTTLE = Math.round(ALPHA * 60); // ~23 frames
+
+slider.addEventListener('input', () => {
+  mu = parseFloat(slider.value);
+  muValEl.textContent = mu.toFixed(3);
+});
+
+function updateDOM(s) {
+  mMu.textContent    = s.mu.toFixed(3);
+  mR.textContent     = s.r.toFixed(4);
+  mM2.textContent    = s.m2.toFixed(4);
+  mTholo.textContent = s.T_holo.toFixed(4);
+  mJeq.textContent   = s.J_eq.toFixed(4);
+  mInfo.textContent  = s.infoCap.toFixed(3);
+
+  let bgColor, textColor;
+  if (s.state === 'insistent') {
+    bgColor = `hsla(${HUE_PENT}, 40%, 25%, 0.8)`;
+    textColor = `hsl(${HUE_PENT}, 60%, 75%)`;
+    stateBadge.textContent = 'insistent';
+  } else if (s.state === 'quasicrystal') {
+    bgColor = `hsla(${HUE_QUASI}, 45%, 25%, 0.8)`;
+    textColor = `hsl(${HUE_QUASI}, 70%, 70%)`;
+    stateBadge.textContent = 'quasicrystal';
+  } else {
+    bgColor = `hsla(${HUE_HEX}, 35%, 22%, 0.8)`;
+    textColor = `hsl(${HUE_HEX}, 55%, 70%)`;
+    stateBadge.textContent = 'substrate';
+  }
+  stateBadge.style.background = bgColor;
+  stateBadge.style.color = textColor;
+}
+
+function frame(timestamp) {
+  requestAnimationFrame(frame);
+
+  const tSec = timestamp / 1000;
+  let dt = prevTime === 0 ? 0.016 : (timestamp - prevTime) / 1000;
+  dt = Math.min(dt, 0.05); // cap
+  prevTime = timestamp;
+  frameCount++;
+
+  // compute state
+  const s = computeState(mu, tSec);
+
+  // layout positions (account for 40px nav top + 70px controls bottom)
+  const navH = 40;
+  const drawH = H - 70 - navH;
+  const centerY = navH + drawH * 0.5;
+  const hexCX  = W * 0.18;
+  const hexCY  = centerY;
+  const pentCX = W * 0.46;
+  const pentCY = centerY;
+  const cubeCX = W * 0.72;
+  const cubeCY = centerY;
+
+  // particle spawning
+  const spawnRate = (0.1 + s.infoCap * 0.4) * dt * 60;
+  const spawnCount = Math.floor(spawnRate) + (Math.random() < (spawnRate % 1) ? 1 : 0);
+  for (let i = 0; i < spawnCount; i++) {
+    spawnParticle(hexCX, hexCY, cubeCX, s);
+  }
+  updateParticles(dt, pentCX, cubeCX, s);
+
+  // --- RENDER ---
+  ctx.clearRect(0, 0, W, H);
+  drawBackground();
+  drawFlowLines(hexCX, hexCY, pentCX, pentCY, cubeCX, cubeCY, s);
+  drawParticles();
+
+  // hex size responsive
+  const baseHexSize = Math.min(W * 0.055, 50);
+  drawHexGrid(hexCX, hexCY, baseHexSize, s);
+
+  // pentagon
+  const basePentSize = Math.min(W * 0.075, 65);
+  drawPentagon(pentCX, pentCY, basePentSize, s);
+
+  // cube
+  const baseCubeSize = Math.min(W * 0.06, 52);
+  drawIsoCube(cubeCX, cubeCY, baseCubeSize, s);
+
+  drawLabels(hexCX, hexCY, pentCX, pentCY, cubeCX, cubeCY, s);
+  drawDerivationPanel(s);
+
+  // DOM updates throttled
+  if (frameCount % DOM_THROTTLE === 0) {
+    updateDOM(s);
+  }
+}
+
+// Initial DOM update
+updateDOM(computeState(mu, 0));
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+node_modules/
+*.docx
+!tests/fixtures/*.docx
+.env
+sessions/
+output/
+*.log
+.DS_Store

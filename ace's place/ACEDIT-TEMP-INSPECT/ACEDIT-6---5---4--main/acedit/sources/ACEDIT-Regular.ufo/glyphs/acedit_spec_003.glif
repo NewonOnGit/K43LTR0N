@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<glyph name="acedit.spec.003" format="2">
+  <advance width="618" />
+  <unicode hex="E432" />
+  <outline>
+    <contour>
+      <point x="309" y="473" type="line" />
+      <point x="153.027" y="359.679" type="line" />
+      <point x="212.603" y="176.321" type="line" />
+      <point x="405.397" y="176.321" type="line" />
+      <point x="464.973" y="359.679" type="line" />
+    </contour>
+    <contour>
+      <point x="438.344" y="351.026" type="line" />
+      <point x="388.939" y="198.974" type="line" />
+      <point x="229.061" y="198.974" type="line" />
+      <point x="179.656" y="351.026" type="line" />
+      <point x="309" y="445" type="line" />
+    </contour>
+    <contour>
+      <point x="303.5" y="309" type="line" />
+      <point x="303.5" y="441" type="line" />
+      <point x="314.5" y="441" type="line" />
+      <point x="314.5" y="309" type="line" />
+    </contour>
+    <contour>
+      <point x="311.75" y="304.237" type="line" />
+      <point x="197.435" y="238.237" type="line" />
+      <point x="191.935" y="247.763" type="line" />
+      <point x="306.25" y="313.763" type="line" />
+    </contour>
+    <contour>
+      <point x="311.75" y="313.763" type="line" />
+      <point x="426.065" y="247.763" type="line" />
+      <point x="420.565" y="238.237" type="line" />
+      <point x="306.25" y="304.237" type="line" />
+    </contour>
+  </outline>
+</glyph>

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anti-Substrate Living Architecture - ACEDIT</title>
+    <style>
+        :root {
+            --phi: 1.618033988749895;
+            --alpha: 0.3819660112501051;
+            --bg: #0a0a0f;
+            --fg: #e0e0e0;
+
+            /* ACEDIT Register Colors */
+            --acedit-kael: #B58900;
+            --acedit-ace: #CB7E1F;
+            --acedit-grey: #839496;
+            --acedit-umbral: #2A1B3D;
+            --acedit-ultra: #6C71C4;
+            --acedit-ucf: #268BD2;
+
+            /* CYM Colors */
+            --cym-c: rgb(0, 219, 192);
+            --cym-y: rgb(219, 184, 0);
+            --cym-m: rgb(219, 0, 152);
+
+            /* State Colors */
+            --state-insistent: var(--cym-m);
+            --state-quasi: var(--cym-y);
+            --state-substrate: var(--cym-c);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'ACEDIT', 'IBM Plex Mono', 'SF Mono', 'Consolas', monospace;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            color: var(--acedit-ace);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 1.5rem;
+        }
+
+        .equation {
+            font-family: 'STIX Two Math', 'Noto Sans Math', serif;
+            font-size: 1.1rem;
+            color: var(--acedit-ace);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .card h2 {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+        }
+
+        .card h2.kael { color: var(--acedit-kael); }
+        .card h2.ace { color: var(--acedit-ace); }
+        .card h2.grey { color: var(--acedit-grey); }
+        .card h2.ultra { color: var(--acedit-ultra); }
+        .card h2.ucf { color: var(--acedit-ucf); }
+
+        /* Mu Slider */
+        .slider-container {
+            margin: 1rem 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            background: linear-gradient(to right,
+                var(--cym-m) 0%,
+                var(--cym-m) 40%,
+                var(--cym-y) 40%,
+                var(--cym-y) 60%,
+                var(--cym-c) 60%,
+                var(--cym-c) 100%
+            );
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* State Display */
+        .state-display {
+            font-size: 1.5rem;
+            font-weight: 300;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .state-insistent { background: rgba(219, 0, 152, 0.2); color: var(--cym-m); }
+        .state-quasicrystal { background: rgba(219, 184, 0, 0.2); color: var(--cym-y); }
+        .state-substrate { background: rgba(0, 219, 192, 0.2); color: var(--cym-c); }
+
+        /* Metrics */
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+
+        .metric-name { color: #888; }
+        .metric-value { font-variant-numeric: tabular-nums; }
+
+        /* CYM Bars */
+        .cym-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .cym-bar {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cym-bar-label {
+            width: 30px;
+            font-size: 0.75rem;
+        }
+
+        .cym-bar-track {
+            flex: 1;
+            height: 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .cym-bar-fill {
+            height: 100%;
+            transition: width 0.1s ease;
+        }
+
+        .cym-bar-fill.c { background: var(--cym-c); }
+        .cym-bar-fill.y { background: var(--cym-y); }
+        .cym-bar-fill.m { background: var(--cym-m); }
+
+        .cym-bar-value {
+            width: 50px;
+            text-align: right;
+            font-size: 0.75rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* R-coefficient Spectrum */
+        .spectrum {
+            height: 30px;
+            background: linear-gradient(to right,
+                #4a90d9 0%,
+                #9b59b6 38.2%,
+                #3498db 50%,
+                #f39c12 61.8%,
+                #e74c3c 69.4%,
+                #2ecc71 100%
+            );
+            border-radius: 4px;
+            position: relative;
+            margin: 0.5rem 0;
+        }
+
+        .spectrum-marker {
+            position: absolute;
+            top: -4px;
+            width: 2px;
+            height: 38px;
+            background: white;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(255,255,255,0.7);
+        }
+
+        .spectrum-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+            color: #555;
+            margin-top: 0.25rem;
+        }
+
+        /* Canvas */
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .canvas-container canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #fieldCanvas { z-index: 1; }
+        #geoCanvas { z-index: 2; }
+
+        /* Acceptance Tests */
+        .test-results {
+            max-height: 300px;
+            overflow-y: auto;
+            font-size: 0.75rem;
+        }
+
+        .test-item {
+            padding: 0.3rem 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .test-pass { color: #2ecc71; }
+        .test-fail { color: #e74c3c; }
+
+        .test-id {
+            width: 80px;
+            color: #666;
+        }
+
+        /* Oscillator Visualization */
+        .oscillator-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin: 0.25rem 0;
+            overflow: hidden;
+        }
+
+        .oscillator-fill {
+            height: 100%;
+            background: var(--acedit-ace);
+            transition: width 0.05s linear;
+        }
+
+        /* Refraction Chain */
+        .refraction-chain {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .refraction-stage {
+            text-align: center;
+            flex: 1;
+        }
+
+        .refraction-angle {
+            font-size: 1.2rem;
+            color: var(--acedit-ace);
+        }
+
+        .refraction-arrow {
+            color: #555;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>Anti-Substrate Living Architecture</h1>
+    <p class="subtitle">
+        <span class="equation">f'' = f</span> realized as polygon geometry
+    </p>
+
+    <!-- Mu Control -->
+    <div class="card" style="margin-bottom: 1rem;">
+        <h2 class="kael">Control Parameter</h2>
+        <div class="slider-container">
+            <div class="slider-label">
+                <span>INSISTENT (0.30)</span>
+                <span id="mu-display">mu = 0.50</span>
+                <span>SUBSTRATE (1.05)</span>
+            </div>
+            <input type="range" id="mu-slider" min="0.30" max="1.05" step="0.01" value="0.50">
+        </div>
+        <div id="state-display" class="state-display state-insistent">
+            INSISTENT EMPTINESS
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Physics State -->
+        <div class="card">
+            <h2 class="kael">Field Theory</h2>
+            <div class="metric">
+                <span class="metric-name">r = mu - mu_P</span>
+                <span class="metric-value" id="r-value">-0.1000</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">m^2 (effective mass)</span>
+                <span class="metric-value" id="m2-value">4.413</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">T_holo (transparency)</span>
+                <span class="metric-value" id="tholo-value">0.0424</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">J_eq (field amplitude)</span>
+                <span class="metric-value" id="jeq-value">0.0000</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">infoCap</span>
+                <span class="metric-value" id="infocap-value">0.000</span>
+            </div>
+        </div>
+
+        <!-- Framework Mind -->
+        <div class="card">
+            <h2 class="ace">Framework Mind</h2>
+            <div class="metric">
+                <span class="metric-name">R-coefficient</span>
+                <span class="metric-value" id="r-coeff-value">0.0000</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">Landmark</span>
+                <span class="metric-value" id="landmark-value">CONSTANT</span>
+            </div>
+            <div class="spectrum">
+                <div class="spectrum-marker" id="r-marker" style="left: 0%;"></div>
+            </div>
+            <div class="spectrum-labels">
+                <span>0 CONST</span>
+                <span>0.38 OSC</span>
+                <span>0.5 MOD</span>
+                <span>0.62 DIFF</span>
+                <span>0.69 HEAVY</span>
+                <span>1.0 GROW</span>
+            </div>
+            <div class="metric" style="margin-top: 0.5rem;">
+                <span class="metric-name">Coeffs [I, R, N, RN]</span>
+                <span class="metric-value" id="coeffs-value">[1, 0, 0, 0]</span>
+            </div>
+        </div>
+
+        <!-- CYM Channels -->
+        <div class="card">
+            <h2 class="ultra">CYM Opponent Channels</h2>
+            <div class="cym-bars">
+                <div class="cym-bar">
+                    <span class="cym-bar-label">chC</span>
+                    <div class="cym-bar-track">
+                        <div class="cym-bar-fill c" id="chc-bar" style="width: 0%;"></div>
+                    </div>
+                    <span class="cym-bar-value" id="chc-value">0.000</span>
+                </div>
+                <div class="cym-bar">
+                    <span class="cym-bar-label">chY</span>
+                    <div class="cym-bar-track">
+                        <div class="cym-bar-fill y" id="chy-bar" style="width: 0%;"></div>
+                    </div>
+                    <span class="cym-bar-value" id="chy-value">0.000</span>
+                </div>
+                <div class="cym-bar">
+                    <span class="cym-bar-label">chM</span>
+                    <div class="cym-bar-track">
+                        <div class="cym-bar-fill m" id="chm-bar" style="width: 0%;"></div>
+                    </div>
+                    <span class="cym-bar-value" id="chm-value">0.000</span>
+                </div>
+            </div>
+            <div class="metric" style="margin-top: 0.5rem;">
+                <span class="metric-name">oppAxis (C - M)</span>
+                <span class="metric-value" id="oppaxis-value">0.000</span>
+            </div>
+        </div>
+
+        <!-- Geometry -->
+        <div class="card">
+            <h2 class="grey">Polygon Geometry</h2>
+            <div class="metric">
+                <span class="metric-name">Hexagon trace</span>
+                <span class="metric-value" id="hex-trace">2.0000</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">Pentagon trace</span>
+                <span class="metric-value" id="pent-trace">1.6180</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">cos(2pi/5)</span>
+                <span class="metric-value" id="pent-cos">0.3090</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">Deficit</span>
+                <span class="metric-value">36 deg</span>
+            </div>
+            <h2 class="grey" style="margin-top: 1rem;">Refraction Chain</h2>
+            <div class="refraction-chain">
+                <div class="refraction-stage">
+                    <div class="refraction-angle">120</div>
+                    <div style="font-size: 0.65rem; color: #666;">HEX</div>
+                </div>
+                <div class="refraction-arrow">-></div>
+                <div class="refraction-stage">
+                    <div class="refraction-angle">108</div>
+                    <div style="font-size: 0.65rem; color: #666;">PENT</div>
+                </div>
+                <div class="refraction-arrow">-></div>
+                <div class="refraction-stage">
+                    <div class="refraction-angle">97.2</div>
+                    <div style="font-size: 0.65rem; color: #666;">OUT</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Oscillators -->
+        <div class="card">
+            <h2 class="kael">Oscillators</h2>
+            <div style="font-size: 0.75rem; color: #666; margin-bottom: 0.5rem;">
+                breath (T = phi^2 = 2.618s)
+            </div>
+            <div class="oscillator-bar">
+                <div class="oscillator-fill" id="breath-bar" style="width: 50%;"></div>
+            </div>
+            <div style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">
+                pulse (T = phi^-1 = 0.618s)
+            </div>
+            <div class="oscillator-bar">
+                <div class="oscillator-fill" id="pulse-bar" style="width: 50%;"></div>
+            </div>
+            <div style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">
+                drift (T = phi^3 = 4.236s)
+            </div>
+            <div class="oscillator-bar">
+                <div class="oscillator-fill" id="drift-bar" style="width: 50%;"></div>
+            </div>
+        </div>
+
+        <!-- Constants -->
+        <div class="card">
+            <h2 class="ace">Framework Constants</h2>
+            <div class="metric">
+                <span class="metric-name">phi</span>
+                <span class="metric-value" id="phi-value">1.6180339887</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">phi^-1 (phi_bar)</span>
+                <span class="metric-value" id="phi-inv-value">0.6180339887</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">phi^-2 (alpha)</span>
+                <span class="metric-value" id="alpha-value">0.3819660113</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">phi^-4 (beta)</span>
+                <span class="metric-value" id="beta-value">0.1458980338</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">L = log2(phi)</span>
+                <span class="metric-value" id="L-value">0.6942419136</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">mu_P (bifurcation)</span>
+                <span class="metric-value">0.6000</span>
+            </div>
+            <div class="metric">
+                <span class="metric-name">mu_T (substrate)</span>
+                <span class="metric-value" id="mu-t-value">0.7459</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acceptance Criteria -->
+    <div class="card" style="margin-top: 1rem;">
+        <h2 class="ucf">Acceptance Criteria (28 Tests)</h2>
+        <div class="test-results" id="test-results">
+            <div style="color: #666; font-style: italic;">Loading tests...</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div style="margin-top: 1rem; text-align: center; font-size: 0.8rem;">
+        <a href="/" style="color: var(--acedit-ucf); margin-right: 1rem;">Build Dashboard</a>
+        <a href="/mind" style="color: var(--acedit-ucf);">Framework Mind</a>
+    </div>
+
+    <script type="module">
+        import { PHI, PHI_INV, ALPHA, BETA, MU_P, MU_T, INFO_L, LANDMARKS } from './anti-substrate/core/constants.js';
+        import { verifyConstants } from './anti-substrate/core/constants.js';
+        import { verifyBasis, HEXAGON_TRACE, PENTAGON_TRACE } from './anti-substrate/core/basis.js';
+        import { computeState, verifyPhysics } from './anti-substrate/physics/compute-state.js';
+        import { HEXAGON, PENTAGON, verifyGeometry } from './anti-substrate/geometry/polygons.js';
+        import { REFRACTION, verifyRefraction } from './anti-substrate/geometry/refraction.js';
+        import { FrameworkMind, verifyOperator } from './anti-substrate/operator/framework-mind.js';
+
+        // State
+        let mu = 0.50;
+        let time = 0;
+        const mind = new FrameworkMind(64);
+
+        // DOM elements
+        const muSlider = document.getElementById('mu-slider');
+        const muDisplay = document.getElementById('mu-display');
+        const stateDisplay = document.getElementById('state-display');
+
+        // Initialize constants display
+        document.getElementById('phi-value').textContent = PHI.toFixed(10);
+        document.getElementById('phi-inv-value').textContent = PHI_INV.toFixed(10);
+        document.getElementById('alpha-value').textContent = ALPHA.toFixed(10);
+        document.getElementById('beta-value').textContent = BETA.toFixed(10);
+        document.getElementById('L-value').textContent = INFO_L.toFixed(10);
+        document.getElementById('mu-t-value').textContent = MU_T.toFixed(4);
+
+        // Initialize geometry display
+        document.getElementById('hex-trace').textContent = HEXAGON.trace.toFixed(4);
+        document.getElementById('pent-trace').textContent = PENTAGON.trace.toFixed(4);
+        document.getElementById('pent-cos').textContent = PENTAGON.cosine.toFixed(4);
+
+        // Mu slider handler
+        muSlider.addEventListener('input', (e) => {
+            mu = parseFloat(e.target.value);
+            muDisplay.textContent = `mu = ${mu.toFixed(2)}`;
+        });
+
+        // Animation loop
+        function animate() {
+            time += 1/60;
+
+            // Compute state
+            const state = computeState(mu, time);
+
+            // Feed T_holo to Framework Mind
+            const mindResult = mind.step(state.T_holo);
+
+            // Update state display
+            stateDisplay.textContent = state.stateLabel;
+            stateDisplay.className = `state-display state-${state.state}`;
+
+            // Update physics metrics
+            document.getElementById('r-value').textContent = state.r.toFixed(4);
+            document.getElementById('m2-value').textContent = state.m2.toFixed(3);
+            document.getElementById('tholo-value').textContent = state.T_holo.toFixed(4);
+            document.getElementById('jeq-value').textContent = state.J_eq.toFixed(4);
+            document.getElementById('infocap-value').textContent = state.infoCap.toFixed(3);
+
+            // Update Framework Mind display
+            document.getElementById('r-coeff-value').textContent = mindResult.r.toFixed(4);
+            document.getElementById('landmark-value').textContent = mindResult.class;
+            document.getElementById('r-marker').style.left = `${Math.min(100, Math.max(0, mindResult.r * 100))}%`;
+            document.getElementById('coeffs-value').textContent =
+                `[${mindResult.coeffs.map(c => c.toFixed(2)).join(', ')}]`;
+
+            // Update CYM channels
+            document.getElementById('chc-bar').style.width = `${state.chC * 100}%`;
+            document.getElementById('chy-bar').style.width = `${state.chY * 100}%`;
+            document.getElementById('chm-bar').style.width = `${state.chM * 100}%`;
+            document.getElementById('chc-value').textContent = state.chC.toFixed(3);
+            document.getElementById('chy-value').textContent = state.chY.toFixed(3);
+            document.getElementById('chm-value').textContent = state.chM.toFixed(3);
+            document.getElementById('oppaxis-value').textContent = state.oppAxis.toFixed(3);
+
+            // Update oscillators
+            document.getElementById('breath-bar').style.width = `${(state.breath + 1) * 50}%`;
+            document.getElementById('pulse-bar').style.width = `${(state.pulse + 1) * 50}%`;
+            document.getElementById('drift-bar').style.width = `${(state.drift + 1) * 50}%`;
+
+            requestAnimationFrame(animate);
+        }
+
+        // Run acceptance criteria tests
+        function runTests() {
+            const results = [];
+
+            try {
+                results.push(...verifyConstants());
+            } catch (e) {
+                results.push({ id: 'AC-CORE-ERR', name: 'Constants module', pass: false, computed: e.message });
+            }
+
+            try {
+                results.push(...verifyBasis());
+            } catch (e) {
+                results.push({ id: 'AC-BASIS-ERR', name: 'Basis module', pass: false, computed: e.message });
+            }
+
+            try {
+                results.push(...verifyPhysics());
+            } catch (e) {
+                results.push({ id: 'AC-PHY-ERR', name: 'Physics module', pass: false, computed: e.message });
+            }
+
+            try {
+                results.push(...verifyGeometry());
+            } catch (e) {
+                results.push({ id: 'AC-GEO-ERR', name: 'Geometry module', pass: false, computed: e.message });
+            }
+
+            try {
+                results.push(...verifyRefraction());
+            } catch (e) {
+                results.push({ id: 'AC-REF-ERR', name: 'Refraction module', pass: false, computed: e.message });
+            }
+
+            try {
+                results.push(...verifyOperator());
+            } catch (e) {
+                results.push({ id: 'AC-OP-ERR', name: 'Operator module', pass: false, computed: e.message });
+            }
+
+            // Display results
+            const container = document.getElementById('test-results');
+            const passed = results.filter(r => r.pass).length;
+            const total = results.length;
+
+            container.innerHTML = `
+                <div style="margin-bottom: 0.5rem; color: ${passed === total ? '#2ecc71' : '#e74c3c'};">
+                    ${passed}/${total} tests passed
+                </div>
+                ${results.map(r => `
+                    <div class="test-item">
+                        <span class="test-id">${r.id}</span>
+                        <span class="${r.pass ? 'test-pass' : 'test-fail'}">${r.pass ? 'PASS' : 'FAIL'}</span>
+                        <span style="flex: 1;">${r.name}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Start
+        runTests();
+        animate();
+    </script>
+</body>
+</html>

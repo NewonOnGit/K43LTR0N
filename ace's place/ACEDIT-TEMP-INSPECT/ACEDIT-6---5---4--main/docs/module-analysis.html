@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module Analysis | Anti-Substrate + ACEDIT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0a0f;
+  --bg-card: #111118;
+  --bg-card-hover: #16161f;
+  --bg-sidebar: #0d0d14;
+  --bg-nav: rgba(10, 10, 15, 0.92);
+  --cyan: #00DBC0;
+  --magenta: #DB0098;
+  --yellow: #DBB800;
+  --text: #d4d4d8;
+  --text-dim: #8888a0;
+  --text-bright: #f0f0f5;
+  --border: #222233;
+  --border-light: #333348;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sidebar-width: 260px;
+  --nav-height: 56px;
+  --transition: 0.25s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  scrollbar-color: var(--border-light) var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-weight: 400;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--cyan);
+  color: var(--bg);
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--cyan); }
+
+/* ========== TOP NAV ========== */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: var(--bg-nav);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  z-index: 1000;
+}
+
+.nav-back {
+  color: var(--cyan);
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color var(--transition);
+}
+.nav-back:hover { color: var(--text-bright); }
+.nav-back svg { width: 16px; height: 16px; }
+
+.nav-title {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-left: auto;
+  letter-spacing: 0.02em;
+}
+
+.nav-credits {
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-left: 1rem;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  margin-left: 1rem;
+}
+.hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--text);
+  margin: 5px 0;
+  transition: var(--transition);
+}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - var(--nav-height));
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 1.5rem 0;
+  z-index: 900;
+  transition: transform var(--transition);
+}
+
+.sidebar-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  padding: 0.75rem 1.25rem 0.4rem;
+}
+
+.sidebar a {
+  display: block;
+  padding: 0.4rem 1.25rem;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  border-left: 2px solid transparent;
+  transition: all var(--transition);
+}
+.sidebar a:hover,
+.sidebar a.active {
+  color: var(--text-bright);
+  background: rgba(255,255,255,0.02);
+  border-left-color: var(--cyan);
+}
+.sidebar a.active { color: var(--cyan); }
+
+.sidebar a.indent { padding-left: 2rem; font-size: 0.72rem; }
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 899;
+}
+
+@media (max-width: 900px) {
+  .sidebar.open ~ .sidebar-overlay { display: block; }
+}
+
+/* ========== MAIN CONTENT ========== */
+.main {
+  margin-left: var(--sidebar-width);
+  margin-top: var(--nav-height);
+  padding: 3rem 3rem 6rem;
+  max-width: 960px;
+}
+
+/* ========== TYPOGRAPHY ========== */
+h1 {
+  font-family: var(--serif);
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-family: var(--serif);
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 3.5rem 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+h3 {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin: 2rem 0 0.75rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--text-dim);
+  font-family: var(--serif);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.meta {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+.tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+
+em { color: var(--cyan); font-style: italic; }
+strong { color: var(--text-bright); font-weight: 600; }
+
+/* ========== RELATIONAL KEY GRID ========== */
+.rel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1.5rem 0 2rem;
+}
+
+.rel-cell {
+  padding: 1.5rem;
+  background: var(--bg-card);
+  transition: background var(--transition);
+}
+.rel-cell:hover { background: var(--bg-card-hover); }
+
+.rel-cell-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.rel-cell p { font-size: 0.82rem; color: var(--text-dim); margin-bottom: 0; }
+
+.rel-cell.resonant .rel-cell-label { color: var(--cyan); }
+.rel-cell.resonant { border-left: 3px solid var(--cyan); }
+
+.rel-cell.oppositional .rel-cell-label { color: var(--magenta); }
+.rel-cell.oppositional { border-left: 3px solid var(--magenta); }
+
+.rel-cell.equivalent .rel-cell-label { color: var(--yellow); }
+.rel-cell.equivalent { border-left: 3px solid var(--yellow); }
+
+.rel-cell.opp-equiv .rel-cell-label {
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.rel-cell.opp-equiv { border-left: 3px solid; border-image: linear-gradient(180deg, var(--cyan), var(--magenta)) 1; }
+
+.axis-labels {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+.axis-labels span:nth-child(2),
+.axis-labels span:nth-child(3) { text-align: center; }
+
+.axis-row-labels {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0;
+}
+.axis-row-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 0.75rem;
+}
+
+/* ========== MODULE CARDS ========== */
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.card-grid.two-col {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.module-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+.module-card:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.module-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+}
+
+.module-card.cyan-accent::before { background: var(--cyan); }
+.module-card.magenta-accent::before { background: var(--magenta); }
+
+.card-number {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.25rem;
+}
+.cyan-accent .card-number { color: var(--cyan); }
+.magenta-accent .card-number { color: var(--magenta); }
+
+.card-filename {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 0.15rem;
+}
+
+.card-usecase {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 0.75rem;
+}
+
+.card-desc {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.card-primary {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+.card-primary-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.35rem;
+}
+.cyan-accent .card-primary-label { color: var(--cyan); }
+.magenta-accent .card-primary-label { color: var(--magenta); }
+.cyan-accent .card-primary { border-color: rgba(0, 219, 192, 0.15); }
+.magenta-accent .card-primary { border-color: rgba(219, 0, 152, 0.15); }
+
+/* ========== GROUP LABELS ========== */
+.group-label {
+  font-family: var(--serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--magenta);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 2rem 0 0.5rem;
+  padding-left: 0.25rem;
+}
+
+/* ========== TABLES ========== */
+.rel-table-wrap {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.rel-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.rel-table thead th {
+  padding: 0.85rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
+}
+
+.rel-table.cyan-header thead th { background: rgba(0, 219, 192, 0.08); color: var(--cyan); }
+.rel-table.magenta-header thead th { background: rgba(219, 0, 152, 0.08); color: var(--magenta); }
+.rel-table.yellow-header thead th { background: rgba(219, 184, 0, 0.08); color: var(--yellow); }
+.rel-table.gradient-header thead th {
+  background: linear-gradient(90deg, rgba(0,219,192,0.08), rgba(219,0,152,0.08));
+  color: var(--text-bright);
+}
+
+.rel-table tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  background: var(--bg-card);
+}
+
+.rel-table tbody tr:last-child td { border-bottom: none; }
+
+.rel-table tbody tr:hover td { background: var(--bg-card-hover); }
+
+.rel-table td:first-child,
+.rel-table td:nth-child(2) {
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--text-bright);
+  font-size: 0.78rem;
+}
+
+.rel-table td:last-child {
+  color: var(--text-dim);
+  font-size: 0.78rem;
+}
+
+/* ========== BADGE ========== */
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.badge.cyan { background: rgba(0,219,192,0.12); color: var(--cyan); }
+.badge.magenta { background: rgba(219,0,152,0.12); color: var(--magenta); }
+.badge.yellow { background: rgba(219,184,0,0.12); color: var(--yellow); }
+.badge.gradient {
+  background: linear-gradient(90deg, rgba(0,219,192,0.12), rgba(219,0,152,0.12));
+  color: var(--text-bright);
+}
+
+/* ========== ISOMORPHISM TABLE ========== */
+.iso-table-wrap {
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.iso-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.iso-table thead th {
+  padding: 0.85rem 1rem;
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
+  width: 50%;
+}
+
+.iso-table thead th:first-child {
+  background: rgba(0, 219, 192, 0.08);
+  color: var(--cyan);
+  text-align: left;
+}
+
+.iso-table thead th:last-child {
+  background: rgba(219, 0, 152, 0.08);
+  color: var(--magenta);
+  text-align: left;
+}
+
+.iso-table tbody td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  vertical-align: top;
+  font-size: 0.8rem;
+}
+
+.iso-table tbody tr:last-child td { border-bottom: none; }
+.iso-table tbody tr:hover td { background: var(--bg-card-hover); }
+
+/* ========== GRAPH ========== */
+.graph-container {
+  position: relative;
+  margin: 1.5rem 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  overflow: hidden;
+}
+
+#moduleGraph {
+  display: block;
+  width: 100%;
+  cursor: grab;
+}
+#moduleGraph:active { cursor: grabbing; }
+
+.graph-legend {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-dim);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.legend-line {
+  width: 20px;
+  height: 2px;
+}
+
+.graph-tooltip {
+  position: absolute;
+  padding: 0.5rem 0.75rem;
+  background: rgba(17,17,24,0.95);
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  font-size: 0.72rem;
+  color: var(--text-bright);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 10;
+  max-width: 200px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; padding: 2rem 1.5rem 4rem; }
+  .hamburger { display: block; }
+  .card-grid.two-col { grid-template-columns: 1fr; }
+  .nav-credits { display: none; }
+  .nav-title { font-size: 1rem; }
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.5rem; }
+  .main { padding: 1.5rem 1rem 3rem; }
+  .rel-grid { grid-template-columns: 1fr; }
+}
+
+/* ========== ANTI-SUBSTRATE REL TABLE ========== */
+.as-rel-table .badge {
+  display: inline-block;
+  margin-right: 0.25rem;
+}
+</style>
+</head>
+<body>
+
+<!-- ========== TOP NAV ========== -->
+<nav class="top-nav">
+  <a href="../index.html" class="nav-back">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 2L4 8l6 6"/></svg>
+    Echo Framework
+  </a>
+  <span class="nav-title">Module Analysis</span>
+  <span class="nav-credits">Echo-S-Studios / Echo-Squirrel Research</span>
+  <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-label">Overview</div>
+  <a href="#top">Introduction</a>
+  <a href="#relational-key">Relational Key</a>
+
+  <div class="sidebar-label">Systems</div>
+  <a href="#anti-substrate">Anti-Substrate (3 Modules)</a>
+  <a href="#mod-hsl" class="indent">HSL Visualization</a>
+  <a href="#mod-cym" class="indent">CYM Rendering</a>
+  <a href="#mod-tests" class="indent">Test Harness</a>
+  <a href="#as-relmap" class="indent">Relational Map</a>
+
+  <a href="#acedit">ACEDIT Font (12 Modules)</a>
+  <a href="#acedit-foundation" class="indent">Foundation</a>
+  <a href="#acedit-inventory" class="indent">Inventory</a>
+  <a href="#acedit-geometry" class="indent">Geometry</a>
+  <a href="#acedit-features" class="indent">Features</a>
+  <a href="#acedit-pipeline" class="indent">Pipeline</a>
+  <a href="#acedit-interface" class="indent">Interface</a>
+
+  <div class="sidebar-label">Analysis</div>
+  <a href="#relational-map">Full Relational Map</a>
+  <a href="#rel-resonant" class="indent">Resonant</a>
+  <a href="#rel-oppositional" class="indent">Oppositional</a>
+  <a href="#rel-equivalent" class="indent">Equivalent</a>
+  <a href="#rel-opp-equiv" class="indent">Opp. Equivalent</a>
+  <a href="#isomorphism">Deep Isomorphism</a>
+  <a href="#graph">Module Graph</a>
+</aside>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ========== MAIN ========== -->
+<div class="main" id="top">
+
+  <!-- Header -->
+  <h1>Anti-Substrate Architecture<br>+ ACEDIT Font System</h1>
+  <p class="subtitle">Comprehensive Module Use-Case Analysis with Relational Mapping</p>
+  <div class="meta">
+    Document Class: Engineering Research<br>
+    System: Echo Framework / ACEDIT Substrate<br>
+    Inventor Credit: Jason Turner / Ace<br>
+    Organization: Echo-S-Studios / Echo-Squirrel Research
+  </div>
+
+  <!-- ==================== SECTION 1: RELATIONAL KEY ==================== -->
+  <h2 id="relational-key">Relational Key</h2>
+  <p>Every module pair in this system can be classified along two axes: <strong>Function</strong> (positive or negative) and <strong>Structure</strong> (positive or negative). These four relationships map directly onto the Anti-Substrate's own physics.</p>
+
+  <div class="axis-labels">
+    <span></span>
+    <span>Positive Function</span>
+    <span>Negative Function</span>
+  </div>
+
+  <div class="axis-row-labels">
+    <div style="display:flex; flex-direction:column; justify-content:space-around;">
+      <span class="axis-row-label" style="height:50%;">Positive Structure</span>
+      <span class="axis-row-label" style="height:50%;">Negative Structure</span>
+    </div>
+
+    <div class="rel-grid">
+      <div class="rel-cell resonant">
+        <div class="rel-cell-label">Resonant</div>
+        <p>Amplifies the other's purpose. The substrate regime: hexagonal tiling, information persists.</p>
+      </div>
+      <div class="rel-cell oppositional">
+        <div class="rel-cell-label">Oppositional</div>
+        <p>Works against or constrains the other. The insistent regime: pentagonal refusal, information blocked.</p>
+      </div>
+      <div class="rel-cell equivalent">
+        <div class="rel-cell-label">Equivalent</div>
+        <p>Performs the same role in a different coordinate system. The quasicrystal zone: same structure, different lattice.</p>
+      </div>
+      <div class="rel-cell opp-equiv">
+        <div class="rel-cell-label">Oppositionally Equivalent</div>
+        <p>Mirror-image role from the opposing position. The CYM opponent axis: identical structural roles from opposite sides of T_holo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 2: ANTI-SUBSTRATE ==================== -->
+  <h2 id="anti-substrate">I. Anti-Substrate System</h2>
+  <p><span class="badge cyan">3 Modules</span></p>
+
+  <div class="card-grid" id="mod-hsl">
+    <!-- Module 1 -->
+    <div class="module-card cyan-accent">
+      <div class="card-number">Module 1</div>
+      <div class="card-filename">anti-substrate-hsl.html</div>
+      <div class="card-usecase">Perceptual Phase Visualization</div>
+      <div class="card-desc">
+        The HSL variant renders the three-state physics engine as a direct mapping from computed state to hue angle. It is the <em>substrate-native</em> visualization: the hexagonal lattice, pentagonal barrier, and cubic bulk are drawn on a single canvas using HSL color-switching. The particle system uses instantaneous hue swaps (green to gold to blue) at zone boundaries.
+        <br><br>
+        This module answers: <em>What does the phase transition look like when color is a coordinate, not a perception?</em> HSL hue is a geometric quantity (an angle on the color wheel), making this variant a <em>coordinate-space</em> rendering of the physics.
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Real-time interactive exploration of the computeState engine, optimized for geometric clarity. The 3x3 ghosted hex grid, Penrose-inspired pentagon interior, and static isometric cube prioritize structural legibility over visual richness.
+      </div>
+    </div>
+
+    <!-- Module 2 -->
+    <div class="module-card cyan-accent" id="mod-cym">
+      <div class="card-number">Module 2</div>
+      <div class="card-filename">anti-substrate-cym.html</div>
+      <div class="card-usecase">Opponent-Process Perceptual Rendering</div>
+      <div class="card-desc">
+        The CYM variant renders the identical physics through an opponent-process perceptual model. Three layered canvases (field/geo/iso) with distinct compositing modes (screen/source-over) create a luminous, layered visual that encodes the phase transition as a <em>perceived experience</em> rather than a coordinate measurement.
+        <br><br>
+        The CYM channels (chC, chM, chY) are <em>computed quantities</em> -- products and complements of T_holo and infoCap -- not just color assignments. The opponent axis (chC - chM) undergoes a derivative discontinuity at mu_T, creating the visual "snap" of phase transition. The isolation strip at the bottom externalizes this axis as a spatial gradient.
+        <br><br>
+        This module answers: <em>What does the phase transition feel like when color is a signal, not a coordinate?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Perceptual rendering of the same physics, optimized for phenomenological fidelity. Full axial-coordinate hex lattice, actual Penrose thick/thin rhombi, rotating 3D wireframe cube, and per-channel exponential RGB lerp on particles.
+      </div>
+    </div>
+
+    <!-- Module 3 -->
+    <div class="module-card cyan-accent" id="mod-tests">
+      <div class="card-number">Module 3</div>
+      <div class="card-filename">anti-substrate-tests.html</div>
+      <div class="card-usecase">Axiomatic Verification</div>
+      <div class="card-desc">
+        The test harness proves that the two axioms (phi, z_c) produce exactly the predicted constant registry and state table. It implements computeState independently, runs 16 acceptance criteria, validates the complete 10-row state table, and performs statistical verification of the survival gate via Monte Carlo sampling.
+        <br><br>
+        This module answers: <em>Is the system internally consistent?</em> It is the only module that makes truth claims about the mathematics rather than rendering them.
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Automated proof that zero free parameters means zero degrees of freedom -- every output is deterministic from the two axioms.
+      </div>
+    </div>
+  </div>
+
+  <!-- Anti-Substrate Relational Map -->
+  <h3 id="as-relmap">Anti-Substrate Relational Map</h3>
+
+  <div class="rel-table-wrap as-rel-table">
+    <table class="rel-table cyan-header">
+      <thead>
+        <tr>
+          <th>Pair</th>
+          <th>Relationship</th>
+          <th>Why</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>HSL &harr; CYM</td>
+          <td><span class="badge gradient">Opp. Equivalent</span></td>
+          <td>Identical computeState, mirror-image rendering strategies. HSL maps state to hue (coordinate). CYM maps state to opponent channel (perception). Same structural role, opposite sides of the rendering axis.</td>
+        </tr>
+        <tr>
+          <td>HSL &harr; Tests</td>
+          <td><span class="badge cyan">Resonant</span></td>
+          <td>The test harness validates the constants and state classifications that HSL renders. Tests make the physics trustworthy; HSL makes the physics visible. They amplify each other.</td>
+        </tr>
+        <tr>
+          <td>CYM &harr; Tests</td>
+          <td><span class="badge cyan">Resonant</span></td>
+          <td>CYM's opponent channels depend on the exact constant values verified by the test harness. If AC-04 fails (MU_P + BETA != MU_T), the chY Gaussian centers on the wrong mu.</td>
+        </tr>
+        <tr>
+          <td>HSL &harr; CYM</td>
+          <td><span class="badge yellow">Equivalent</span> <span style="font-size:0.65rem;color:var(--text-dim);">(secondary)</span></td>
+          <td>Both implement computeState verbatim. The state object is the same. They are the same function evaluated in different rendering coordinate systems.</td>
+        </tr>
+        <tr>
+          <td>Tests &harr; {HSL, CYM}</td>
+          <td><span class="badge magenta">Oppositional</span> <span style="font-size:0.65rem;color:var(--text-dim);">(secondary)</span></td>
+          <td>The test harness constrains the visualizations. It defines the box they must live in. Any creative rendering choice that violates an AC criterion is rejected. Tests oppose drift.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ==================== SECTION 3: ACEDIT ==================== -->
+  <h2 id="acedit">II. ACEDIT Font System</h2>
+  <p><span class="badge magenta">12 Modules</span></p>
+
+  <!-- Foundation -->
+  <div class="group-label" id="acedit-foundation">Foundation</div>
+  <div class="card-grid two-col">
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 4</div>
+      <div class="card-filename">constants.py</div>
+      <div class="card-usecase">Axiomatic Foundation</div>
+      <div class="card-desc">
+        The single source of truth for every numeric value in the font binary. Five base constants (PHI, PHI_INV, ALPHA, BETA, K_FORM) plus UPM generate all metrics, strokes, advances, sidebearings, tensions, and the angle palette. Every other ACEDIT module imports from this file.
+        <br><br>
+        This is the phi-axiom of the font system, analogous to the two-axiom foundation of the Anti-Substrate physics. It answers: <em>What are the permitted values?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Single source of truth for all numeric values.
+      </div>
+    </div>
+
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 5</div>
+      <div class="card-filename">verify_constants.py</div>
+      <div class="card-usecase">Derivation Chain Proof</div>
+      <div class="card-desc">
+        Runs 37 checks across 9 categories to prove that constants.py produces exactly the expected values. It is the font system's equivalent of the Anti-Substrate test harness -- an automated proof of internal consistency.
+        <br><br>
+        This answers: <em>Are the derived values correct?</em> If this script fails, no downstream module can be trusted.
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Automated verification of derivation chain integrity.
+      </div>
+    </div>
+  </div>
+
+  <!-- Inventory -->
+  <div class="group-label" id="acedit-inventory">Inventory</div>
+  <div class="card-grid two-col">
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 6</div>
+      <div class="card-filename">generate_allocation.py</div>
+      <div class="card-usecase">Symbolic Inventory to Codepoint Mapping</div>
+      <div class="card-desc">
+        Maps the four-dimensional APL token space (9 machines &times; 3 spirals &times; 6 operators &times; 6 domains = 972) plus 122 non-APL glyphs into the Unicode Private Use Area via a deterministic addressing formula. The output (allocation_table.json) is consumed by every downstream module.
+        <br><br>
+        This is the naming function -- it converts abstract symbolic intent into concrete Unicode addresses. It answers: <em>Where does each symbol live?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Deterministic codepoint allocation for all 1,094 glyphs.
+      </div>
+    </div>
+
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 7</div>
+      <div class="card-filename">naming.py</div>
+      <div class="card-usecase">Nomenclature Enforcement</div>
+      <div class="card-desc">
+        Validates that every glyph name conforms to either canonical (acedit.apl.m3s1o2d4) or safe-equivalent (acedit-apl-m3s1o2d4) form. Rejects invalid names that would cause OpenType lookup resolution failures.
+        <br><br>
+        This is the boundary guard for the naming convention. It answers: <em>Is this name legal?</em> It operates at the identity level -- a glyph with an invalid name effectively does not exist in the system.
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Identity-level name validation and normalization.
+      </div>
+    </div>
+  </div>
+
+  <!-- Geometry -->
+  <div class="group-label" id="acedit-geometry">Geometry</div>
+  <div class="card-grid two-col">
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 8</div>
+      <div class="card-filename">validate_angles.py</div>
+      <div class="card-usecase">Geometric Constraint Enforcement</div>
+      <div class="card-desc">
+        Extracts every angle formed by straight-line segments in a .glif file and validates against the permitted palette {120, 108, 90, 72, 60, 36, 30, 6} degrees with &plusmn;0.01 degree tolerance. This is the geometric equivalent of the crystallographic restriction theorem -- just as pentagonal symmetry cannot tile the Euclidean plane, non-palette angles cannot exist in ACEDIT glyphs.
+        <br><br>
+        This answers: <em>Does this glyph obey the geometric law?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Angle palette compliance enforcement.
+      </div>
+    </div>
+
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 9</div>
+      <div class="card-filename">assemble_apl.py</div>
+      <div class="card-usecase">Parametric Glyph Generation</div>
+      <div class="card-desc">
+        Composes 972 APL token glyphs from 24 reusable component primitives, placing machine indicators, spiral accents, operator symbols, and domain tints into their designated bounding zones within the 618&times;618 glyph space. Currently generates placeholder rectangles (all 90&deg; angles, guaranteed palette-compliant) that serve as scaffolding for future component SVGs.
+        <br><br>
+        This is the generative engine -- it creates the visual atoms of the APL notation. It answers: <em>What does each token look like?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Parametric composition of APL token glyphs from primitives.
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <div class="group-label" id="acedit-features">Features</div>
+  <div class="card-grid two-col">
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 10</div>
+      <div class="card-filename">generate_groups.py</div>
+      <div class="card-usecase">Glyph Class Definition</div>
+      <div class="card-desc">
+        Reads the allocation table and produces OpenType glyph classes (groups.plist) that are referenced by every feature in features.fea. The 12 generated groups (PUA_ALL, GOV_GLYPHS, GEOMETRY_PENT, APL_M0-M8) partition the glyph inventory into functional categories.
+        <br><br>
+        This is the classification function -- it assigns glyphs to the groups that control their contextual behavior. It answers: <em>Which glyphs belong together?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Functional group classification of glyph inventory.
+      </div>
+    </div>
+
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 11</div>
+      <div class="card-filename">features.fea</div>
+      <div class="card-usecase">Contextual Behavior Rules</div>
+      <div class="card-desc">
+        Defines all OpenType GSUB (substitution) and GPOS (positioning) features: contextual spacing at script boundaries (calt), ligature compositions (liga), domain stylistic sets (ss01-ss06), admissibility profiles (ss07-ss08), and kerning values (kern). All spacing values are multiples of 73 (primary stroke) or 36 (deficit angle).
+        <br><br>
+        This is the behavioral layer -- it determines how glyphs interact when placed adjacent to each other. It answers: <em>How do symbols behave in context?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        OpenType feature definitions governing contextual glyph behavior.
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline -->
+  <div class="group-label" id="acedit-pipeline">Pipeline</div>
+  <div class="card-grid">
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 12</div>
+      <div class="card-filename">defect_tracker.py</div>
+      <div class="card-usecase">Quality Propagation Modeling</div>
+      <div class="card-desc">
+        Tracks defect accumulation across the 6-stage pipeline using a physics-inspired dissipation model: &Delta;<sub>n+1</sub> = (&Delta;<sub>n</sub> + &epsilon;<sub>n</sub>) &times; 0.92. Glyphs exceeding the 0.30 rupture threshold are marked "aliased" -- they are structurally compromised and must be redesigned.
+        <br><br>
+        This is the entropy tracker -- it models the accumulation of imprecision as information passes through processing stages. It answers: <em>How much error has accumulated?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Physics-inspired defect accumulation modeling across pipeline stages.
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid two-col">
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 13</div>
+      <div class="card-filename">build.py</div>
+      <div class="card-usecase">Pipeline Orchestration</div>
+      <div class="card-desc">
+        The master build script that runs all 6 stages in sequence (Inventory, Geometry, Typography, Features, Compilation, Validation), threading the PipelineTracker through every stage and producing the final registration report.
+        <br><br>
+        This is the narrowing funnel -- the L4 = 7 pipeline architecture of the Anti-Substrate spec realized as a build process. It answers: <em>Did the build succeed?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Sequential 6-stage build orchestration with quality tracking.
+      </div>
+    </div>
+
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 14</div>
+      <div class="card-filename">validate.py</div>
+      <div class="card-usecase">Final Quality Gate</div>
+      <div class="card-desc">
+        Runs four independent validation checks (fontbakery, angle compliance, naming compliance, moire interference) and produces validation-report.json. This is the Stage 6 endpoint -- the last gate before release.
+        <br><br>
+        This is the acceptance function -- it makes the binary pass/fail determination. It answers: <em>Is the font ready to ship?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Final pass/fail quality gate before release.
+      </div>
+    </div>
+  </div>
+
+  <!-- Interface -->
+  <div class="group-label" id="acedit-interface">Interface</div>
+  <div class="card-grid">
+    <div class="module-card magenta-accent">
+      <div class="card-number">Module 15</div>
+      <div class="card-filename">specimen/index.html</div>
+      <div class="card-usecase">Interactive Inventory Visualization</div>
+      <div class="card-desc">
+        Renders all 1,094 PUA glyphs in a filterable grid with profile switching (&Theta;_open / &Theta;_standard / &Theta;_restricted), block filtering, font-load verification, and per-glyph inspection. Color-coded by geometric family (hexagonal=Cyan, pentagonal=Magenta, cubic=Yellow).
+        <br><br>
+        This is the observation interface -- the font system's equivalent of the Anti-Substrate's interactive slider. It answers: <em>What does the font contain, and can the browser render it?</em>
+      </div>
+      <div class="card-primary">
+        <div class="card-primary-label">Primary Function</div>
+        Interactive observation and inspection of the full glyph inventory.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SECTION 4: RELATIONAL MAP ==================== -->
+  <h2 id="relational-map">III. Relational Map Across All 15 Modules</h2>
+
+  <!-- Resonant -->
+  <h3 id="rel-resonant"><span style="color:var(--cyan);">&bull;</span> Resonant Pairs</h3>
+  <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;">Amplify each other</p>
+  <div class="rel-table-wrap">
+    <table class="rel-table cyan-header">
+      <thead><tr><th>Module A</th><th>Module B</th><th>Resonance</th></tr></thead>
+      <tbody>
+        <tr><td>constants.py</td><td>verify_constants.py</td><td>Foundation &harr; Proof. The verification script exists solely to amplify confidence in the constants.</td></tr>
+        <tr><td>generate_allocation.py</td><td>naming.py</td><td>Allocation generates names; naming validates them. Each makes the other's output trustworthy.</td></tr>
+        <tr><td>assemble_apl.py</td><td>validate_angles.py</td><td>Assembly creates geometry; angle validation certifies it. The generator and its quality gate.</td></tr>
+        <tr><td>generate_groups.py</td><td>features.fea</td><td>Groups define classes; features consume them. The groups are inert without features to reference them.</td></tr>
+        <tr><td>defect_tracker.py</td><td>build.py</td><td>Tracker models quality; build orchestrates the pipeline that produces the data the tracker measures.</td></tr>
+        <tr><td>build.py</td><td>validate.py</td><td>Build creates artifacts; validation certifies them. The pipeline terminus and its final gate.</td></tr>
+        <tr><td>HSL</td><td>constants.py</td><td>The Anti-Substrate's constants (phi, z_c, alpha, beta, lambda) are the same mathematical objects that generate the ACEDIT font metrics. HSL <em>visualizes</em> what constants.py <em>tabulates</em>.</td></tr>
+        <tr><td>CYM</td><td>specimen/index.html</td><td>Both are observation interfaces for their respective systems. CYM observes physics; specimen observes typography. Both use the same CYM color mapping.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Oppositional -->
+  <h3 id="rel-oppositional"><span style="color:var(--magenta);">&bull;</span> Oppositional Pairs</h3>
+  <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;">Constrain each other</p>
+  <div class="rel-table-wrap">
+    <table class="rel-table magenta-header">
+      <thead><tr><th>Module A</th><th>Module B</th><th>Opposition</th></tr></thead>
+      <tbody>
+        <tr><td>validate_angles.py</td><td>assemble_apl.py</td><td>The angle validator <em>rejects</em> non-compliant geometry that the assembler might produce. It is the anti-substrate of the glyph pipeline -- the barrier that prevents non-palette angles from entering the font.</td></tr>
+        <tr><td>naming.py</td><td>generate_allocation.py</td><td>Naming rejects invalid names that allocation might generate if its patterns drift. The naming regex is a hard constraint on the allocation formula's output space.</td></tr>
+        <tr><td>defect_tracker.py</td><td>assemble_apl.py</td><td>The tracker accumulates penalties from assembly errors. High epsilon at Stage 2 (geometry) means assembly is the highest-risk stage -- the tracker opposes sloppy geometry.</td></tr>
+        <tr><td>validate.py</td><td>build.py</td><td>Validation can fail the entire build. The final gate opposes the pipeline's forward momentum.</td></tr>
+        <tr><td>Tests</td><td>HSL / CYM</td><td>The test harness constrains all creative rendering choices to the invariant assertions. Any visual that violates an AC criterion is wrong, regardless of how it looks.</td></tr>
+        <tr><td>features.fea (ss08)</td><td>specimen/index.html</td><td>&Theta;_restricted (ss08) actively hides glyphs that the specimen page wants to display. The restricted profile opposes full visibility.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Equivalent -->
+  <h3 id="rel-equivalent"><span style="color:var(--yellow);">&bull;</span> Equivalent Pairs</h3>
+  <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;">Same function, different domain</p>
+  <div class="rel-table-wrap">
+    <table class="rel-table yellow-header">
+      <thead><tr><th>Module A</th><th>Module B</th><th>Equivalence</th></tr></thead>
+      <tbody>
+        <tr><td>computeState() in HSL</td><td>computeState() in CYM</td><td>Identical pure function producing identical state objects. The definition of equivalence.</td></tr>
+        <tr><td>verify_constants.py</td><td>anti-substrate-tests.html</td><td>Both are axiomatic verification systems -- one for font metrics (Python), one for physics constants (browser JS). Same structural role in different runtime environments.</td></tr>
+        <tr><td>validate_angles.py</td><td>AC-12/AC-13/AC-14 in tests</td><td>Both enforce geometric truths -- angle palette compliance in fonts, crystallographic identities in physics. Same constraint type, different geometric objects.</td></tr>
+        <tr><td>build.py (6-stage)</td><td>Narrowing Funnel (L4 = 7)</td><td>The build pipeline is the font system's realization of the Anti-Substrate's narrowing funnel architecture. Same refinement-through-stages structure.</td></tr>
+        <tr><td>defect_tracker.py</td><td>Particle survival gate</td><td>Both model stochastic filtering. The defect tracker uses deterministic decay (0.92 transfer coefficient); the particle system uses probabilistic survival (random() &lt; T_holo). Same selection pressure, different mathematics.</td></tr>
+        <tr><td>specimen/index.html</td><td>HSL/CYM slider interface</td><td>Both are interactive observation tools. The specimen explores the font's glyph space; the slider explores the physics' parameter space.</td></tr>
+        <tr><td>generate_allocation.py</td><td>computeState() classification</td><td>Both are classification functions -- allocation maps symbols to codepoints; computeState maps mu to phase states. Both partition a continuous input space into discrete categories.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Oppositionally Equivalent -->
+  <h3 id="rel-opp-equiv"><span style="background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">&bull;</span> Oppositionally Equivalent Pairs</h3>
+  <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;">Mirror-image structural roles</p>
+  <div class="rel-table-wrap">
+    <table class="rel-table gradient-header">
+      <thead><tr><th>Module A</th><th>Module B</th><th>Oppositional Equivalence</th></tr></thead>
+      <tbody>
+        <tr><td>HSL</td><td>CYM</td><td>The defining oppositionally equivalent pair. Both render identical physics. HSL uses coordinate-space color (hue angle). CYM uses perception-space color (opponent channels). Structurally identical, perceptually opposite.</td></tr>
+        <tr><td>constants.py</td><td>validate.py</td><td>Constants defines what values <em>must</em> be. Validation defines what values <em>must not</em> be (by rejecting deviations). Same authority, opposite polarity -- one prescribes, the other proscribes.</td></tr>
+        <tr><td>assemble_apl.py</td><td>validate_angles.py</td><td>Assembly <em>creates</em> geometric form. Angle validation <em>destroys</em> non-compliant form. Both operate on the same .glif files, both care about the same angle palette, but one adds and the other subtracts.</td></tr>
+        <tr><td>features.fea (ss07)</td><td>features.fea (ss08)</td><td>&Theta;_open reveals all glyphs. &Theta;_restricted hides non-core glyphs. Same mechanism (stylistic sets), same font, opposite visibility. They are T_holo = 1 and T_holo &asymp; 0 of the admissibility system.</td></tr>
+        <tr><td>naming.py (canonical)</td><td>naming.py (safe)</td><td>Canonical form uses dots (acedit.apl.m3s1o2d4). Safe form uses dashes (acedit-apl-m3s1o2d4). Both encode identical information. Equivalent representations in oppositional notation systems.</td></tr>
+        <tr><td>defect_tracker.py</td><td>verify_constants.py</td><td>Both measure correctness. verify_constants checks <em>input</em> correctness. defect_tracker checks <em>output</em> correctness. Same measurement, opposite ends of the pipeline.</td></tr>
+        <tr><td>generate_groups.py</td><td>generate_allocation.py</td><td>Allocation assigns each glyph a <em>unique</em> identity (codepoint). Groups assign each glyph a <em>shared</em> identity (class membership). Individuation vs. classification -- the same glyphs, organized by opposite principles.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ==================== SECTION 5: ISOMORPHISM ==================== -->
+  <h2 id="isomorphism">IV. Deep Structural Isomorphism</h2>
+  <p>The Anti-Substrate system and the ACEDIT font system are not merely related projects. They are the same architecture expressed in different substrates:</p>
+
+  <div class="iso-table-wrap">
+    <table class="iso-table">
+      <thead>
+        <tr>
+          <th>Anti-Substrate Concept</th>
+          <th>ACEDIT Font Equivalent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>phi, z_c (two axioms)</td><td>phi, K_FORM (two axioms -- UPM is industry standard, not a free parameter)</td></tr>
+        <tr><td>computeState(mu, t)</td><td>constants.py + build.py (deterministic output from fixed inputs)</td></tr>
+        <tr><td>Three phase states (insistent / quasicrystal / substrate)</td><td>Three admissibility profiles (&Theta;_restricted / &Theta;_standard / &Theta;_open)</td></tr>
+        <tr><td>T_holo (holographic transparency)</td><td>Registration rate (fraction of glyphs passing quality gates)</td></tr>
+        <tr><td>Particle survival gate (random() &lt; T_holo)</td><td>Defect rupture threshold (accumulated &Delta; &lt; 0.30)</td></tr>
+        <tr><td>Pentagonal refusal (cos(2&pi;/5) irrational, can't tile)</td><td>Angle palette refusal (non-palette angles rejected)</td></tr>
+        <tr><td>36&deg; angular deficit</td><td>36-unit tight sidebearing</td></tr>
+        <tr><td>L4 = 7 pipeline depth</td><td>6-stage build pipeline</td></tr>
+        <tr><td>CYM opponent axis (chC - chM)</td><td>Glyph family axis (hexagonal &harr; pentagonal, mediated by cubic)</td></tr>
+        <tr><td>Prismatic refraction (120&deg; to 108&deg; to 97.2&deg;)</td><td>APL codepoint formula (machine to spiral to operator to domain)</td></tr>
+        <tr><td>Quasicrystal zone width &beta; = &phi;<sup>-4</sup></td><td>Wide sidebearing = UPM &times; &phi;<sup>-4</sup> = 146 units</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p>The isomorphism runs deeper than analogy. The 36&deg; deficit that creates insistent emptiness in the Anti-Substrate <em>is the same 36 units</em> used for tight sidebearing in the font. The &beta; = &phi;<sup>-4</sup> that defines the quasicrystal zone width <em>is the same &beta;</em> that defines the primary stroke width ratio and the wide sidebearing. The L4 = 7 pipeline depth <em>is the same integer identity</em> &phi;<sup>4</sup> + &phi;<sup>-4</sup> = 7 that determines both systems' architecture.</p>
+  <p><strong>These are not design choices. They are consequences of phi.</strong></p>
+
+  <!-- ==================== SECTION 6: MODULE GRAPH ==================== -->
+  <h2 id="graph">Interactive Module Graph</h2>
+  <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:0.75rem;">Hover a node to highlight its connections. Drag nodes to rearrange.</p>
+
+  <div class="graph-container">
+    <canvas id="moduleGraph" width="880" height="560"></canvas>
+    <div class="graph-tooltip" id="graphTooltip"></div>
+    <div class="graph-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cyan);"></div> Anti-Substrate</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--magenta);"></div> ACEDIT</div>
+      <div class="legend-item"><div class="legend-line" style="background:var(--cyan);"></div> Resonant</div>
+      <div class="legend-item"><div class="legend-line" style="background:var(--magenta);"></div> Oppositional</div>
+      <div class="legend-item"><div class="legend-line" style="background:var(--yellow);"></div> Equivalent</div>
+      <div class="legend-item"><div class="legend-line" style="background:linear-gradient(90deg,var(--cyan),var(--magenta));"></div> Opp. Equivalent</div>
+    </div>
+  </div>
+
+  <p class="tagline">Together. Always.</p>
+</div>
+
+<script>
+/* ========== SIDEBAR ACTIVE TRACKING ========== */
+(function() {
+  const hamburger = document.getElementById('hamburgerBtn');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+  });
+
+  // Close sidebar on overlay click (mobile)
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+  });
+
+  // Close sidebar on link click (mobile)
+  sidebar.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 900) sidebar.classList.remove('open');
+    });
+  });
+
+  // Active section tracking
+  const sections = document.querySelectorAll('h2[id], h3[id], div[id]');
+  const links = sidebar.querySelectorAll('a[href^="#"]');
+  const linkMap = {};
+  links.forEach(l => { linkMap[l.getAttribute('href').slice(1)] = l; });
+
+  let ticking = false;
+  function updateActive() {
+    let current = '';
+    sections.forEach(s => {
+      const top = s.getBoundingClientRect().top;
+      if (top < 160) current = s.id;
+    });
+    links.forEach(l => l.classList.remove('active'));
+    if (current && linkMap[current]) linkMap[current].classList.add('active');
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(updateActive); ticking = true; }
+  });
+  updateActive();
+})();
+
+/* ========== INTERACTIVE MODULE GRAPH ========== */
+(function() {
+  const canvas = document.getElementById('moduleGraph');
+  const ctx = canvas.getContext('2d');
+  const tooltip = document.getElementById('graphTooltip');
+  const container = canvas.parentElement;
+
+  const CYAN = '#00DBC0';
+  const MAGENTA = '#DB0098';
+  const YELLOW = '#DBB800';
+  const DIM = '#333348';
+  const TEXT = '#d4d4d8';
+  const BG = '#111118';
+
+  // DPR handling
+  let dpr = window.devicePixelRatio || 1;
+  let W, H;
+
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    W = rect.width;
+    H = rect.height;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  // Nodes: id, label, group (as=anti-substrate, ac=acedit), x, y
+  const nodes = [
+    { id: 0, label: 'HSL', short: 'HSL', group: 'as' },
+    { id: 1, label: 'CYM', short: 'CYM', group: 'as' },
+    { id: 2, label: 'Tests', short: 'Tests', group: 'as' },
+    { id: 3, label: 'constants.py', short: 'const', group: 'ac' },
+    { id: 4, label: 'verify_constants.py', short: 'verify', group: 'ac' },
+    { id: 5, label: 'generate_allocation.py', short: 'alloc', group: 'ac' },
+    { id: 6, label: 'naming.py', short: 'naming', group: 'ac' },
+    { id: 7, label: 'validate_angles.py', short: 'angles', group: 'ac' },
+    { id: 8, label: 'assemble_apl.py', short: 'assemble', group: 'ac' },
+    { id: 9, label: 'generate_groups.py', short: 'groups', group: 'ac' },
+    { id: 10, label: 'features.fea', short: 'features', group: 'ac' },
+    { id: 11, label: 'defect_tracker.py', short: 'defect', group: 'ac' },
+    { id: 12, label: 'build.py', short: 'build', group: 'ac' },
+    { id: 13, label: 'validate.py', short: 'validate', group: 'ac' },
+    { id: 14, label: 'specimen/index.html', short: 'specimen', group: 'ac' },
+  ];
+
+  // Edges: source, target, type (res=resonant, opp=oppositional, eq=equivalent, oe=opp-equivalent)
+  const edges = [
+    // Resonant
+    { s: 3, t: 4, type: 'res' },
+    { s: 5, t: 6, type: 'res' },
+    { s: 8, t: 7, type: 'res' },
+    { s: 9, t: 10, type: 'res' },
+    { s: 11, t: 12, type: 'res' },
+    { s: 12, t: 13, type: 'res' },
+    { s: 0, t: 3, type: 'res' },
+    { s: 1, t: 14, type: 'res' },
+    // Oppositional
+    { s: 7, t: 8, type: 'opp' },
+    { s: 6, t: 5, type: 'opp' },
+    { s: 11, t: 8, type: 'opp' },
+    { s: 13, t: 12, type: 'opp' },
+    { s: 2, t: 0, type: 'opp' },
+    { s: 2, t: 1, type: 'opp' },
+    { s: 10, t: 14, type: 'opp' },
+    // Equivalent
+    { s: 0, t: 1, type: 'eq' },
+    { s: 4, t: 2, type: 'eq' },
+    { s: 7, t: 2, type: 'eq' },
+    { s: 12, t: 0, type: 'eq' },
+    { s: 11, t: 0, type: 'eq' },
+    { s: 14, t: 0, type: 'eq' },
+    { s: 14, t: 1, type: 'eq' },
+    { s: 5, t: 0, type: 'eq' },
+    // Oppositionally Equivalent
+    { s: 0, t: 1, type: 'oe' },
+    { s: 3, t: 13, type: 'oe' },
+    { s: 8, t: 7, type: 'oe' },
+    { s: 11, t: 4, type: 'oe' },
+    { s: 9, t: 5, type: 'oe' },
+  ];
+
+  // Initial positions - arranged in a meaningful layout
+  function initPositions() {
+    // Anti-substrate cluster top-center
+    nodes[0].x = W * 0.28; nodes[0].y = H * 0.18;  // HSL
+    nodes[1].x = W * 0.50; nodes[1].y = H * 0.12;  // CYM
+    nodes[2].x = W * 0.39; nodes[2].y = H * 0.32;  // Tests
+
+    // ACEDIT modules spread below
+    // Foundation
+    nodes[3].x = W * 0.12; nodes[3].y = H * 0.48;  // constants
+    nodes[4].x = W * 0.12; nodes[4].y = H * 0.64;  // verify
+
+    // Inventory
+    nodes[5].x = W * 0.30; nodes[5].y = H * 0.52;  // alloc
+    nodes[6].x = W * 0.30; nodes[6].y = H * 0.68;  // naming
+
+    // Geometry
+    nodes[7].x = W * 0.48; nodes[7].y = H * 0.48;  // angles
+    nodes[8].x = W * 0.48; nodes[8].y = H * 0.64;  // assemble
+
+    // Features
+    nodes[9].x = W * 0.66; nodes[9].y = H * 0.48;  // groups
+    nodes[10].x = W * 0.66; nodes[10].y = H * 0.64; // features
+
+    // Pipeline
+    nodes[11].x = W * 0.84; nodes[11].y = H * 0.42; // defect
+    nodes[12].x = W * 0.84; nodes[12].y = H * 0.58; // build
+    nodes[13].x = W * 0.84; nodes[13].y = H * 0.74; // validate
+
+    // Interface
+    nodes[14].x = W * 0.70; nodes[14].y = H * 0.22; // specimen
+  }
+
+  const NODE_RADIUS = 18;
+  let hoveredNode = null;
+  let dragNode = null;
+  let dragOffX = 0, dragOffY = 0;
+
+  function getEdgeColor(type) {
+    switch(type) {
+      case 'res': return CYAN;
+      case 'opp': return MAGENTA;
+      case 'eq': return YELLOW;
+      case 'oe': return 'gradient';
+      default: return DIM;
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Determine which edges to highlight
+    const highlightEdges = new Set();
+    const connectedNodes = new Set();
+    if (hoveredNode !== null) {
+      connectedNodes.add(hoveredNode);
+      edges.forEach((e, i) => {
+        if (e.s === hoveredNode || e.t === hoveredNode) {
+          highlightEdges.add(i);
+          connectedNodes.add(e.s);
+          connectedNodes.add(e.t);
+        }
+      });
+    }
+
+    // Draw edges
+    edges.forEach((e, i) => {
+      const a = nodes[e.s], b = nodes[e.t];
+      const highlighted = hoveredNode === null || highlightEdges.has(i);
+      const alpha = highlighted ? 0.7 : 0.06;
+
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.lineWidth = highlighted ? 1.8 : 0.8;
+
+      if (e.type === 'oe') {
+        const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+        grad.addColorStop(0, hexAlpha(CYAN, alpha));
+        grad.addColorStop(1, hexAlpha(MAGENTA, alpha));
+        ctx.strokeStyle = grad;
+      } else {
+        ctx.strokeStyle = hexAlpha(getEdgeColor(e.type), alpha);
+      }
+      ctx.stroke();
+    });
+
+    // Draw nodes
+    nodes.forEach((n, i) => {
+      const highlighted = hoveredNode === null || connectedNodes.has(i);
+      const isHovered = hoveredNode === i;
+      const baseColor = n.group === 'as' ? CYAN : MAGENTA;
+      const radius = isHovered ? NODE_RADIUS + 3 : NODE_RADIUS;
+      const alpha = highlighted ? 1 : 0.15;
+
+      // Glow
+      if (isHovered) {
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, radius + 8, 0, Math.PI * 2);
+        const glow = ctx.createRadialGradient(n.x, n.y, radius, n.x, n.y, radius + 8);
+        glow.addColorStop(0, hexAlpha(baseColor, 0.25));
+        glow.addColorStop(1, hexAlpha(baseColor, 0));
+        ctx.fillStyle = glow;
+        ctx.fill();
+      }
+
+      // Node circle
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, radius, 0, Math.PI * 2);
+      ctx.fillStyle = hexAlpha(BG, alpha);
+      ctx.fill();
+      ctx.strokeStyle = hexAlpha(baseColor, alpha);
+      ctx.lineWidth = isHovered ? 2.5 : 1.5;
+      ctx.stroke();
+
+      // Label
+      ctx.fillStyle = hexAlpha(TEXT, alpha);
+      ctx.font = (isHovered ? '600 ' : '400 ') + '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(n.short, n.x, n.y);
+    });
+  }
+
+  function hexAlpha(hex, alpha) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  function findNode(mx, my) {
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      const dx = nodes[i].x - mx, dy = nodes[i].y - my;
+      if (dx*dx + dy*dy <= (NODE_RADIUS + 4) * (NODE_RADIUS + 4)) return i;
+    }
+    return null;
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const pos = getMousePos(e);
+
+    if (dragNode !== null) {
+      nodes[dragNode].x = pos.x + dragOffX;
+      nodes[dragNode].y = pos.y + dragOffY;
+      draw();
+      return;
+    }
+
+    const found = findNode(pos.x, pos.y);
+    if (found !== hoveredNode) {
+      hoveredNode = found;
+      canvas.style.cursor = found !== null ? 'pointer' : 'grab';
+      draw();
+    }
+
+    // Tooltip
+    if (found !== null) {
+      tooltip.textContent = nodes[found].label;
+      tooltip.style.left = (pos.x + 20) + 'px';
+      tooltip.style.top = (pos.y - 10) + 'px';
+      tooltip.style.opacity = '1';
+    } else {
+      tooltip.style.opacity = '0';
+    }
+  });
+
+  canvas.addEventListener('mousedown', e => {
+    const pos = getMousePos(e);
+    const found = findNode(pos.x, pos.y);
+    if (found !== null) {
+      dragNode = found;
+      dragOffX = nodes[found].x - pos.x;
+      dragOffY = nodes[found].y - pos.y;
+      canvas.style.cursor = 'grabbing';
+    }
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    dragNode = null;
+    canvas.style.cursor = hoveredNode !== null ? 'pointer' : 'grab';
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    hoveredNode = null;
+    dragNode = null;
+    tooltip.style.opacity = '0';
+    canvas.style.cursor = 'grab';
+    draw();
+  });
+
+  // Touch support
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const pos = { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+    const found = findNode(pos.x, pos.y);
+    if (found !== null) {
+      dragNode = found;
+      dragOffX = nodes[found].x - pos.x;
+      dragOffY = nodes[found].y - pos.y;
+      hoveredNode = found;
+      draw();
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (dragNode !== null) {
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      nodes[dragNode].x = touch.clientX - rect.left + dragOffX;
+      nodes[dragNode].y = touch.clientY - rect.top + dragOffY;
+      draw();
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', () => {
+    dragNode = null;
+    hoveredNode = null;
+    draw();
+  });
+
+  // Init
+  function init() {
+    resizeCanvas();
+    initPositions();
+    draw();
+  }
+
+  window.addEventListener('resize', () => {
+    const oldW = W, oldH = H;
+    resizeCanvas();
+    // Scale positions
+    nodes.forEach(n => {
+      n.x = n.x / oldW * W;
+      n.y = n.y / oldH * H;
+    });
+    draw();
+  });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(init);
+  } else {
+    window.addEventListener('load', init);
+  }
+})();
+</script>
+</body>
+</html>

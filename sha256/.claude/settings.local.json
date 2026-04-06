@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"C:\\Users\\ginge\\Downloads\\Self-Reference v2\" /s /b)",
+      "Bash(dir \"C:\\Users\\ginge\\Downloads\\Self-Reference v2\\SHA256\" /s /b)"
+    ]
+  }
+}

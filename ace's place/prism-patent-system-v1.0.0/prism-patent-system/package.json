@@ -1,0 +1,21 @@
+{
+  "name": "prism-patent-system",
+  "version": "1.0.0",
+  "description": "Prism-Guided Signal Propagation System for Automated Patent Specification Generation",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/acceptance.test.js",
+    "test:core": "node tests/core.test.js",
+    "test:vn": "node tests/vn-protocol.test.js",
+    "test:pipeline": "node tests/pipeline.test.js",
+    "test:gen": "node tests/generation.test.js",
+    "test:all": "node tests/acceptance.test.js",
+    "start": "node index.js"
+  },
+  "keywords": ["patent", "signal-processing", "llm", "eo-rfd", "vn-protocol"],
+  "author": "Echo-S-Studios / Echo-Squirrel Research",
+  "license": "MIT",
+  "dependencies": {
+    "docx": "^9.0.0"
+  }
+}

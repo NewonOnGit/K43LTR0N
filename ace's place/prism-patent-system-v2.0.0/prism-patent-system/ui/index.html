@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRISM Patent System V2 — Geometric Stance Visualizer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2c3e50, #34495e);
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    header .version {
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 350px 1fr 350px;
+      gap: 1rem;
+      padding: 1rem;
+      max-width: 1800px;
+      margin: 0 auto;
+      min-height: calc(100vh - 60px);
+    }
+
+    .panel {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      background: #f8f9fa;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .panel-content {
+      padding: 1rem;
+    }
+
+    /* Canvas Styles */
+    #canvas-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #canvas-panel .panel-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fafafa;
+    }
+
+    #stance-canvas {
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: default;
+    }
+
+    /* Stance Editor Styles */
+    .stance-editor h3 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      color: #444;
+    }
+
+    .stance-editor h4 {
+      font-size: 0.85rem;
+      margin: 1rem 0 0.5rem;
+      color: #666;
+    }
+
+    .stance-editor .section {
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .stance-editor .section:last-child {
+      border-bottom: none;
+    }
+
+    .point-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .point-row label {
+      width: 100px;
+      font-size: 0.85rem;
+      color: #555;
+    }
+
+    .point-row input {
+      width: 70px;
+      padding: 0.4rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .point-row input:focus {
+      outline: none;
+      border-color: #4477aa;
+    }
+
+    select {
+      padding: 0.4rem;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-right: 0.5rem;
+    }
+
+    button {
+      padding: 0.4rem 0.8rem;
+      border: none;
+      border-radius: 4px;
+      background: #4477aa;
+      color: #fff;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+
+    button:hover {
+      background: #3366aa;
+    }
+
+    /* Pipeline Viz Styles */
+    .pipeline-viz .section {
+      margin-bottom: 1.5rem;
+    }
+
+    .pipeline-viz h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      color: #444;
+    }
+
+    .pipeline-layers {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.25rem;
+    }
+
+    .pipeline-layer {
+      padding: 0.5rem;
+      border-radius: 4px;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    .layer-header {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .layer-regs {
+      font-size: 0.7rem;
+      color: #555;
+      margin-top: 0.25rem;
+    }
+
+    .pipeline-arrow {
+      color: #999;
+      font-size: 1.2rem;
+    }
+
+    .fsm-states {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .fsm-state {
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.3s;
+    }
+
+    .fsm-state.active {
+      transform: scale(1.1);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .fsm-arrow {
+      color: #999;
+      font-size: 1.2rem;
+    }
+
+    .fsm-current {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: #666;
+    }
+
+    .channel {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .channel-name {
+      width: 150px;
+      font-size: 0.75rem;
+      color: #555;
+    }
+
+    .channel-bar {
+      flex: 1;
+      height: 12px;
+      background: #eee;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .channel-fill {
+      height: 100%;
+      transition: width 0.3s;
+    }
+
+    .channel-value {
+      width: 40px;
+      text-align: right;
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    .closure-indicators {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .closure-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+    }
+
+    .indicator-icon {
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .indicator-label {
+      flex: 1;
+    }
+
+    .indicator-value {
+      color: #666;
+    }
+
+    .closure-metrics {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .register-list {
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.75rem;
+    }
+
+    .register-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .register-key {
+      color: #4477aa;
+      font-family: monospace;
+    }
+
+    .register-value {
+      color: #666;
+      font-family: monospace;
+    }
+
+    .no-data {
+      color: #999;
+      font-style: italic;
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      #canvas-panel {
+        order: -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PRISM Patent System</h1>
+    <span class="version">V2.0.0 — Observer Interior Architecture</span>
+  </header>
+
+  <div class="container">
+    <div class="panel" id="editor-panel">
+      <div class="panel-header">Stance Editor</div>
+      <div class="panel-content" id="stance-editor"></div>
+    </div>
+
+    <div class="panel" id="canvas-panel">
+      <div class="panel-header">Geometric Stance Visualization</div>
+      <div class="panel-content">
+        <canvas id="stance-canvas" width="600" height="600"></canvas>
+      </div>
+    </div>
+
+    <div class="panel" id="pipeline-panel">
+      <div class="panel-header">Pipeline & Metrics</div>
+      <div class="panel-content" id="pipeline-viz"></div>
+    </div>
+  </div>
+
+  <script src="canvas-renderer.js"></script>
+  <script src="stance-editor.js"></script>
+  <script src="pipeline-viz.js"></script>
+  <script>
+    // Initialize components
+    const canvas = document.getElementById('stance-canvas');
+    const renderer = new CanvasRenderer(canvas, { scale: 250, offsetX: 300, offsetY: 400 });
+
+    const editorContainer = document.getElementById('stance-editor');
+    const editor = new StanceEditor(editorContainer, {
+      onChange: (quad, path) => {
+        // Recompute framework (simplified client-side version)
+        const framework = computeFrameworkClient(quad, path);
+        const eoMetrics = computeEOClient(framework);
+        renderer.setStance(quad, path, framework, eoMetrics);
+        pipelineViz.updateFromRegisters(buildRegisters(framework, eoMetrics), eoMetrics.routingState || 'PLAY');
+      }
+    });
+
+    const pipelineContainer = document.getElementById('pipeline-viz');
+    const pipelineViz = new PipelineViz(pipelineContainer);
+
+    // Canvas interaction → editor sync
+    renderer.onStanceChange = (quad, path) => {
+      editor.setStance(quad, path);
+      const framework = computeFrameworkClient(quad, path);
+      const eoMetrics = computeEOClient(framework);
+      renderer.framework = framework;
+      renderer.eoMetrics = eoMetrics;
+      pipelineViz.updateFromRegisters(buildRegisters(framework, eoMetrics), eoMetrics.routingState || 'PLAY');
+    };
+
+    renderer.attachListeners();
+
+    // Initial render with default stance
+    const { quad, path } = editor.getStance();
+    const initialFramework = computeFrameworkClient(quad, path);
+    const initialEO = computeEOClient(initialFramework);
+    renderer.setStance(quad, path, initialFramework, initialEO);
+    pipelineViz.updateFromRegisters(buildRegisters(initialFramework, initialEO), 'PLAY');
+
+    // ─── Client-side simplified computations ─────────────────────────────
+
+    function computeFrameworkClient(quad, pathPts) {
+      const [L, E, R] = pathPts;
+      const [Q0, Q1, Q2, Q3] = quad;
+
+      // Simplified centroid
+      const centroid = [
+        (Q0[0] + Q1[0] + Q2[0] + Q3[0]) / 4,
+        (Q0[1] + Q1[1] + Q2[1] + Q3[1]) / 4
+      ];
+
+      // Distance from E to centroid
+      const distToCentroid = Math.sqrt(
+        Math.pow(E[0] - centroid[0], 2) + Math.pow(E[1] - centroid[1], 2)
+      );
+
+      // Simplified compression (|E-R| / |L-E|)
+      const lenLE = Math.sqrt(Math.pow(E[0] - L[0], 2) + Math.pow(E[1] - L[1], 2));
+      const lenER = Math.sqrt(Math.pow(R[0] - E[0], 2) + Math.pow(R[1] - E[1], 2));
+      const compression = lenLE > 0.001 ? lenER / lenLE : 1;
+
+      // Simplified deflection angle
+      const vecLE = [E[0] - L[0], E[1] - L[1]];
+      const vecER = [R[0] - E[0], R[1] - E[1]];
+      const dot = vecLE[0] * vecER[0] + vecLE[1] * vecER[1];
+      const magLE = Math.sqrt(vecLE[0] * vecLE[0] + vecLE[1] * vecLE[1]);
+      const magER = Math.sqrt(vecER[0] * vecER[0] + vecER[1] * vecER[1]);
+      const cosAngle = magLE > 0.001 && magER > 0.001 ? dot / (magLE * magER) : 1;
+      const deflection = Math.acos(Math.max(-1, Math.min(1, cosAngle)));
+
+      // Point-in-polygon test (simplified convex)
+      const insideQ = pointInQuad(E, quad);
+
+      // Simplified ker/im (based on compression)
+      const kerNorm = Math.max(0, 1 - compression);
+      const imNorm = Math.min(1, compression);
+
+      // Centrality (0 at boundary, 1 at centroid)
+      const maxDist = Math.max(...quad.map(q =>
+        Math.sqrt(Math.pow(q[0] - centroid[0], 2) + Math.pow(q[1] - centroid[1], 2))
+      ));
+      const centrality = insideQ ? Math.max(0, 1 - distToCentroid / maxDist) : 0;
+
+      // Boundary proximity
+      const boundaryProx = insideQ ? 1 - centrality : 0;
+
+      return {
+        compression,
+        deflection,
+        kerNorm,
+        imNorm,
+        centrality,
+        boundaryProx,
+        insideQ,
+        centroid,
+        // Placeholders for polygons (would need proper clipping in full version)
+        kerPoly: null,
+        imPoly: null
+      };
+    }
+
+    function computeEOClient(fw) {
+      const Z_C = 0.866;
+      const SIGMA_NEG = 55.71;
+
+      // z-coordinate
+      const z = fw.insideQ
+        ? 0.55 * fw.centrality + 0.45 * fw.boundaryProx
+        : -0.1;
+
+      // Negentropy
+      const eta = Math.exp(-SIGMA_NEG * Math.pow(z - Z_C, 2));
+
+      // Admissibility fractions (simplified)
+      const registered = fw.imNorm * eta;
+      const latent = (1 - fw.imNorm) * 0.5;
+      const suppressed = fw.kerNorm * 0.3;
+      const aliased = 1 - registered - latent - suppressed;
+
+      // Field signature (simplified)
+      const fieldSignature = {
+        PriorArtDensity: 0.7 - fw.kerNorm * 0.3,
+        ClaimBreadth: fw.compression,
+        EnablementQuality: eta * 0.9,
+        WrittenDescSupport: eta * 0.85,
+        NonObviousness: z > Z_C ? 0.8 : 0.5,
+        IndustrialApplicability: 0.9,
+        GeometricCoherence: fw.centrality * 0.8 + 0.2
+      };
+
+      // Signal rupture
+      const sigmaR = Object.values(fieldSignature)
+        .filter(v => v < 0.5).length * 0.15;
+
+      // Closure state
+      const k4Deficit = Math.max(0, 1 - fw.compression - fw.centrality);
+      const extAdmitted = registered > 0.02;
+      const closureFailure = extAdmitted && (k4Deficit > 0.8 || sigmaR >= 0.74);
+      const uniqueClosure = !(extAdmitted && closureFailure);
+
+      // Routing state
+      let routingState = 'PLAY';
+      if (sigmaR >= 0.74) routingState = 'HARBOR';
+      else if (sigmaR >= 0.5) routingState = 'BUFFER';
+      else if (sigmaR >= 0.3) routingState = 'WARNING';
+
+      return {
+        z,
+        eta,
+        registered,
+        latent,
+        suppressed,
+        aliased,
+        fieldSignature,
+        sigmaR,
+        k4Deficit,
+        extAdmitted,
+        closureFailure,
+        uniqueClosure,
+        routingState
+      };
+    }
+
+    function pointInQuad(pt, quad) {
+      // Simplified point-in-convex-polygon
+      let sign = null;
+      for (let i = 0; i < 4; i++) {
+        const j = (i + 1) % 4;
+        const d = (quad[j][0] - quad[i][0]) * (pt[1] - quad[i][1]) -
+                  (quad[j][1] - quad[i][1]) * (pt[0] - quad[i][0]);
+        if (sign === null) sign = d >= 0;
+        else if ((d >= 0) !== sign) return false;
+      }
+      return true;
+    }
+
+    function buildRegisters(fw, eo) {
+      return {
+        'stance.compression': fw.compression,
+        'stance.deflection': fw.deflection,
+        'stance.kerNorm': fw.kerNorm,
+        'stance.imNorm': fw.imNorm,
+        'stance.centrality': fw.centrality,
+        'stance.boundaryProx': fw.boundaryProx,
+        'stance.insideQ': fw.insideQ,
+        'eo.z': eo.z,
+        'eo.eta': eo.eta,
+        'eo.registered': eo.registered,
+        'eo.latent': eo.latent,
+        'eo.suppressed': eo.suppressed,
+        'eo.aliased': eo.aliased,
+        'eo.sigmaR': eo.sigmaR,
+        'eo.k4Deficit': eo.k4Deficit,
+        'L4.field_signature': eo.fieldSignature,
+        'L8.closure_state': {
+          extAdmitted: eo.extAdmitted,
+          closureFailure: eo.closureFailure,
+          uniqueClosure: eo.uniqueClosure,
+          k4Deficit: eo.k4Deficit,
+          sigmaR: eo.sigmaR
+        },
+        'L7.routing_state': { state: eo.routingState }
+      };
+    }
+  </script>
+</body>
+</html>

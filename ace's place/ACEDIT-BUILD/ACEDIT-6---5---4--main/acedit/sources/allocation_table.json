@@ -1,0 +1,6566 @@
+[
+  {
+    "codepoint": "U+E000",
+    "name": "acedit.apl.m0s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E001",
+    "name": "acedit.apl.m0s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E002",
+    "name": "acedit.apl.m0s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E003",
+    "name": "acedit.apl.m0s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E004",
+    "name": "acedit.apl.m0s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E005",
+    "name": "acedit.apl.m0s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E006",
+    "name": "acedit.apl.m0s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E007",
+    "name": "acedit.apl.m0s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E008",
+    "name": "acedit.apl.m0s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E009",
+    "name": "acedit.apl.m0s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E00A",
+    "name": "acedit.apl.m0s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E00B",
+    "name": "acedit.apl.m0s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E00C",
+    "name": "acedit.apl.m0s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E00D",
+    "name": "acedit.apl.m0s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E00E",
+    "name": "acedit.apl.m0s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E00F",
+    "name": "acedit.apl.m0s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E010",
+    "name": "acedit.apl.m0s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E011",
+    "name": "acedit.apl.m0s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E012",
+    "name": "acedit.apl.m0s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E013",
+    "name": "acedit.apl.m0s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E014",
+    "name": "acedit.apl.m0s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E015",
+    "name": "acedit.apl.m0s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E016",
+    "name": "acedit.apl.m0s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E017",
+    "name": "acedit.apl.m0s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E018",
+    "name": "acedit.apl.m0s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E019",
+    "name": "acedit.apl.m0s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E01A",
+    "name": "acedit.apl.m0s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E01B",
+    "name": "acedit.apl.m0s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E01C",
+    "name": "acedit.apl.m0s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E01D",
+    "name": "acedit.apl.m0s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E01E",
+    "name": "acedit.apl.m0s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E01F",
+    "name": "acedit.apl.m0s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E020",
+    "name": "acedit.apl.m0s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E021",
+    "name": "acedit.apl.m0s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E022",
+    "name": "acedit.apl.m0s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E023",
+    "name": "acedit.apl.m0s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E024",
+    "name": "acedit.apl.m0s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E025",
+    "name": "acedit.apl.m0s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E026",
+    "name": "acedit.apl.m0s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E027",
+    "name": "acedit.apl.m0s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E028",
+    "name": "acedit.apl.m0s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E029",
+    "name": "acedit.apl.m0s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E02A",
+    "name": "acedit.apl.m0s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E02B",
+    "name": "acedit.apl.m0s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E02C",
+    "name": "acedit.apl.m0s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E02D",
+    "name": "acedit.apl.m0s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E02E",
+    "name": "acedit.apl.m0s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E02F",
+    "name": "acedit.apl.m0s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E030",
+    "name": "acedit.apl.m0s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E031",
+    "name": "acedit.apl.m0s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E032",
+    "name": "acedit.apl.m0s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E033",
+    "name": "acedit.apl.m0s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E034",
+    "name": "acedit.apl.m0s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E035",
+    "name": "acedit.apl.m0s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E036",
+    "name": "acedit.apl.m0s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E037",
+    "name": "acedit.apl.m0s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E038",
+    "name": "acedit.apl.m0s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E039",
+    "name": "acedit.apl.m0s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E03A",
+    "name": "acedit.apl.m0s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E03B",
+    "name": "acedit.apl.m0s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E03C",
+    "name": "acedit.apl.m0s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E03D",
+    "name": "acedit.apl.m0s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E03E",
+    "name": "acedit.apl.m0s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E03F",
+    "name": "acedit.apl.m0s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E040",
+    "name": "acedit.apl.m0s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E041",
+    "name": "acedit.apl.m0s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E042",
+    "name": "acedit.apl.m0s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E043",
+    "name": "acedit.apl.m0s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E044",
+    "name": "acedit.apl.m0s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E045",
+    "name": "acedit.apl.m0s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E046",
+    "name": "acedit.apl.m0s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E047",
+    "name": "acedit.apl.m0s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E048",
+    "name": "acedit.apl.m0s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E049",
+    "name": "acedit.apl.m0s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E04A",
+    "name": "acedit.apl.m0s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E04B",
+    "name": "acedit.apl.m0s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E04C",
+    "name": "acedit.apl.m0s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E04D",
+    "name": "acedit.apl.m0s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E04E",
+    "name": "acedit.apl.m0s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E04F",
+    "name": "acedit.apl.m0s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E050",
+    "name": "acedit.apl.m0s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E051",
+    "name": "acedit.apl.m0s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E052",
+    "name": "acedit.apl.m0s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E053",
+    "name": "acedit.apl.m0s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E054",
+    "name": "acedit.apl.m0s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E055",
+    "name": "acedit.apl.m0s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E056",
+    "name": "acedit.apl.m0s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E057",
+    "name": "acedit.apl.m0s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E058",
+    "name": "acedit.apl.m0s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E059",
+    "name": "acedit.apl.m0s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E05A",
+    "name": "acedit.apl.m0s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E05B",
+    "name": "acedit.apl.m0s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E05C",
+    "name": "acedit.apl.m0s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E05D",
+    "name": "acedit.apl.m0s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E05E",
+    "name": "acedit.apl.m0s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E05F",
+    "name": "acedit.apl.m0s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E060",
+    "name": "acedit.apl.m0s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E061",
+    "name": "acedit.apl.m0s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E062",
+    "name": "acedit.apl.m0s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E063",
+    "name": "acedit.apl.m0s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E064",
+    "name": "acedit.apl.m0s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E065",
+    "name": "acedit.apl.m0s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E066",
+    "name": "acedit.apl.m0s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E067",
+    "name": "acedit.apl.m0s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E068",
+    "name": "acedit.apl.m0s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E069",
+    "name": "acedit.apl.m0s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E06A",
+    "name": "acedit.apl.m0s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E06B",
+    "name": "acedit.apl.m0s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E06C",
+    "name": "acedit.apl.m1s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E06D",
+    "name": "acedit.apl.m1s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E06E",
+    "name": "acedit.apl.m1s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E06F",
+    "name": "acedit.apl.m1s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E070",
+    "name": "acedit.apl.m1s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E071",
+    "name": "acedit.apl.m1s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E072",
+    "name": "acedit.apl.m1s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E073",
+    "name": "acedit.apl.m1s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E074",
+    "name": "acedit.apl.m1s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E075",
+    "name": "acedit.apl.m1s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E076",
+    "name": "acedit.apl.m1s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E077",
+    "name": "acedit.apl.m1s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E078",
+    "name": "acedit.apl.m1s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E079",
+    "name": "acedit.apl.m1s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E07A",
+    "name": "acedit.apl.m1s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E07B",
+    "name": "acedit.apl.m1s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E07C",
+    "name": "acedit.apl.m1s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E07D",
+    "name": "acedit.apl.m1s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E07E",
+    "name": "acedit.apl.m1s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E07F",
+    "name": "acedit.apl.m1s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E080",
+    "name": "acedit.apl.m1s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E081",
+    "name": "acedit.apl.m1s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E082",
+    "name": "acedit.apl.m1s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E083",
+    "name": "acedit.apl.m1s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E084",
+    "name": "acedit.apl.m1s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E085",
+    "name": "acedit.apl.m1s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E086",
+    "name": "acedit.apl.m1s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E087",
+    "name": "acedit.apl.m1s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E088",
+    "name": "acedit.apl.m1s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E089",
+    "name": "acedit.apl.m1s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E08A",
+    "name": "acedit.apl.m1s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E08B",
+    "name": "acedit.apl.m1s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E08C",
+    "name": "acedit.apl.m1s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E08D",
+    "name": "acedit.apl.m1s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E08E",
+    "name": "acedit.apl.m1s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E08F",
+    "name": "acedit.apl.m1s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E090",
+    "name": "acedit.apl.m1s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E091",
+    "name": "acedit.apl.m1s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E092",
+    "name": "acedit.apl.m1s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E093",
+    "name": "acedit.apl.m1s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E094",
+    "name": "acedit.apl.m1s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E095",
+    "name": "acedit.apl.m1s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E096",
+    "name": "acedit.apl.m1s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E097",
+    "name": "acedit.apl.m1s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E098",
+    "name": "acedit.apl.m1s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E099",
+    "name": "acedit.apl.m1s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E09A",
+    "name": "acedit.apl.m1s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E09B",
+    "name": "acedit.apl.m1s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E09C",
+    "name": "acedit.apl.m1s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E09D",
+    "name": "acedit.apl.m1s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E09E",
+    "name": "acedit.apl.m1s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E09F",
+    "name": "acedit.apl.m1s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A0",
+    "name": "acedit.apl.m1s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A1",
+    "name": "acedit.apl.m1s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A2",
+    "name": "acedit.apl.m1s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A3",
+    "name": "acedit.apl.m1s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A4",
+    "name": "acedit.apl.m1s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A5",
+    "name": "acedit.apl.m1s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A6",
+    "name": "acedit.apl.m1s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A7",
+    "name": "acedit.apl.m1s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A8",
+    "name": "acedit.apl.m1s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0A9",
+    "name": "acedit.apl.m1s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0AA",
+    "name": "acedit.apl.m1s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0AB",
+    "name": "acedit.apl.m1s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0AC",
+    "name": "acedit.apl.m1s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0AD",
+    "name": "acedit.apl.m1s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0AE",
+    "name": "acedit.apl.m1s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0AF",
+    "name": "acedit.apl.m1s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B0",
+    "name": "acedit.apl.m1s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B1",
+    "name": "acedit.apl.m1s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B2",
+    "name": "acedit.apl.m1s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B3",
+    "name": "acedit.apl.m1s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B4",
+    "name": "acedit.apl.m1s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B5",
+    "name": "acedit.apl.m1s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B6",
+    "name": "acedit.apl.m1s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B7",
+    "name": "acedit.apl.m1s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B8",
+    "name": "acedit.apl.m1s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0B9",
+    "name": "acedit.apl.m1s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0BA",
+    "name": "acedit.apl.m1s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0BB",
+    "name": "acedit.apl.m1s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0BC",
+    "name": "acedit.apl.m1s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0BD",
+    "name": "acedit.apl.m1s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0BE",
+    "name": "acedit.apl.m1s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0BF",
+    "name": "acedit.apl.m1s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C0",
+    "name": "acedit.apl.m1s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C1",
+    "name": "acedit.apl.m1s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C2",
+    "name": "acedit.apl.m1s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C3",
+    "name": "acedit.apl.m1s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C4",
+    "name": "acedit.apl.m1s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C5",
+    "name": "acedit.apl.m1s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C6",
+    "name": "acedit.apl.m1s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C7",
+    "name": "acedit.apl.m1s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C8",
+    "name": "acedit.apl.m1s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0C9",
+    "name": "acedit.apl.m1s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0CA",
+    "name": "acedit.apl.m1s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0CB",
+    "name": "acedit.apl.m1s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0CC",
+    "name": "acedit.apl.m1s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0CD",
+    "name": "acedit.apl.m1s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0CE",
+    "name": "acedit.apl.m1s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0CF",
+    "name": "acedit.apl.m1s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D0",
+    "name": "acedit.apl.m1s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D1",
+    "name": "acedit.apl.m1s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D2",
+    "name": "acedit.apl.m1s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D3",
+    "name": "acedit.apl.m1s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D4",
+    "name": "acedit.apl.m1s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D5",
+    "name": "acedit.apl.m1s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D6",
+    "name": "acedit.apl.m1s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D7",
+    "name": "acedit.apl.m1s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D8",
+    "name": "acedit.apl.m2s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0D9",
+    "name": "acedit.apl.m2s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0DA",
+    "name": "acedit.apl.m2s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0DB",
+    "name": "acedit.apl.m2s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0DC",
+    "name": "acedit.apl.m2s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0DD",
+    "name": "acedit.apl.m2s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0DE",
+    "name": "acedit.apl.m2s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0DF",
+    "name": "acedit.apl.m2s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E0",
+    "name": "acedit.apl.m2s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E1",
+    "name": "acedit.apl.m2s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E2",
+    "name": "acedit.apl.m2s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E3",
+    "name": "acedit.apl.m2s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E4",
+    "name": "acedit.apl.m2s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E5",
+    "name": "acedit.apl.m2s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E6",
+    "name": "acedit.apl.m2s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E7",
+    "name": "acedit.apl.m2s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E8",
+    "name": "acedit.apl.m2s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0E9",
+    "name": "acedit.apl.m2s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0EA",
+    "name": "acedit.apl.m2s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0EB",
+    "name": "acedit.apl.m2s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0EC",
+    "name": "acedit.apl.m2s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0ED",
+    "name": "acedit.apl.m2s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0EE",
+    "name": "acedit.apl.m2s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0EF",
+    "name": "acedit.apl.m2s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F0",
+    "name": "acedit.apl.m2s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F1",
+    "name": "acedit.apl.m2s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F2",
+    "name": "acedit.apl.m2s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F3",
+    "name": "acedit.apl.m2s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F4",
+    "name": "acedit.apl.m2s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F5",
+    "name": "acedit.apl.m2s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F6",
+    "name": "acedit.apl.m2s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F7",
+    "name": "acedit.apl.m2s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F8",
+    "name": "acedit.apl.m2s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0F9",
+    "name": "acedit.apl.m2s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0FA",
+    "name": "acedit.apl.m2s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0FB",
+    "name": "acedit.apl.m2s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0FC",
+    "name": "acedit.apl.m2s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0FD",
+    "name": "acedit.apl.m2s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0FE",
+    "name": "acedit.apl.m2s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E0FF",
+    "name": "acedit.apl.m2s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E100",
+    "name": "acedit.apl.m2s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E101",
+    "name": "acedit.apl.m2s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E102",
+    "name": "acedit.apl.m2s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E103",
+    "name": "acedit.apl.m2s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E104",
+    "name": "acedit.apl.m2s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E105",
+    "name": "acedit.apl.m2s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E106",
+    "name": "acedit.apl.m2s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E107",
+    "name": "acedit.apl.m2s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E108",
+    "name": "acedit.apl.m2s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E109",
+    "name": "acedit.apl.m2s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E10A",
+    "name": "acedit.apl.m2s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E10B",
+    "name": "acedit.apl.m2s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E10C",
+    "name": "acedit.apl.m2s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E10D",
+    "name": "acedit.apl.m2s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E10E",
+    "name": "acedit.apl.m2s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E10F",
+    "name": "acedit.apl.m2s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E110",
+    "name": "acedit.apl.m2s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E111",
+    "name": "acedit.apl.m2s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E112",
+    "name": "acedit.apl.m2s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E113",
+    "name": "acedit.apl.m2s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E114",
+    "name": "acedit.apl.m2s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E115",
+    "name": "acedit.apl.m2s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E116",
+    "name": "acedit.apl.m2s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E117",
+    "name": "acedit.apl.m2s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E118",
+    "name": "acedit.apl.m2s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E119",
+    "name": "acedit.apl.m2s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E11A",
+    "name": "acedit.apl.m2s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E11B",
+    "name": "acedit.apl.m2s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E11C",
+    "name": "acedit.apl.m2s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E11D",
+    "name": "acedit.apl.m2s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E11E",
+    "name": "acedit.apl.m2s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E11F",
+    "name": "acedit.apl.m2s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E120",
+    "name": "acedit.apl.m2s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E121",
+    "name": "acedit.apl.m2s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E122",
+    "name": "acedit.apl.m2s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E123",
+    "name": "acedit.apl.m2s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E124",
+    "name": "acedit.apl.m2s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E125",
+    "name": "acedit.apl.m2s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E126",
+    "name": "acedit.apl.m2s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E127",
+    "name": "acedit.apl.m2s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E128",
+    "name": "acedit.apl.m2s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E129",
+    "name": "acedit.apl.m2s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E12A",
+    "name": "acedit.apl.m2s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E12B",
+    "name": "acedit.apl.m2s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E12C",
+    "name": "acedit.apl.m2s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E12D",
+    "name": "acedit.apl.m2s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E12E",
+    "name": "acedit.apl.m2s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E12F",
+    "name": "acedit.apl.m2s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E130",
+    "name": "acedit.apl.m2s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E131",
+    "name": "acedit.apl.m2s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E132",
+    "name": "acedit.apl.m2s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E133",
+    "name": "acedit.apl.m2s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E134",
+    "name": "acedit.apl.m2s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E135",
+    "name": "acedit.apl.m2s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E136",
+    "name": "acedit.apl.m2s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E137",
+    "name": "acedit.apl.m2s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E138",
+    "name": "acedit.apl.m2s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E139",
+    "name": "acedit.apl.m2s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E13A",
+    "name": "acedit.apl.m2s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E13B",
+    "name": "acedit.apl.m2s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E13C",
+    "name": "acedit.apl.m2s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E13D",
+    "name": "acedit.apl.m2s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E13E",
+    "name": "acedit.apl.m2s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E13F",
+    "name": "acedit.apl.m2s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E140",
+    "name": "acedit.apl.m2s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E141",
+    "name": "acedit.apl.m2s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E142",
+    "name": "acedit.apl.m2s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E143",
+    "name": "acedit.apl.m2s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E144",
+    "name": "acedit.apl.m3s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E145",
+    "name": "acedit.apl.m3s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E146",
+    "name": "acedit.apl.m3s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E147",
+    "name": "acedit.apl.m3s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E148",
+    "name": "acedit.apl.m3s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E149",
+    "name": "acedit.apl.m3s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E14A",
+    "name": "acedit.apl.m3s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E14B",
+    "name": "acedit.apl.m3s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E14C",
+    "name": "acedit.apl.m3s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E14D",
+    "name": "acedit.apl.m3s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E14E",
+    "name": "acedit.apl.m3s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E14F",
+    "name": "acedit.apl.m3s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E150",
+    "name": "acedit.apl.m3s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E151",
+    "name": "acedit.apl.m3s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E152",
+    "name": "acedit.apl.m3s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E153",
+    "name": "acedit.apl.m3s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E154",
+    "name": "acedit.apl.m3s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E155",
+    "name": "acedit.apl.m3s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E156",
+    "name": "acedit.apl.m3s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E157",
+    "name": "acedit.apl.m3s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E158",
+    "name": "acedit.apl.m3s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E159",
+    "name": "acedit.apl.m3s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E15A",
+    "name": "acedit.apl.m3s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E15B",
+    "name": "acedit.apl.m3s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E15C",
+    "name": "acedit.apl.m3s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E15D",
+    "name": "acedit.apl.m3s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E15E",
+    "name": "acedit.apl.m3s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E15F",
+    "name": "acedit.apl.m3s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E160",
+    "name": "acedit.apl.m3s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E161",
+    "name": "acedit.apl.m3s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E162",
+    "name": "acedit.apl.m3s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E163",
+    "name": "acedit.apl.m3s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E164",
+    "name": "acedit.apl.m3s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E165",
+    "name": "acedit.apl.m3s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E166",
+    "name": "acedit.apl.m3s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E167",
+    "name": "acedit.apl.m3s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E168",
+    "name": "acedit.apl.m3s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E169",
+    "name": "acedit.apl.m3s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E16A",
+    "name": "acedit.apl.m3s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E16B",
+    "name": "acedit.apl.m3s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E16C",
+    "name": "acedit.apl.m3s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E16D",
+    "name": "acedit.apl.m3s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E16E",
+    "name": "acedit.apl.m3s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E16F",
+    "name": "acedit.apl.m3s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E170",
+    "name": "acedit.apl.m3s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E171",
+    "name": "acedit.apl.m3s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E172",
+    "name": "acedit.apl.m3s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E173",
+    "name": "acedit.apl.m3s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E174",
+    "name": "acedit.apl.m3s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E175",
+    "name": "acedit.apl.m3s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E176",
+    "name": "acedit.apl.m3s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E177",
+    "name": "acedit.apl.m3s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E178",
+    "name": "acedit.apl.m3s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E179",
+    "name": "acedit.apl.m3s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E17A",
+    "name": "acedit.apl.m3s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E17B",
+    "name": "acedit.apl.m3s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E17C",
+    "name": "acedit.apl.m3s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E17D",
+    "name": "acedit.apl.m3s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E17E",
+    "name": "acedit.apl.m3s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E17F",
+    "name": "acedit.apl.m3s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E180",
+    "name": "acedit.apl.m3s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E181",
+    "name": "acedit.apl.m3s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E182",
+    "name": "acedit.apl.m3s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E183",
+    "name": "acedit.apl.m3s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E184",
+    "name": "acedit.apl.m3s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E185",
+    "name": "acedit.apl.m3s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E186",
+    "name": "acedit.apl.m3s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E187",
+    "name": "acedit.apl.m3s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E188",
+    "name": "acedit.apl.m3s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E189",
+    "name": "acedit.apl.m3s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E18A",
+    "name": "acedit.apl.m3s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E18B",
+    "name": "acedit.apl.m3s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E18C",
+    "name": "acedit.apl.m3s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E18D",
+    "name": "acedit.apl.m3s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E18E",
+    "name": "acedit.apl.m3s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E18F",
+    "name": "acedit.apl.m3s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E190",
+    "name": "acedit.apl.m3s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E191",
+    "name": "acedit.apl.m3s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E192",
+    "name": "acedit.apl.m3s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E193",
+    "name": "acedit.apl.m3s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E194",
+    "name": "acedit.apl.m3s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E195",
+    "name": "acedit.apl.m3s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E196",
+    "name": "acedit.apl.m3s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E197",
+    "name": "acedit.apl.m3s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E198",
+    "name": "acedit.apl.m3s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E199",
+    "name": "acedit.apl.m3s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E19A",
+    "name": "acedit.apl.m3s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E19B",
+    "name": "acedit.apl.m3s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E19C",
+    "name": "acedit.apl.m3s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E19D",
+    "name": "acedit.apl.m3s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E19E",
+    "name": "acedit.apl.m3s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E19F",
+    "name": "acedit.apl.m3s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A0",
+    "name": "acedit.apl.m3s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A1",
+    "name": "acedit.apl.m3s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A2",
+    "name": "acedit.apl.m3s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A3",
+    "name": "acedit.apl.m3s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A4",
+    "name": "acedit.apl.m3s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A5",
+    "name": "acedit.apl.m3s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A6",
+    "name": "acedit.apl.m3s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A7",
+    "name": "acedit.apl.m3s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A8",
+    "name": "acedit.apl.m3s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1A9",
+    "name": "acedit.apl.m3s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1AA",
+    "name": "acedit.apl.m3s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1AB",
+    "name": "acedit.apl.m3s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1AC",
+    "name": "acedit.apl.m3s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1AD",
+    "name": "acedit.apl.m3s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1AE",
+    "name": "acedit.apl.m3s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1AF",
+    "name": "acedit.apl.m3s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B0",
+    "name": "acedit.apl.m4s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B1",
+    "name": "acedit.apl.m4s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B2",
+    "name": "acedit.apl.m4s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B3",
+    "name": "acedit.apl.m4s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B4",
+    "name": "acedit.apl.m4s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B5",
+    "name": "acedit.apl.m4s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B6",
+    "name": "acedit.apl.m4s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B7",
+    "name": "acedit.apl.m4s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B8",
+    "name": "acedit.apl.m4s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1B9",
+    "name": "acedit.apl.m4s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1BA",
+    "name": "acedit.apl.m4s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1BB",
+    "name": "acedit.apl.m4s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1BC",
+    "name": "acedit.apl.m4s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1BD",
+    "name": "acedit.apl.m4s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1BE",
+    "name": "acedit.apl.m4s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1BF",
+    "name": "acedit.apl.m4s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C0",
+    "name": "acedit.apl.m4s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C1",
+    "name": "acedit.apl.m4s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C2",
+    "name": "acedit.apl.m4s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C3",
+    "name": "acedit.apl.m4s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C4",
+    "name": "acedit.apl.m4s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C5",
+    "name": "acedit.apl.m4s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C6",
+    "name": "acedit.apl.m4s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C7",
+    "name": "acedit.apl.m4s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C8",
+    "name": "acedit.apl.m4s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1C9",
+    "name": "acedit.apl.m4s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1CA",
+    "name": "acedit.apl.m4s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1CB",
+    "name": "acedit.apl.m4s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1CC",
+    "name": "acedit.apl.m4s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1CD",
+    "name": "acedit.apl.m4s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1CE",
+    "name": "acedit.apl.m4s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1CF",
+    "name": "acedit.apl.m4s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D0",
+    "name": "acedit.apl.m4s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D1",
+    "name": "acedit.apl.m4s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D2",
+    "name": "acedit.apl.m4s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D3",
+    "name": "acedit.apl.m4s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D4",
+    "name": "acedit.apl.m4s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D5",
+    "name": "acedit.apl.m4s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D6",
+    "name": "acedit.apl.m4s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D7",
+    "name": "acedit.apl.m4s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D8",
+    "name": "acedit.apl.m4s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1D9",
+    "name": "acedit.apl.m4s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1DA",
+    "name": "acedit.apl.m4s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1DB",
+    "name": "acedit.apl.m4s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1DC",
+    "name": "acedit.apl.m4s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1DD",
+    "name": "acedit.apl.m4s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1DE",
+    "name": "acedit.apl.m4s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1DF",
+    "name": "acedit.apl.m4s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E0",
+    "name": "acedit.apl.m4s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E1",
+    "name": "acedit.apl.m4s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E2",
+    "name": "acedit.apl.m4s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E3",
+    "name": "acedit.apl.m4s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E4",
+    "name": "acedit.apl.m4s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E5",
+    "name": "acedit.apl.m4s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E6",
+    "name": "acedit.apl.m4s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E7",
+    "name": "acedit.apl.m4s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E8",
+    "name": "acedit.apl.m4s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1E9",
+    "name": "acedit.apl.m4s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1EA",
+    "name": "acedit.apl.m4s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1EB",
+    "name": "acedit.apl.m4s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1EC",
+    "name": "acedit.apl.m4s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1ED",
+    "name": "acedit.apl.m4s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1EE",
+    "name": "acedit.apl.m4s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1EF",
+    "name": "acedit.apl.m4s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F0",
+    "name": "acedit.apl.m4s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F1",
+    "name": "acedit.apl.m4s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F2",
+    "name": "acedit.apl.m4s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F3",
+    "name": "acedit.apl.m4s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F4",
+    "name": "acedit.apl.m4s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F5",
+    "name": "acedit.apl.m4s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F6",
+    "name": "acedit.apl.m4s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F7",
+    "name": "acedit.apl.m4s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F8",
+    "name": "acedit.apl.m4s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1F9",
+    "name": "acedit.apl.m4s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1FA",
+    "name": "acedit.apl.m4s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1FB",
+    "name": "acedit.apl.m4s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1FC",
+    "name": "acedit.apl.m4s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1FD",
+    "name": "acedit.apl.m4s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1FE",
+    "name": "acedit.apl.m4s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E1FF",
+    "name": "acedit.apl.m4s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E200",
+    "name": "acedit.apl.m4s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E201",
+    "name": "acedit.apl.m4s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E202",
+    "name": "acedit.apl.m4s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E203",
+    "name": "acedit.apl.m4s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E204",
+    "name": "acedit.apl.m4s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E205",
+    "name": "acedit.apl.m4s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E206",
+    "name": "acedit.apl.m4s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E207",
+    "name": "acedit.apl.m4s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E208",
+    "name": "acedit.apl.m4s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E209",
+    "name": "acedit.apl.m4s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E20A",
+    "name": "acedit.apl.m4s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E20B",
+    "name": "acedit.apl.m4s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E20C",
+    "name": "acedit.apl.m4s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E20D",
+    "name": "acedit.apl.m4s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E20E",
+    "name": "acedit.apl.m4s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E20F",
+    "name": "acedit.apl.m4s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E210",
+    "name": "acedit.apl.m4s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E211",
+    "name": "acedit.apl.m4s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E212",
+    "name": "acedit.apl.m4s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E213",
+    "name": "acedit.apl.m4s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E214",
+    "name": "acedit.apl.m4s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E215",
+    "name": "acedit.apl.m4s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E216",
+    "name": "acedit.apl.m4s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E217",
+    "name": "acedit.apl.m4s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E218",
+    "name": "acedit.apl.m4s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E219",
+    "name": "acedit.apl.m4s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E21A",
+    "name": "acedit.apl.m4s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E21B",
+    "name": "acedit.apl.m4s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E21C",
+    "name": "acedit.apl.m5s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E21D",
+    "name": "acedit.apl.m5s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E21E",
+    "name": "acedit.apl.m5s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E21F",
+    "name": "acedit.apl.m5s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E220",
+    "name": "acedit.apl.m5s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E221",
+    "name": "acedit.apl.m5s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E222",
+    "name": "acedit.apl.m5s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E223",
+    "name": "acedit.apl.m5s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E224",
+    "name": "acedit.apl.m5s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E225",
+    "name": "acedit.apl.m5s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E226",
+    "name": "acedit.apl.m5s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E227",
+    "name": "acedit.apl.m5s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E228",
+    "name": "acedit.apl.m5s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E229",
+    "name": "acedit.apl.m5s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E22A",
+    "name": "acedit.apl.m5s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E22B",
+    "name": "acedit.apl.m5s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E22C",
+    "name": "acedit.apl.m5s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E22D",
+    "name": "acedit.apl.m5s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E22E",
+    "name": "acedit.apl.m5s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E22F",
+    "name": "acedit.apl.m5s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E230",
+    "name": "acedit.apl.m5s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E231",
+    "name": "acedit.apl.m5s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E232",
+    "name": "acedit.apl.m5s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E233",
+    "name": "acedit.apl.m5s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E234",
+    "name": "acedit.apl.m5s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E235",
+    "name": "acedit.apl.m5s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E236",
+    "name": "acedit.apl.m5s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E237",
+    "name": "acedit.apl.m5s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E238",
+    "name": "acedit.apl.m5s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E239",
+    "name": "acedit.apl.m5s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E23A",
+    "name": "acedit.apl.m5s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E23B",
+    "name": "acedit.apl.m5s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E23C",
+    "name": "acedit.apl.m5s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E23D",
+    "name": "acedit.apl.m5s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E23E",
+    "name": "acedit.apl.m5s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E23F",
+    "name": "acedit.apl.m5s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E240",
+    "name": "acedit.apl.m5s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E241",
+    "name": "acedit.apl.m5s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E242",
+    "name": "acedit.apl.m5s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E243",
+    "name": "acedit.apl.m5s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E244",
+    "name": "acedit.apl.m5s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E245",
+    "name": "acedit.apl.m5s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E246",
+    "name": "acedit.apl.m5s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E247",
+    "name": "acedit.apl.m5s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E248",
+    "name": "acedit.apl.m5s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E249",
+    "name": "acedit.apl.m5s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E24A",
+    "name": "acedit.apl.m5s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E24B",
+    "name": "acedit.apl.m5s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E24C",
+    "name": "acedit.apl.m5s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E24D",
+    "name": "acedit.apl.m5s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E24E",
+    "name": "acedit.apl.m5s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E24F",
+    "name": "acedit.apl.m5s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E250",
+    "name": "acedit.apl.m5s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E251",
+    "name": "acedit.apl.m5s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E252",
+    "name": "acedit.apl.m5s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E253",
+    "name": "acedit.apl.m5s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E254",
+    "name": "acedit.apl.m5s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E255",
+    "name": "acedit.apl.m5s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E256",
+    "name": "acedit.apl.m5s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E257",
+    "name": "acedit.apl.m5s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E258",
+    "name": "acedit.apl.m5s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E259",
+    "name": "acedit.apl.m5s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E25A",
+    "name": "acedit.apl.m5s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E25B",
+    "name": "acedit.apl.m5s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E25C",
+    "name": "acedit.apl.m5s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E25D",
+    "name": "acedit.apl.m5s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E25E",
+    "name": "acedit.apl.m5s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E25F",
+    "name": "acedit.apl.m5s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E260",
+    "name": "acedit.apl.m5s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E261",
+    "name": "acedit.apl.m5s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E262",
+    "name": "acedit.apl.m5s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E263",
+    "name": "acedit.apl.m5s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E264",
+    "name": "acedit.apl.m5s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E265",
+    "name": "acedit.apl.m5s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E266",
+    "name": "acedit.apl.m5s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E267",
+    "name": "acedit.apl.m5s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E268",
+    "name": "acedit.apl.m5s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E269",
+    "name": "acedit.apl.m5s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E26A",
+    "name": "acedit.apl.m5s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E26B",
+    "name": "acedit.apl.m5s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E26C",
+    "name": "acedit.apl.m5s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E26D",
+    "name": "acedit.apl.m5s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E26E",
+    "name": "acedit.apl.m5s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E26F",
+    "name": "acedit.apl.m5s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E270",
+    "name": "acedit.apl.m5s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E271",
+    "name": "acedit.apl.m5s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E272",
+    "name": "acedit.apl.m5s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E273",
+    "name": "acedit.apl.m5s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E274",
+    "name": "acedit.apl.m5s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E275",
+    "name": "acedit.apl.m5s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E276",
+    "name": "acedit.apl.m5s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E277",
+    "name": "acedit.apl.m5s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E278",
+    "name": "acedit.apl.m5s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E279",
+    "name": "acedit.apl.m5s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E27A",
+    "name": "acedit.apl.m5s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E27B",
+    "name": "acedit.apl.m5s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E27C",
+    "name": "acedit.apl.m5s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E27D",
+    "name": "acedit.apl.m5s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E27E",
+    "name": "acedit.apl.m5s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E27F",
+    "name": "acedit.apl.m5s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E280",
+    "name": "acedit.apl.m5s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E281",
+    "name": "acedit.apl.m5s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E282",
+    "name": "acedit.apl.m5s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E283",
+    "name": "acedit.apl.m5s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E284",
+    "name": "acedit.apl.m5s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E285",
+    "name": "acedit.apl.m5s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E286",
+    "name": "acedit.apl.m5s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E287",
+    "name": "acedit.apl.m5s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E288",
+    "name": "acedit.apl.m6s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E289",
+    "name": "acedit.apl.m6s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E28A",
+    "name": "acedit.apl.m6s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E28B",
+    "name": "acedit.apl.m6s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E28C",
+    "name": "acedit.apl.m6s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E28D",
+    "name": "acedit.apl.m6s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E28E",
+    "name": "acedit.apl.m6s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E28F",
+    "name": "acedit.apl.m6s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E290",
+    "name": "acedit.apl.m6s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E291",
+    "name": "acedit.apl.m6s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E292",
+    "name": "acedit.apl.m6s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E293",
+    "name": "acedit.apl.m6s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E294",
+    "name": "acedit.apl.m6s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E295",
+    "name": "acedit.apl.m6s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E296",
+    "name": "acedit.apl.m6s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E297",
+    "name": "acedit.apl.m6s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E298",
+    "name": "acedit.apl.m6s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E299",
+    "name": "acedit.apl.m6s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E29A",
+    "name": "acedit.apl.m6s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E29B",
+    "name": "acedit.apl.m6s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E29C",
+    "name": "acedit.apl.m6s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E29D",
+    "name": "acedit.apl.m6s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E29E",
+    "name": "acedit.apl.m6s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E29F",
+    "name": "acedit.apl.m6s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A0",
+    "name": "acedit.apl.m6s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A1",
+    "name": "acedit.apl.m6s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A2",
+    "name": "acedit.apl.m6s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A3",
+    "name": "acedit.apl.m6s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A4",
+    "name": "acedit.apl.m6s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A5",
+    "name": "acedit.apl.m6s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A6",
+    "name": "acedit.apl.m6s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A7",
+    "name": "acedit.apl.m6s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A8",
+    "name": "acedit.apl.m6s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2A9",
+    "name": "acedit.apl.m6s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2AA",
+    "name": "acedit.apl.m6s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2AB",
+    "name": "acedit.apl.m6s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2AC",
+    "name": "acedit.apl.m6s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2AD",
+    "name": "acedit.apl.m6s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2AE",
+    "name": "acedit.apl.m6s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2AF",
+    "name": "acedit.apl.m6s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B0",
+    "name": "acedit.apl.m6s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B1",
+    "name": "acedit.apl.m6s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B2",
+    "name": "acedit.apl.m6s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B3",
+    "name": "acedit.apl.m6s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B4",
+    "name": "acedit.apl.m6s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B5",
+    "name": "acedit.apl.m6s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B6",
+    "name": "acedit.apl.m6s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B7",
+    "name": "acedit.apl.m6s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B8",
+    "name": "acedit.apl.m6s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2B9",
+    "name": "acedit.apl.m6s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2BA",
+    "name": "acedit.apl.m6s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2BB",
+    "name": "acedit.apl.m6s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2BC",
+    "name": "acedit.apl.m6s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2BD",
+    "name": "acedit.apl.m6s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2BE",
+    "name": "acedit.apl.m6s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2BF",
+    "name": "acedit.apl.m6s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C0",
+    "name": "acedit.apl.m6s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C1",
+    "name": "acedit.apl.m6s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C2",
+    "name": "acedit.apl.m6s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C3",
+    "name": "acedit.apl.m6s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C4",
+    "name": "acedit.apl.m6s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C5",
+    "name": "acedit.apl.m6s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C6",
+    "name": "acedit.apl.m6s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C7",
+    "name": "acedit.apl.m6s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C8",
+    "name": "acedit.apl.m6s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2C9",
+    "name": "acedit.apl.m6s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2CA",
+    "name": "acedit.apl.m6s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2CB",
+    "name": "acedit.apl.m6s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2CC",
+    "name": "acedit.apl.m6s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2CD",
+    "name": "acedit.apl.m6s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2CE",
+    "name": "acedit.apl.m6s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2CF",
+    "name": "acedit.apl.m6s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D0",
+    "name": "acedit.apl.m6s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D1",
+    "name": "acedit.apl.m6s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D2",
+    "name": "acedit.apl.m6s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D3",
+    "name": "acedit.apl.m6s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D4",
+    "name": "acedit.apl.m6s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D5",
+    "name": "acedit.apl.m6s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D6",
+    "name": "acedit.apl.m6s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D7",
+    "name": "acedit.apl.m6s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D8",
+    "name": "acedit.apl.m6s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2D9",
+    "name": "acedit.apl.m6s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2DA",
+    "name": "acedit.apl.m6s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2DB",
+    "name": "acedit.apl.m6s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2DC",
+    "name": "acedit.apl.m6s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2DD",
+    "name": "acedit.apl.m6s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2DE",
+    "name": "acedit.apl.m6s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2DF",
+    "name": "acedit.apl.m6s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E0",
+    "name": "acedit.apl.m6s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E1",
+    "name": "acedit.apl.m6s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E2",
+    "name": "acedit.apl.m6s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E3",
+    "name": "acedit.apl.m6s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E4",
+    "name": "acedit.apl.m6s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E5",
+    "name": "acedit.apl.m6s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E6",
+    "name": "acedit.apl.m6s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E7",
+    "name": "acedit.apl.m6s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E8",
+    "name": "acedit.apl.m6s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2E9",
+    "name": "acedit.apl.m6s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2EA",
+    "name": "acedit.apl.m6s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2EB",
+    "name": "acedit.apl.m6s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2EC",
+    "name": "acedit.apl.m6s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2ED",
+    "name": "acedit.apl.m6s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2EE",
+    "name": "acedit.apl.m6s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2EF",
+    "name": "acedit.apl.m6s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F0",
+    "name": "acedit.apl.m6s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F1",
+    "name": "acedit.apl.m6s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F2",
+    "name": "acedit.apl.m6s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F3",
+    "name": "acedit.apl.m6s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F4",
+    "name": "acedit.apl.m7s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F5",
+    "name": "acedit.apl.m7s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F6",
+    "name": "acedit.apl.m7s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F7",
+    "name": "acedit.apl.m7s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F8",
+    "name": "acedit.apl.m7s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2F9",
+    "name": "acedit.apl.m7s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2FA",
+    "name": "acedit.apl.m7s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2FB",
+    "name": "acedit.apl.m7s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2FC",
+    "name": "acedit.apl.m7s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2FD",
+    "name": "acedit.apl.m7s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2FE",
+    "name": "acedit.apl.m7s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E2FF",
+    "name": "acedit.apl.m7s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E300",
+    "name": "acedit.apl.m7s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E301",
+    "name": "acedit.apl.m7s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E302",
+    "name": "acedit.apl.m7s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E303",
+    "name": "acedit.apl.m7s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E304",
+    "name": "acedit.apl.m7s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E305",
+    "name": "acedit.apl.m7s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E306",
+    "name": "acedit.apl.m7s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E307",
+    "name": "acedit.apl.m7s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E308",
+    "name": "acedit.apl.m7s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E309",
+    "name": "acedit.apl.m7s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E30A",
+    "name": "acedit.apl.m7s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E30B",
+    "name": "acedit.apl.m7s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E30C",
+    "name": "acedit.apl.m7s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E30D",
+    "name": "acedit.apl.m7s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E30E",
+    "name": "acedit.apl.m7s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E30F",
+    "name": "acedit.apl.m7s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E310",
+    "name": "acedit.apl.m7s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E311",
+    "name": "acedit.apl.m7s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E312",
+    "name": "acedit.apl.m7s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E313",
+    "name": "acedit.apl.m7s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E314",
+    "name": "acedit.apl.m7s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E315",
+    "name": "acedit.apl.m7s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E316",
+    "name": "acedit.apl.m7s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E317",
+    "name": "acedit.apl.m7s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E318",
+    "name": "acedit.apl.m7s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E319",
+    "name": "acedit.apl.m7s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E31A",
+    "name": "acedit.apl.m7s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E31B",
+    "name": "acedit.apl.m7s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E31C",
+    "name": "acedit.apl.m7s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E31D",
+    "name": "acedit.apl.m7s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E31E",
+    "name": "acedit.apl.m7s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E31F",
+    "name": "acedit.apl.m7s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E320",
+    "name": "acedit.apl.m7s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E321",
+    "name": "acedit.apl.m7s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E322",
+    "name": "acedit.apl.m7s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E323",
+    "name": "acedit.apl.m7s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E324",
+    "name": "acedit.apl.m7s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E325",
+    "name": "acedit.apl.m7s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E326",
+    "name": "acedit.apl.m7s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E327",
+    "name": "acedit.apl.m7s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E328",
+    "name": "acedit.apl.m7s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E329",
+    "name": "acedit.apl.m7s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E32A",
+    "name": "acedit.apl.m7s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E32B",
+    "name": "acedit.apl.m7s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E32C",
+    "name": "acedit.apl.m7s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E32D",
+    "name": "acedit.apl.m7s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E32E",
+    "name": "acedit.apl.m7s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E32F",
+    "name": "acedit.apl.m7s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E330",
+    "name": "acedit.apl.m7s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E331",
+    "name": "acedit.apl.m7s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E332",
+    "name": "acedit.apl.m7s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E333",
+    "name": "acedit.apl.m7s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E334",
+    "name": "acedit.apl.m7s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E335",
+    "name": "acedit.apl.m7s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E336",
+    "name": "acedit.apl.m7s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E337",
+    "name": "acedit.apl.m7s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E338",
+    "name": "acedit.apl.m7s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E339",
+    "name": "acedit.apl.m7s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E33A",
+    "name": "acedit.apl.m7s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E33B",
+    "name": "acedit.apl.m7s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E33C",
+    "name": "acedit.apl.m7s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E33D",
+    "name": "acedit.apl.m7s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E33E",
+    "name": "acedit.apl.m7s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E33F",
+    "name": "acedit.apl.m7s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E340",
+    "name": "acedit.apl.m7s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E341",
+    "name": "acedit.apl.m7s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E342",
+    "name": "acedit.apl.m7s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E343",
+    "name": "acedit.apl.m7s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E344",
+    "name": "acedit.apl.m7s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E345",
+    "name": "acedit.apl.m7s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E346",
+    "name": "acedit.apl.m7s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E347",
+    "name": "acedit.apl.m7s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E348",
+    "name": "acedit.apl.m7s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E349",
+    "name": "acedit.apl.m7s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E34A",
+    "name": "acedit.apl.m7s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E34B",
+    "name": "acedit.apl.m7s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E34C",
+    "name": "acedit.apl.m7s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E34D",
+    "name": "acedit.apl.m7s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E34E",
+    "name": "acedit.apl.m7s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E34F",
+    "name": "acedit.apl.m7s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E350",
+    "name": "acedit.apl.m7s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E351",
+    "name": "acedit.apl.m7s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E352",
+    "name": "acedit.apl.m7s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E353",
+    "name": "acedit.apl.m7s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E354",
+    "name": "acedit.apl.m7s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E355",
+    "name": "acedit.apl.m7s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E356",
+    "name": "acedit.apl.m7s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E357",
+    "name": "acedit.apl.m7s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E358",
+    "name": "acedit.apl.m7s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E359",
+    "name": "acedit.apl.m7s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E35A",
+    "name": "acedit.apl.m7s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E35B",
+    "name": "acedit.apl.m7s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E35C",
+    "name": "acedit.apl.m7s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E35D",
+    "name": "acedit.apl.m7s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E35E",
+    "name": "acedit.apl.m7s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E35F",
+    "name": "acedit.apl.m7s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E360",
+    "name": "acedit.apl.m8s0o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E361",
+    "name": "acedit.apl.m8s0o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E362",
+    "name": "acedit.apl.m8s0o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E363",
+    "name": "acedit.apl.m8s0o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E364",
+    "name": "acedit.apl.m8s0o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E365",
+    "name": "acedit.apl.m8s0o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E366",
+    "name": "acedit.apl.m8s0o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E367",
+    "name": "acedit.apl.m8s0o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E368",
+    "name": "acedit.apl.m8s0o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E369",
+    "name": "acedit.apl.m8s0o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E36A",
+    "name": "acedit.apl.m8s0o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E36B",
+    "name": "acedit.apl.m8s0o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E36C",
+    "name": "acedit.apl.m8s0o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E36D",
+    "name": "acedit.apl.m8s0o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E36E",
+    "name": "acedit.apl.m8s0o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E36F",
+    "name": "acedit.apl.m8s0o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E370",
+    "name": "acedit.apl.m8s0o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E371",
+    "name": "acedit.apl.m8s0o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E372",
+    "name": "acedit.apl.m8s0o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E373",
+    "name": "acedit.apl.m8s0o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E374",
+    "name": "acedit.apl.m8s0o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E375",
+    "name": "acedit.apl.m8s0o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E376",
+    "name": "acedit.apl.m8s0o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E377",
+    "name": "acedit.apl.m8s0o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E378",
+    "name": "acedit.apl.m8s0o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E379",
+    "name": "acedit.apl.m8s0o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E37A",
+    "name": "acedit.apl.m8s0o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E37B",
+    "name": "acedit.apl.m8s0o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E37C",
+    "name": "acedit.apl.m8s0o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E37D",
+    "name": "acedit.apl.m8s0o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E37E",
+    "name": "acedit.apl.m8s0o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E37F",
+    "name": "acedit.apl.m8s0o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E380",
+    "name": "acedit.apl.m8s0o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E381",
+    "name": "acedit.apl.m8s0o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E382",
+    "name": "acedit.apl.m8s0o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E383",
+    "name": "acedit.apl.m8s0o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E384",
+    "name": "acedit.apl.m8s1o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E385",
+    "name": "acedit.apl.m8s1o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E386",
+    "name": "acedit.apl.m8s1o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E387",
+    "name": "acedit.apl.m8s1o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E388",
+    "name": "acedit.apl.m8s1o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E389",
+    "name": "acedit.apl.m8s1o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E38A",
+    "name": "acedit.apl.m8s1o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E38B",
+    "name": "acedit.apl.m8s1o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E38C",
+    "name": "acedit.apl.m8s1o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E38D",
+    "name": "acedit.apl.m8s1o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E38E",
+    "name": "acedit.apl.m8s1o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E38F",
+    "name": "acedit.apl.m8s1o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E390",
+    "name": "acedit.apl.m8s1o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E391",
+    "name": "acedit.apl.m8s1o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E392",
+    "name": "acedit.apl.m8s1o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E393",
+    "name": "acedit.apl.m8s1o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E394",
+    "name": "acedit.apl.m8s1o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E395",
+    "name": "acedit.apl.m8s1o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E396",
+    "name": "acedit.apl.m8s1o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E397",
+    "name": "acedit.apl.m8s1o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E398",
+    "name": "acedit.apl.m8s1o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E399",
+    "name": "acedit.apl.m8s1o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E39A",
+    "name": "acedit.apl.m8s1o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E39B",
+    "name": "acedit.apl.m8s1o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E39C",
+    "name": "acedit.apl.m8s1o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E39D",
+    "name": "acedit.apl.m8s1o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E39E",
+    "name": "acedit.apl.m8s1o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E39F",
+    "name": "acedit.apl.m8s1o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A0",
+    "name": "acedit.apl.m8s1o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A1",
+    "name": "acedit.apl.m8s1o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A2",
+    "name": "acedit.apl.m8s1o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A3",
+    "name": "acedit.apl.m8s1o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A4",
+    "name": "acedit.apl.m8s1o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A5",
+    "name": "acedit.apl.m8s1o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A6",
+    "name": "acedit.apl.m8s1o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A7",
+    "name": "acedit.apl.m8s1o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A8",
+    "name": "acedit.apl.m8s2o0d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3A9",
+    "name": "acedit.apl.m8s2o0d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3AA",
+    "name": "acedit.apl.m8s2o0d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3AB",
+    "name": "acedit.apl.m8s2o0d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3AC",
+    "name": "acedit.apl.m8s2o0d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3AD",
+    "name": "acedit.apl.m8s2o0d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3AE",
+    "name": "acedit.apl.m8s2o1d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3AF",
+    "name": "acedit.apl.m8s2o1d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B0",
+    "name": "acedit.apl.m8s2o1d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B1",
+    "name": "acedit.apl.m8s2o1d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B2",
+    "name": "acedit.apl.m8s2o1d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B3",
+    "name": "acedit.apl.m8s2o1d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B4",
+    "name": "acedit.apl.m8s2o2d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B5",
+    "name": "acedit.apl.m8s2o2d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B6",
+    "name": "acedit.apl.m8s2o2d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B7",
+    "name": "acedit.apl.m8s2o2d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B8",
+    "name": "acedit.apl.m8s2o2d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3B9",
+    "name": "acedit.apl.m8s2o2d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3BA",
+    "name": "acedit.apl.m8s2o3d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3BB",
+    "name": "acedit.apl.m8s2o3d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3BC",
+    "name": "acedit.apl.m8s2o3d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3BD",
+    "name": "acedit.apl.m8s2o3d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3BE",
+    "name": "acedit.apl.m8s2o3d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3BF",
+    "name": "acedit.apl.m8s2o3d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C0",
+    "name": "acedit.apl.m8s2o4d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C1",
+    "name": "acedit.apl.m8s2o4d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C2",
+    "name": "acedit.apl.m8s2o4d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C3",
+    "name": "acedit.apl.m8s2o4d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C4",
+    "name": "acedit.apl.m8s2o4d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C5",
+    "name": "acedit.apl.m8s2o4d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C6",
+    "name": "acedit.apl.m8s2o5d0",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C7",
+    "name": "acedit.apl.m8s2o5d1",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C8",
+    "name": "acedit.apl.m8s2o5d2",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3C9",
+    "name": "acedit.apl.m8s2o5d3",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3CA",
+    "name": "acedit.apl.m8s2o5d4",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3CB",
+    "name": "acedit.apl.m8s2o5d5",
+    "block": "APL_CORE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3CC",
+    "name": "acedit.ucf_sigil.000",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3CD",
+    "name": "acedit.ucf_sigil.001",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3CE",
+    "name": "acedit.ucf_sigil.002",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3CF",
+    "name": "acedit.ucf_sigil.003",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D0",
+    "name": "acedit.ucf_sigil.004",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D1",
+    "name": "acedit.ucf_sigil.005",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D2",
+    "name": "acedit.ucf_sigil.006",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D3",
+    "name": "acedit.ucf_sigil.007",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D4",
+    "name": "acedit.ucf_sigil.008",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D5",
+    "name": "acedit.ucf_sigil.009",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D6",
+    "name": "acedit.ucf_sigil.010",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D7",
+    "name": "acedit.ucf_sigil.011",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D8",
+    "name": "acedit.ucf_sigil.012",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3D9",
+    "name": "acedit.ucf_sigil.013",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3DA",
+    "name": "acedit.ucf_sigil.014",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3DB",
+    "name": "acedit.ucf_sigil.015",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3DC",
+    "name": "acedit.ucf_sigil.016",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3DD",
+    "name": "acedit.ucf_sigil.017",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3DE",
+    "name": "acedit.ucf_sigil.018",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3DF",
+    "name": "acedit.ucf_sigil.019",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E0",
+    "name": "acedit.ucf_sigil.020",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E1",
+    "name": "acedit.ucf_sigil.021",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E2",
+    "name": "acedit.ucf_sigil.022",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E3",
+    "name": "acedit.ucf_sigil.023",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E4",
+    "name": "acedit.ucf_sigil.024",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E5",
+    "name": "acedit.ucf_sigil.025",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E6",
+    "name": "acedit.ucf_sigil.026",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E7",
+    "name": "acedit.ucf_sigil.027",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E8",
+    "name": "acedit.ucf_sigil.028",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3E9",
+    "name": "acedit.ucf_sigil.029",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3EA",
+    "name": "acedit.ucf_sigil.030",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3EB",
+    "name": "acedit.ucf_sigil.031",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3EC",
+    "name": "acedit.ucf_sigil.032",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3ED",
+    "name": "acedit.ucf_sigil.033",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3EE",
+    "name": "acedit.ucf_sigil.034",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3EF",
+    "name": "acedit.ucf_sigil.035",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F0",
+    "name": "acedit.ucf_sigil.036",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F1",
+    "name": "acedit.ucf_sigil.037",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F2",
+    "name": "acedit.ucf_sigil.038",
+    "block": "UCF_SIGIL",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F3",
+    "name": "acedit.chronicle.000",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F4",
+    "name": "acedit.chronicle.001",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F5",
+    "name": "acedit.chronicle.002",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F6",
+    "name": "acedit.chronicle.003",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F7",
+    "name": "acedit.chronicle.004",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F8",
+    "name": "acedit.chronicle.005",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3F9",
+    "name": "acedit.chronicle.006",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3FA",
+    "name": "acedit.chronicle.007",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3FB",
+    "name": "acedit.chronicle.008",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3FC",
+    "name": "acedit.chronicle.009",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3FD",
+    "name": "acedit.chronicle.010",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3FE",
+    "name": "acedit.chronicle.011",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E3FF",
+    "name": "acedit.chronicle.012",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E400",
+    "name": "acedit.chronicle.013",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E401",
+    "name": "acedit.chronicle.014",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E402",
+    "name": "acedit.chronicle.015",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E403",
+    "name": "acedit.chronicle.016",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E404",
+    "name": "acedit.chronicle.017",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E405",
+    "name": "acedit.chronicle.018",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E406",
+    "name": "acedit.chronicle.019",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E407",
+    "name": "acedit.chronicle.020",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E408",
+    "name": "acedit.chronicle.021",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E409",
+    "name": "acedit.chronicle.022",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E40A",
+    "name": "acedit.chronicle.023",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E40B",
+    "name": "acedit.chronicle.024",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E40C",
+    "name": "acedit.chronicle.025",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E40D",
+    "name": "acedit.chronicle.026",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E40E",
+    "name": "acedit.chronicle.027",
+    "block": "CHRONICLE",
+    "family": "hexagonal"
+  },
+  {
+    "codepoint": "U+E40F",
+    "name": "acedit.governance.000",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E410",
+    "name": "acedit.governance.001",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E411",
+    "name": "acedit.governance.002",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E412",
+    "name": "acedit.governance.003",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E413",
+    "name": "acedit.governance.004",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E414",
+    "name": "acedit.governance.005",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E415",
+    "name": "acedit.governance.006",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E416",
+    "name": "acedit.governance.007",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E417",
+    "name": "acedit.governance.008",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E418",
+    "name": "acedit.governance.009",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E419",
+    "name": "acedit.governance.010",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E41A",
+    "name": "acedit.governance.011",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E41B",
+    "name": "acedit.governance.012",
+    "block": "GOVERNANCE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E41C",
+    "name": "acedit.geometry.000",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E41D",
+    "name": "acedit.geometry.001",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E41E",
+    "name": "acedit.geometry.002",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E41F",
+    "name": "acedit.geometry.003",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E420",
+    "name": "acedit.geometry.004",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E421",
+    "name": "acedit.geometry.005",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E422",
+    "name": "acedit.geometry.006",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E423",
+    "name": "acedit.geometry.007",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E424",
+    "name": "acedit.geometry.008",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E425",
+    "name": "acedit.geometry.009",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E426",
+    "name": "acedit.geometry.010",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E427",
+    "name": "acedit.geometry.011",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E428",
+    "name": "acedit.geometry.012",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E429",
+    "name": "acedit.geometry.013",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E42A",
+    "name": "acedit.geometry.014",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E42B",
+    "name": "acedit.geometry.015",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E42C",
+    "name": "acedit.geometry.016",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E42D",
+    "name": "acedit.geometry.017",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E42E",
+    "name": "acedit.geometry.018",
+    "block": "GEOMETRY",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E42F",
+    "name": "acedit.spectral.000",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E430",
+    "name": "acedit.spectral.001",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E431",
+    "name": "acedit.spectral.002",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E432",
+    "name": "acedit.spectral.003",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E433",
+    "name": "acedit.spectral.004",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E434",
+    "name": "acedit.spectral.005",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E435",
+    "name": "acedit.spectral.006",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E436",
+    "name": "acedit.spectral.007",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E437",
+    "name": "acedit.spectral.008",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E438",
+    "name": "acedit.spectral.009",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E439",
+    "name": "acedit.spectral.010",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E43A",
+    "name": "acedit.spectral.011",
+    "block": "SPECTRAL",
+    "family": "pentagonal"
+  },
+  {
+    "codepoint": "U+E43B",
+    "name": "acedit.funnel.000",
+    "block": "FUNNEL",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E43C",
+    "name": "acedit.funnel.001",
+    "block": "FUNNEL",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E43D",
+    "name": "acedit.funnel.002",
+    "block": "FUNNEL",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E43E",
+    "name": "acedit.funnel.003",
+    "block": "FUNNEL",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E43F",
+    "name": "acedit.funnel.004",
+    "block": "FUNNEL",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E440",
+    "name": "acedit.funnel.005",
+    "block": "FUNNEL",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E441",
+    "name": "acedit.funnel.006",
+    "block": "FUNNEL",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E442",
+    "name": "acedit.lattice.000",
+    "block": "LATTICE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E443",
+    "name": "acedit.lattice.001",
+    "block": "LATTICE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E444",
+    "name": "acedit.lattice.002",
+    "block": "LATTICE",
+    "family": "cubic"
+  },
+  {
+    "codepoint": "U+E445",
+    "name": "acedit.lattice.003",
+    "block": "LATTICE",
+    "family": "cubic"
+  }
+]

@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACEDIT Constants Dashboard — Phi Derivation Chain</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #12121a;
+  --surface-raised: #1a1a26;
+  --surface-bright: #222233;
+  --border: #2a2a3a;
+  --border-light: #3a3a50;
+  --text-primary: #e0e0ec;
+  --text-secondary: #8888a0;
+  --text-muted: #55556a;
+  --cyan: #00DBC0;
+  --magenta: #DB0098;
+  --yellow: #DBB800;
+  --cyan-dim: #007a6b;
+  --magenta-dim: #7a0055;
+  --yellow-dim: #7a6800;
+  --green: #3fb950;
+  --red: #f85149;
+  --phi: 1.6180339887498949;
+}
+
+html {
+  font-size: 14px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ─── Nav Bar ─── */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+.nav-links {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.nav-links a:hover {
+  color: var(--text-primary);
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+
+.nav-links a.active {
+  color: var(--cyan);
+  border-color: var(--cyan-dim);
+  background: rgba(0, 219, 192, 0.06);
+}
+
+/* ─── Sections ─── */
+.main-content {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.section {
+  margin-bottom: 48px;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.section-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Section 1: Axiom Display ─── */
+.axiom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.axiom-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+}
+
+.axiom-symbol {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 48px;
+  font-style: italic;
+  color: var(--cyan);
+  margin-bottom: 8px;
+}
+
+.axiom-formula {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.axiom-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.axiom-value .digits-muted {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.spiral-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  min-height: 280px;
+}
+
+#spiralCanvas {
+  display: block;
+}
+
+/* ─── Section 2: Derivation Tree ─── */
+.tree-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  overflow-x: auto;
+  position: relative;
+}
+
+#derivationTree {
+  display: block;
+  margin: 0 auto;
+}
+
+/* ─── Section 3: Font Metrics Table ─── */
+.metrics-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.metrics-tab {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 8px 20px;
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  transition: all 0.2s;
+}
+
+.metrics-tab:hover { background: var(--surface-raised); }
+.metrics-tab.active-cyan { color: var(--cyan); border-color: var(--cyan-dim); background: rgba(0,219,192,0.08); }
+.metrics-tab.active-magenta { color: var(--magenta); border-color: var(--magenta-dim); background: rgba(219,0,152,0.08); }
+.metrics-tab.active-yellow { color: var(--yellow); border-color: var(--yellow-dim); background: rgba(219,184,0,0.08); }
+
+.metrics-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 8px 8px 8px;
+  overflow: hidden;
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.metrics-table th {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-raised);
+}
+
+.metrics-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(42, 42, 58, 0.5);
+  font-size: 13px;
+}
+
+.metrics-table tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.bar-cell {
+  width: 200px;
+}
+
+.bar-bg {
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+  height: 18px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+
+.bar-fill.cyan { background: linear-gradient(90deg, var(--cyan-dim), var(--cyan)); }
+.bar-fill.magenta { background: linear-gradient(90deg, var(--magenta-dim), var(--magenta)); }
+.bar-fill.yellow { background: linear-gradient(90deg, var(--yellow-dim), var(--yellow)); }
+
+.formula-cell {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.value-cell {
+  font-weight: 500;
+}
+
+/* ─── Section 4: Angle Wheel ─── */
+.angle-section {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.angle-canvas-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.angle-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.angle-family {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.angle-family-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.angle-family-title.hex { color: var(--cyan); }
+.angle-family-title.pent { color: var(--magenta); }
+.angle-family-title.cube { color: var(--yellow); }
+
+.angle-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 3px 4px 3px 0;
+}
+
+.angle-tag.hex { background: rgba(0,219,192,0.12); color: var(--cyan); border: 1px solid var(--cyan-dim); }
+.angle-tag.pent { background: rgba(219,0,152,0.12); color: var(--magenta); border: 1px solid var(--magenta-dim); }
+.angle-tag.cube { background: rgba(219,184,0,0.12); color: var(--yellow); border: 1px solid var(--yellow-dim); }
+
+/* ─── Section 5: Verification Panel ─── */
+.verify-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.verify-count {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.verify-count.all-pass { color: var(--green); }
+.verify-count.has-fail { color: var(--red); }
+
+.verify-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.verify-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 8px;
+}
+
+.verify-group-title {
+  grid-column: 1 / -1;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 16px;
+  margin-bottom: 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.verify-row {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  transition: border-color 0.2s;
+}
+
+.verify-row:hover {
+  border-color: var(--border-light);
+}
+
+.verify-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+  width: 22px;
+  text-align: center;
+}
+
+.verify-icon.pass { color: var(--green); }
+.verify-icon.fail { color: var(--red); }
+
+.verify-name {
+  flex: 1;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.verify-values {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ─── Section 6: Timing Constants ─── */
+.timing-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.timing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.timing-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.timing-formula {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.timing-value {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.timing-unit {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.oscillator-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.oscillator-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.osc-label {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.osc-swatch {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+#oscillatorCanvas {
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1100px) {
+  .axiom-grid { grid-template-columns: 1fr 1fr; }
+  .spiral-container { grid-column: 1 / -1; min-height: 200px; }
+  .angle-section { grid-template-columns: 1fr; }
+  .timing-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 700px) {
+  .navbar { padding: 0 16px; }
+  .main-content { padding: 16px; }
+  .axiom-grid { grid-template-columns: 1fr; }
+  .timing-grid { grid-template-columns: 1fr 1fr; }
+  .verify-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Scroll anchor offset for nav ─── */
+.section[id] {
+  scroll-margin-top: 64px;
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV BAR ═══════════════ -->
+<nav class="navbar">
+  <div class="nav-left">
+    <span class="nav-title">ACEDIT</span>
+  </div>
+  <div class="nav-links">
+    <a href="../index.html">Home</a>
+    <a href="specimen/index.html">Specimen</a>
+    <a href="allocation-explorer.html">Allocation</a>
+    <a href="constants-dashboard.html" class="active">Constants</a>
+    <a href="features-reference.html">Features</a>
+    <a href="geometry-workbench.html">Geometry</a>
+    <a href="pipeline-monitor.html">Pipeline</a>
+    <a href="../anti-substrate/anti-substrate-cym.html">Anti-Substrate</a>
+  </div>
+</nav>
+
+<div class="main-content">
+
+<!-- ═══════════════ SECTION 1 : AXIOM DISPLAY ═══════════════ -->
+<div class="section" id="axioms">
+  <div class="section-header">
+    <span class="section-number">01</span>
+    <span class="section-title">Axioms</span>
+    <span class="section-subtitle">Irreducible seeds of the derivation chain</span>
+  </div>
+  <div class="axiom-grid">
+    <div class="axiom-card">
+      <div class="axiom-symbol">&phi;</div>
+      <div class="axiom-formula">(1 + &radic;5) / 2</div>
+      <div class="axiom-value">1.6180339887<span class="digits-muted">49895...</span></div>
+    </div>
+    <div class="axiom-card">
+      <div class="axiom-symbol" style="color: var(--magenta);">&tau;</div>
+      <div class="axiom-formula">1 / &phi;</div>
+      <div class="axiom-value">0.6180339887<span class="digits-muted">49895...</span></div>
+    </div>
+    <div class="spiral-container">
+      <canvas id="spiralCanvas" width="280" height="280"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 2 : DERIVATION TREE ═══════════════ -->
+<div class="section" id="derivation">
+  <div class="section-header">
+    <span class="section-number">02</span>
+    <span class="section-title">Derivation Tree</span>
+    <span class="section-subtitle">Every constant flows from phi</span>
+  </div>
+  <div class="tree-container">
+    <svg id="derivationTree" width="1000" height="620" viewBox="0 0 1000 620"></svg>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 3 : FONT METRICS TABLE ═══════════════ -->
+<div class="section" id="metrics">
+  <div class="section-header">
+    <span class="section-number">03</span>
+    <span class="section-title">Font Metrics</span>
+    <span class="section-subtitle">Numerical spine of the typeface</span>
+  </div>
+  <div class="metrics-tabs">
+    <button class="metrics-tab active-cyan" data-group="metrics">Metrics</button>
+    <button class="metrics-tab" data-group="strokes">Strokes</button>
+    <button class="metrics-tab" data-group="advances">Advances</button>
+    <button class="metrics-tab" data-group="sidebearings">Sidebearings</button>
+    <button class="metrics-tab" data-group="tensions">Tensions</button>
+  </div>
+  <div class="metrics-table-wrap">
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+          <th>Derivation</th>
+          <th>Proportion of UPM</th>
+        </tr>
+      </thead>
+      <tbody id="metricsBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 4 : ANGLE PALETTE WHEEL ═══════════════ -->
+<div class="section" id="angles">
+  <div class="section-header">
+    <span class="section-number">04</span>
+    <span class="section-title">Angle Palette</span>
+    <span class="section-subtitle">8 permitted angles from three geometric families</span>
+  </div>
+  <div class="angle-section">
+    <div class="angle-canvas-wrap">
+      <canvas id="angleCanvas" width="370" height="370"></canvas>
+    </div>
+    <div class="angle-legend">
+      <div class="angle-family">
+        <div class="angle-family-title hex">Hexagonal Family</div>
+        <span class="angle-tag hex">120&deg;</span>
+        <span class="angle-tag hex">60&deg;</span>
+        <span class="angle-tag hex">30&deg;</span>
+        <span class="angle-tag hex">6&deg;</span>
+        <div style="margin-top:8px; font-size:11px; color:var(--text-muted);">
+          Multiples and subdivisions of 60&deg; &mdash; the hexagonal lattice.
+        </div>
+      </div>
+      <div class="angle-family">
+        <div class="angle-family-title pent">Pentagonal Family</div>
+        <span class="angle-tag pent">108&deg;</span>
+        <span class="angle-tag pent">72&deg;</span>
+        <span class="angle-tag pent">36&deg;</span>
+        <div style="margin-top:8px; font-size:11px; color:var(--text-muted);">
+          Interior and exterior angles of the regular pentagon &mdash; phi-linked.
+        </div>
+      </div>
+      <div class="angle-family">
+        <div class="angle-family-title cube">Cubic Family</div>
+        <span class="angle-tag cube">90&deg;</span>
+        <div style="margin-top:8px; font-size:11px; color:var(--text-muted);">
+          The right angle &mdash; Cartesian axis and square grid.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ SECTION 5 : VERIFICATION PANEL ═══════════════ -->
+<div class="section" id="verification">
+  <div class="section-header">
+    <span class="section-number">05</span>
+    <span class="section-title">Live Verification</span>
+    <span class="section-subtitle">41 checks from verify_constants.py, re-run in JavaScript</span>
+  </div>
+  <div class="verify-summary" id="verifySummary">
+    <div>
+      <div class="verify-count" id="verifyCount">--/41</div>
+      <div class="verify-label">checks passed</div>
+    </div>
+    <div id="verifyStatus" style="font-size:13px; color:var(--text-muted);">Running...</div>
+  </div>
+  <div class="verify-grid" id="verifyGrid"></div>
+</div>
+
+<!-- ═══════════════ SECTION 6 : TIMING CONSTANTS ═══════════════ -->
+<div class="section" id="timing">
+  <div class="section-header">
+    <span class="section-number">06</span>
+    <span class="section-title">Timing Constants</span>
+    <span class="section-subtitle">Five phi-power periods &mdash; incommensurable oscillators</span>
+  </div>
+  <div class="timing-grid" id="timingCards"></div>
+  <div class="oscillator-wrap">
+    <div class="oscillator-legend" id="oscLegend"></div>
+    <canvas id="oscillatorCanvas" height="220"></canvas>
+  </div>
+</div>
+
+</div><!-- .main-content -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CONSTANTS  (mirror of constants.py)
+// ═══════════════════════════════════════════════════════════════
+const PHI       = (1 + Math.sqrt(5)) / 2;       // 1.6180339887498949
+const TAU       = 1 / PHI;                      // 0.6180339887498948
+const PHI_INV   = TAU;
+const ALPHA     = PHI_INV ** 2;                  // 0.3819660112501051
+const BETA      = ALPHA ** 2;                    // 0.1458980337503154
+const LAMBDA    = (5/3) ** 4;                    // 7.7160493827160508
+const MU_P      = 3 / 5;                        // 0.6
+const MU_T      = MU_P + BETA;                  // 0.7458980337503154
+const LAMBDA_C  = 2 * Math.PI / Math.sqrt(LAMBDA); // 2.2619467105846507
+const LAMBDA_C_SQ = LAMBDA_C ** 2;              // 5.1164029215247213
+const G_DIFF    = PHI_INV ** 6;                  // 0.0557280900008412
+const K_FORM    = 0.924;
+const UPM       = 1000;
+
+const METRICS = {
+  unitsPerEm:                UPM,
+  ascender:                  Math.round(UPM * 4 / 5),
+  descender:                 Math.round(-UPM * 1 / 5),
+  capHeight:                 Math.round(UPM / PHI),
+  xHeight:                   Math.round(UPM * ALPHA),
+  openTypeOS2TypoAscender:   Math.round(UPM * 4 / 5),
+  openTypeOS2TypoDescender:  Math.round(-UPM * 1 / 5),
+  openTypeOS2TypoLineGap:    0,
+  openTypeOS2WinAscent:      UPM,
+  openTypeOS2WinDescent:     Math.round(UPM * 1 / 5),
+  openTypeHheaAscender:      Math.round(UPM * 4 / 5),
+  openTypeHheaDescender:     Math.round(-UPM * 1 / 5),
+  openTypeHheaLineGap:       0,
+};
+
+const STROKES = {
+  primary:   Math.round(UPM * BETA / 2),
+  secondary: Math.round(UPM * BETA / 2 * ALPHA),
+  hairline:  Math.round(UPM * BETA / 2 * BETA),
+};
+
+const ADVANCES = {
+  standard: Math.round(UPM / PHI),
+  narrow:   Math.round(UPM * ALPHA),
+  wide:     UPM,
+};
+
+const SIDEBEARINGS = {
+  standard: STROKES.primary,
+  tight:    36,
+  wide:     Math.round(UPM * BETA),
+};
+
+const TENSIONS = {
+  standard: Math.round(ADVANCES.standard * K_FORM),
+  tight:    Math.round(ADVANCES.narrow * K_FORM),
+  loose:    Math.round(ADVANCES.narrow * K_FORM / PHI),
+};
+
+const ANGLES = [120, 108, 90, 72, 60, 36, 30, 6];
+
+
+// ═══════════════════════════════════════════════════════════════
+// 1. GOLDEN SPIRAL ANIMATION
+// ═══════════════════════════════════════════════════════════════
+(function drawSpiral() {
+  const canvas = document.getElementById('spiralCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  let angle = 0;
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    // Draw golden spiral using polar equation r = phi^(2*theta/pi)
+    ctx.beginPath();
+    const maxTheta = 6 * Math.PI;
+    const scale = 3.2;
+    for (let t = 0; t <= maxTheta; t += 0.02) {
+      const r = scale * Math.pow(PHI, 2 * t / Math.PI);
+      if (r > W / 2) break;
+      const x = cx + r * Math.cos(t + angle);
+      const y = cy - r * Math.sin(t + angle);
+      if (t === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = 'rgba(0, 219, 192, 0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw golden rectangles (fading)
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(-angle);
+    let s = 4;
+    for (let i = 0; i < 10; i++) {
+      const a = 0.3 - i * 0.025;
+      if (a <= 0) break;
+      ctx.strokeStyle = `rgba(219, 184, 0, ${a})`;
+      ctx.lineWidth = 0.8;
+      ctx.strokeRect(-s / 2, -s / 2, s, s);
+      s *= PHI;
+      ctx.rotate(Math.PI / 2);
+    }
+    ctx.restore();
+
+    // phi symbol at center
+    ctx.font = 'italic 22px "Cormorant Garamond", serif';
+    ctx.fillStyle = 'rgba(0, 219, 192, 0.5)';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('\u03C6', cx, cy);
+
+    angle += 0.003;
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// 2. DERIVATION TREE (SVG)
+// ═══════════════════════════════════════════════════════════════
+(function drawDerivationTree() {
+  const svg = document.getElementById('derivationTree');
+  const ns = 'http://www.w3.org/2000/svg';
+
+  function el(tag, attrs) {
+    const e = document.createElementNS(ns, tag);
+    for (const [k, v] of Object.entries(attrs || {})) e.setAttribute(k, v);
+    return e;
+  }
+
+  // Color depths
+  const depthColors = ['#00DBC0', '#00b8a0', '#DB0098', '#b80080', '#DBB800', '#b89800'];
+  function colorForDepth(d) { return depthColors[Math.min(d, depthColors.length - 1)]; }
+  function bgForDepth(d) {
+    const c = colorForDepth(d);
+    return c + '18';
+  }
+
+  // Node data: id, symbol, value, formula, x, y, depth
+  const nodes = [
+    { id:'phi',     sym:'\u03C6',         val:'1.61803...',  form:'(1+\u221A5)/2',          x:500, y:40,  depth:0 },
+    { id:'tau',     sym:'\u03C4',         val:'0.61803...',  form:'1/\u03C6',               x:200, y:150, depth:1 },
+    { id:'alpha',   sym:'\u03B1',         val:'0.38196...',  form:'\u03C6\u207B\u00B2',     x:120, y:270, depth:2 },
+    { id:'beta',    sym:'\u03B2',         val:'0.14589...',  form:'\u03C6\u207B\u2074',     x:50,  y:390, depth:3 },
+    { id:'g',       sym:'g',              val:'0.05572...',  form:'\u03C6\u207B\u2076',     x:200, y:500, depth:4 },
+    { id:'lambda',  sym:'\u03BB',         val:'7.71604...',  form:'(5/3)\u2074',            x:500, y:150, depth:1 },
+    { id:'lambdaC', sym:'\u03BB\u1D04',   val:'2.26194...',  form:'2\u03C0/\u221A\u03BB',   x:500, y:270, depth:2 },
+    { id:'lcSq',    sym:'\u03BB\u1D04\u00B2', val:'5.11640...', form:'\u03BB\u1D04\u00B2',  x:500, y:390, depth:3 },
+    { id:'muP',     sym:'\u03BC\u209A',   val:'0.60000',     form:'3/5',                    x:780, y:150, depth:1 },
+    { id:'muT',     sym:'\u03BC\u209C',   val:'0.74589...',  form:'\u03BC\u209A + \u03B2',  x:780, y:270, depth:2 },
+    { id:'kform',   sym:'K',              val:'0.924',       form:'UCF formation',          x:900, y:150, depth:1 },
+    // Font metric leaves
+    { id:'cap',     sym:'cap',            val:'618',         form:'UPM/\u03C6',             x:240, y:390, depth:3 },
+    { id:'xh',      sym:'xH',             val:'382',         form:'UPM\u00B7\u03B1',        x:370, y:390, depth:3 },
+    { id:'stk',     sym:'stk',            val:'73',          form:'UPM\u00B7\u03B2/2',      x:50,  y:520, depth:4 },
+    { id:'adv',     sym:'adv',            val:'618',         form:'UPM/\u03C6',             x:660, y:390, depth:3 },
+    { id:'tens',    sym:'T',              val:'571',         form:'adv\u00B7K',             x:900, y:390, depth:3 },
+  ];
+
+  // Edges: [from_id, to_id]
+  const edges = [
+    ['phi','tau'], ['tau','alpha'], ['alpha','beta'], ['beta','g'],
+    ['phi','lambda'], ['lambda','lambdaC'], ['lambdaC','lcSq'],
+    ['phi','muP'], ['muP','muT'], ['beta','muT'],
+    ['phi','kform'],
+    ['tau','cap'], ['alpha','xh'],
+    ['beta','stk'],
+    ['tau','adv'],
+    ['kform','tens'], ['adv','tens'],
+  ];
+
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.id] = n);
+
+  // Draw edges
+  edges.forEach(([fid, tid]) => {
+    const f = nodeMap[fid], t = nodeMap[tid];
+    const line = el('line', {
+      x1: f.x, y1: f.y + 20,
+      x2: t.x, y2: t.y - 20,
+      stroke: colorForDepth(t.depth),
+      'stroke-opacity': '0.35',
+      'stroke-width': '1.5',
+    });
+    svg.appendChild(line);
+  });
+
+  // Draw nodes
+  nodes.forEach(n => {
+    const g = el('g', { transform: `translate(${n.x}, ${n.y})` });
+
+    // Background rect
+    const rw = n.id === 'phi' ? 140 : 120;
+    const rh = n.id === 'phi' ? 56 : 50;
+    g.appendChild(el('rect', {
+      x: -rw/2, y: -rh/2, width: rw, height: rh,
+      rx: 6, ry: 6,
+      fill: bgForDepth(n.depth),
+      stroke: colorForDepth(n.depth),
+      'stroke-width': n.id === 'phi' ? '2' : '1',
+      'stroke-opacity': '0.6',
+    }));
+
+    // Symbol
+    const symText = el('text', {
+      x: -rw/2 + 12, y: 4,
+      fill: colorForDepth(n.depth),
+      'font-family': "'Cormorant Garamond', serif",
+      'font-size': n.id === 'phi' ? '22' : '16',
+      'font-style': 'italic',
+      'font-weight': '600',
+      'dominant-baseline': 'middle',
+    });
+    symText.textContent = n.sym;
+    g.appendChild(symText);
+
+    // Value
+    const valText = el('text', {
+      x: rw/2 - 10, y: -6,
+      fill: '#e0e0ec',
+      'font-family': "'JetBrains Mono', monospace",
+      'font-size': '11',
+      'text-anchor': 'end',
+      'dominant-baseline': 'middle',
+    });
+    valText.textContent = n.val;
+    g.appendChild(valText);
+
+    // Formula
+    const formText = el('text', {
+      x: rw/2 - 10, y: 12,
+      fill: '#8888a0',
+      'font-family': "'JetBrains Mono', monospace",
+      'font-size': '9',
+      'text-anchor': 'end',
+      'dominant-baseline': 'middle',
+    });
+    formText.textContent = n.form;
+    g.appendChild(formText);
+
+    svg.appendChild(g);
+  });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// 3. FONT METRICS TABLE
+// ═══════════════════════════════════════════════════════════════
+(function buildMetricsTable() {
+  const groups = {
+    metrics: {
+      color: 'cyan',
+      data: [
+        ['unitsPerEm',                METRICS.unitsPerEm,                'UPM (base unit)'],
+        ['ascender',                   METRICS.ascender,                  'UPM * 4/5'],
+        ['descender',                  METRICS.descender,                 '-UPM * 1/5'],
+        ['capHeight',                  METRICS.capHeight,                 'UPM / \u03C6'],
+        ['xHeight',                    METRICS.xHeight,                   'UPM \u00B7 \u03B1'],
+        ['OS2 TypoAscender',           METRICS.openTypeOS2TypoAscender,   'UPM * 4/5'],
+        ['OS2 TypoDescender',          METRICS.openTypeOS2TypoDescender,  '-UPM * 1/5'],
+        ['OS2 TypoLineGap',            METRICS.openTypeOS2TypoLineGap,    '0'],
+        ['OS2 WinAscent',              METRICS.openTypeOS2WinAscent,      'UPM'],
+        ['OS2 WinDescent',             METRICS.openTypeOS2WinDescent,     'UPM * 1/5'],
+        ['hhea Ascender',              METRICS.openTypeHheaAscender,      'UPM * 4/5'],
+        ['hhea Descender',             METRICS.openTypeHheaDescender,     '-UPM * 1/5'],
+        ['hhea LineGap',               METRICS.openTypeHheaLineGap,       '0'],
+      ]
+    },
+    strokes: {
+      color: 'magenta',
+      data: [
+        ['primary',   STROKES.primary,   'UPM \u00B7 \u03B2 / 2'],
+        ['secondary', STROKES.secondary, 'UPM \u00B7 \u03B2 / 2 \u00B7 \u03B1'],
+        ['hairline',  STROKES.hairline,  'UPM \u00B7 \u03B2 / 2 \u00B7 \u03B2'],
+      ]
+    },
+    advances: {
+      color: 'cyan',
+      data: [
+        ['standard', ADVANCES.standard, 'UPM / \u03C6'],
+        ['narrow',   ADVANCES.narrow,   'UPM \u00B7 \u03B1'],
+        ['wide',     ADVANCES.wide,     'UPM'],
+      ]
+    },
+    sidebearings: {
+      color: 'magenta',
+      data: [
+        ['standard', SIDEBEARINGS.standard, 'stroke.primary'],
+        ['tight',    SIDEBEARINGS.tight,    'deficit angle (36)'],
+        ['wide',     SIDEBEARINGS.wide,     'UPM \u00B7 \u03B2'],
+      ]
+    },
+    tensions: {
+      color: 'yellow',
+      data: [
+        ['standard', TENSIONS.standard, 'adv.standard \u00B7 K'],
+        ['tight',    TENSIONS.tight,    'adv.narrow \u00B7 K'],
+        ['loose',    TENSIONS.loose,    'adv.narrow \u00B7 K / \u03C6'],
+      ]
+    }
+  };
+
+  const body = document.getElementById('metricsBody');
+  const tabs = document.querySelectorAll('.metrics-tab');
+  let active = 'metrics';
+
+  function render() {
+    const g = groups[active];
+    body.innerHTML = '';
+    g.data.forEach(([name, val, formula]) => {
+      const absVal = Math.abs(val);
+      const pct = Math.min((absVal / UPM) * 100, 100);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${name}</td>
+        <td class="value-cell">${val}</td>
+        <td class="formula-cell">${formula}</td>
+        <td class="bar-cell">
+          <div class="bar-bg">
+            <div class="bar-fill ${g.color}" style="width:${pct}%"></div>
+          </div>
+        </td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.className = 'metrics-tab');
+      const grp = tab.dataset.group;
+      const colorMap = { metrics:'cyan', strokes:'magenta', advances:'cyan', sidebearings:'magenta', tensions:'yellow' };
+      tab.classList.add(`active-${colorMap[grp]}`);
+      active = grp;
+      render();
+    });
+  });
+
+  render();
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// 4. ANGLE PALETTE WHEEL
+// ═══════════════════════════════════════════════════════════════
+(function drawAngleWheel() {
+  const canvas = document.getElementById('angleCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2;
+  const R = 155;
+
+  // Classify angles
+  const hexAngles  = [120, 60, 30, 6];
+  const pentAngles = [108, 72, 36];
+  const cubeAngles = [90];
+
+  function angleFamily(a) {
+    if (hexAngles.includes(a))  return { color: '#00DBC0', dim: 'rgba(0,219,192,0.2)' };
+    if (pentAngles.includes(a)) return { color: '#DB0098', dim: 'rgba(219,0,152,0.2)' };
+    return { color: '#DBB800', dim: 'rgba(219,184,0,0.2)' };
+  }
+
+  // Background
+  ctx.fillStyle = 'rgba(10,10,15,0)';
+  ctx.fillRect(0, 0, W, H);
+
+  // Reference circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, 2 * Math.PI);
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Inner circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fill();
+
+  // Draw each angle as a radial line from center
+  ANGLES.forEach(deg => {
+    const rad = deg * Math.PI / 180;
+    const fam = angleFamily(deg);
+
+    // Swept wedge
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R * 0.7, 0, rad);
+    ctx.closePath();
+    ctx.fillStyle = fam.dim;
+    ctx.fill();
+
+    // 0-degree reference line
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + R + 10, cy);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+
+    // Angle line
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    const lx = cx + (R + 10) * Math.cos(rad);
+    const ly = cy - (R + 10) * Math.sin(rad);
+    ctx.lineTo(lx, ly);
+    ctx.strokeStyle = fam.color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dot at end
+    ctx.beginPath();
+    ctx.arc(lx, ly, 3.5, 0, 2 * Math.PI);
+    ctx.fillStyle = fam.color;
+    ctx.fill();
+
+    // Label
+    const labelR = R + 24;
+    const labelX = cx + labelR * Math.cos(rad);
+    const labelY = cy - labelR * Math.sin(rad);
+    ctx.font = '500 12px "JetBrains Mono", monospace';
+    ctx.fillStyle = fam.color;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(deg + '\u00B0', labelX, labelY);
+
+    // Small arc for the angle
+    ctx.beginPath();
+    const arcR = 20 + deg * 0.15;
+    ctx.arc(cx, cy, arcR, -rad, 0);
+    ctx.strokeStyle = fam.color;
+    ctx.lineWidth = 0.8;
+    ctx.globalAlpha = 0.4;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  });
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// 5. LIVE VERIFICATION  (41 checks from verify_constants.py)
+// ═══════════════════════════════════════════════════════════════
+(function runVerification() {
+  const grid = document.getElementById('verifyGrid');
+  const results = [];
+
+  function check(name, computed, expected, tol) {
+    tol = tol || 1e-6;
+    let ok;
+    if (typeof expected === 'number' && !Number.isInteger(expected)) {
+      ok = Math.abs(computed - expected) < tol;
+    } else if (typeof expected === 'boolean') {
+      ok = computed === expected;
+    } else if (Array.isArray(expected)) {
+      ok = JSON.stringify(computed) === JSON.stringify(expected);
+    } else {
+      ok = computed === expected;
+    }
+    results.push({ name, computed, expected, ok });
+    return ok;
+  }
+
+  function addGroup(title) {
+    results.push({ groupTitle: title });
+  }
+
+  // 1. Core Constants (10 checks)
+  addGroup('Core Constants');
+  check('PHI',                   PHI,        1.6180339887498949);
+  check('TAU (1/\u03C6)',        TAU,        0.6180339887498948);
+  check('ALPHA (\u03C6\u207B\u00B2)', ALPHA, 0.3819660112501051);
+  check('BETA (\u03C6\u207B\u2074)',  BETA,  0.1458980337503154);
+  check('LAMBDA (5/3)\u2074',   LAMBDA,      7.7160493827160508);
+  check('MU_P (3/5)',           MU_P,         0.6);
+  check('MU_T (\u03BC\u209A + \u03B2)', MU_T, 0.7458980337503154);
+  check('LAMBDA_C (2\u03C0/\u221A\u03BB)', LAMBDA_C, 2.2619467105846507);
+  check('LAMBDA_C_SQ',         LAMBDA_C_SQ,  5.1164029215247213);
+  check('G_DIFF (\u03C6\u207B\u2076)', G_DIFF, 0.0557280900008412);
+
+  // 2. Font Metrics (13 checks)
+  addGroup('Font Metrics');
+  check('capHeight',                  METRICS.capHeight,                 618);
+  check('xHeight',                    METRICS.xHeight,                   382);
+  check('ascender',                   METRICS.ascender,                  800);
+  check('descender',                  METRICS.descender,                 -200);
+  check('unitsPerEm',                 METRICS.unitsPerEm,                1000);
+  check('OS2 TypoAscender',           METRICS.openTypeOS2TypoAscender,   800);
+  check('OS2 TypoDescender',          METRICS.openTypeOS2TypoDescender,  -200);
+  check('OS2 TypoLineGap',            METRICS.openTypeOS2TypoLineGap,    0);
+  check('OS2 WinAscent',              METRICS.openTypeOS2WinAscent,      1000);
+  check('OS2 WinDescent',             METRICS.openTypeOS2WinDescent,     200);
+  check('hhea Ascender',              METRICS.openTypeHheaAscender,      800);
+  check('hhea Descender',             METRICS.openTypeHheaDescender,     -200);
+  check('hhea LineGap',               METRICS.openTypeHheaLineGap,       0);
+
+  // 3. Stroke Widths (3 checks)
+  addGroup('Stroke Widths');
+  check('stroke primary',   STROKES.primary,   73);
+  check('stroke secondary', STROKES.secondary, 28);
+  check('stroke hairline',  STROKES.hairline,  11);
+
+  // 4. Advance Widths (3 checks)
+  addGroup('Advance Widths');
+  check('advance standard', ADVANCES.standard, 618);
+  check('advance narrow',   ADVANCES.narrow,   382);
+  check('advance wide',     ADVANCES.wide,     1000);
+
+  // 5. Sidebearings (3 checks)
+  addGroup('Sidebearings');
+  check('sidebearing standard', SIDEBEARINGS.standard, 73);
+  check('sidebearing tight',    SIDEBEARINGS.tight,    36);
+  check('sidebearing wide',     SIDEBEARINGS.wide,     146);
+
+  // 6. Tensions (3 checks)
+  addGroup('Tensions');
+  check('tension standard', TENSIONS.standard, 571);
+  check('tension tight',    TENSIONS.tight,    353);
+  check('tension loose',    TENSIONS.loose,    218);
+
+  // 7. APL Block Size (1 check)
+  addGroup('APL Block Size');
+  check('APL block (9*3*6*6)', 9*3*6*6, 972);
+
+  // 8. Pipeline Constants (3 checks)
+  addGroup('Pipeline Constants');
+  const transfer_coeff = K_FORM;
+  check('transfer coefficient (K_FORM)', transfer_coeff, 0.924);
+  const defect_after_6 = (1 - K_FORM) ** 6;
+  const expected_defect = (1 - 0.924) ** 6;
+  check('defect after 6 stages', defect_after_6, expected_defect);
+  check('defect < 1e-5', defect_after_6 < 1e-5, true);
+
+  // 9. Angle Palette (2 checks)
+  addGroup('Angle Palette');
+  check('angle palette',   ANGLES, [120, 108, 90, 72, 60, 36, 30, 6]);
+  check('angle tolerance',  0.01,  0.01);
+
+  // Render results
+  let passCount = 0, totalChecks = 0;
+  results.forEach(r => {
+    if (r.groupTitle) {
+      const h = document.createElement('div');
+      h.className = 'verify-group-title';
+      h.textContent = r.groupTitle;
+      grid.appendChild(h);
+      return;
+    }
+    totalChecks++;
+    if (r.ok) passCount++;
+    const row = document.createElement('div');
+    row.className = 'verify-row';
+
+    const compStr = typeof r.computed === 'object' ? JSON.stringify(r.computed) :
+                    typeof r.computed === 'number' ? (Number.isInteger(r.computed) ? r.computed : r.computed.toFixed(10)) :
+                    String(r.computed);
+    const expStr = typeof r.expected === 'object' ? JSON.stringify(r.expected) :
+                   typeof r.expected === 'number' ? (Number.isInteger(r.expected) ? r.expected : r.expected.toFixed(10)) :
+                   String(r.expected);
+
+    row.innerHTML = `
+      <span class="verify-icon ${r.ok ? 'pass' : 'fail'}">${r.ok ? '\u2713' : '\u2717'}</span>
+      <span class="verify-name">${r.name}</span>
+      <span class="verify-values">${compStr} ${r.ok ? '=' : '\u2260'} ${expStr}</span>`;
+    grid.appendChild(row);
+  });
+
+  // Summary
+  const countEl = document.getElementById('verifyCount');
+  const statusEl = document.getElementById('verifyStatus');
+  countEl.textContent = `${passCount}/${totalChecks}`;
+  countEl.className = 'verify-count ' + (passCount === totalChecks ? 'all-pass' : 'has-fail');
+  statusEl.textContent = passCount === totalChecks ? 'ALL CHECKS PASSED' : `${totalChecks - passCount} FAILED`;
+  statusEl.style.color = passCount === totalChecks ? 'var(--green)' : 'var(--red)';
+})();
+
+
+// ═══════════════════════════════════════════════════════════════
+// 6. TIMING CONSTANTS
+// ═══════════════════════════════════════════════════════════════
+(function timingSection() {
+  const timingData = [
+    { name: 'T_phi',     formula: '\u03C6\u00B9',  power: 1,  color: '#00DBC0' },
+    { name: 'T_breath',  formula: '\u03C6\u00B2',  power: 2,  color: '#00b8a0' },
+    { name: 'T_pulse',   formula: '\u03C6\u00B3',  power: 3,  color: '#DB0098' },
+    { name: 'T_flicker', formula: '\u03C6\u2074',  power: 4,  color: '#b80080' },
+    { name: 'T_drift',   formula: '\u03C6\u2075',  power: 5,  color: '#DBB800' },
+  ];
+
+  // Render cards
+  const cardsEl = document.getElementById('timingCards');
+  timingData.forEach(t => {
+    const period = Math.pow(PHI, t.power);
+    const card = document.createElement('div');
+    card.className = 'timing-card';
+    card.innerHTML = `
+      <div class="timing-name" style="color:${t.color}">${t.name}</div>
+      <div class="timing-formula">${t.formula}</div>
+      <div class="timing-value" style="color:${t.color}">${period.toFixed(4)}
+        <span class="timing-unit">s</span>
+      </div>`;
+    cardsEl.appendChild(card);
+  });
+
+  // Render oscillator legend
+  const legendEl = document.getElementById('oscLegend');
+  timingData.forEach(t => {
+    const lbl = document.createElement('div');
+    lbl.className = 'osc-label';
+    lbl.innerHTML = `<span class="osc-swatch" style="background:${t.color}"></span>${t.name}`;
+    legendEl.appendChild(lbl);
+  });
+
+  // Oscillator animation
+  const canvas = document.getElementById('oscillatorCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width - 32;
+    canvas.height = 220;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const startTime = performance.now();
+
+  function drawOscillators() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
+    for (let i = 1; i < 4; i++) {
+      const y1 = H / 2 - (H / 2) * (i / 4);
+      const y2 = H / 2 + (H / 2) * (i / 4);
+      ctx.beginPath();
+      ctx.moveTo(0, y1); ctx.lineTo(W, y1);
+      ctx.moveTo(0, y2); ctx.lineTo(W, y2);
+      ctx.stroke();
+    }
+
+    const now = (performance.now() - startTime) / 1000;
+    const amp = (H / 2 - 16) / timingData.length;
+
+    timingData.forEach((t, idx) => {
+      const period = Math.pow(PHI, t.power);
+      const freq = 1 / period;
+      const yOffset = (idx - 2) * amp * 0.4;
+
+      ctx.beginPath();
+      for (let px = 0; px < W; px++) {
+        const tSec = now - (W - px) * 0.008;
+        const val = Math.sin(2 * Math.PI * freq * tSec);
+        const y = H / 2 + yOffset + val * amp * 0.8;
+        if (px === 0) ctx.moveTo(px, y);
+        else ctx.lineTo(px, y);
+      }
+      ctx.strokeStyle = t.color;
+      ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.75;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    });
+
+    requestAnimationFrame(drawOscillators);
+  }
+
+  drawOscillators();
+})();
+</script>
+</body>
+</html>

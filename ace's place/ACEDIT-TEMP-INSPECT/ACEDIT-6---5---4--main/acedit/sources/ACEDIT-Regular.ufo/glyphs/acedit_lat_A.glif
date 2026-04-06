@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<glyph name="acedit.lat.A" format="2">
+  <advance width="618" />
+  <unicode hex="E445" />
+  <outline>
+    <contour>
+      <point x="295" y="169" type="line" />
+      <point x="295" y="449" type="line" />
+      <point x="323" y="449" type="line" />
+      <point x="323" y="169" type="line" />
+    </contour>
+    <contour>
+      <point x="169" y="323" type="line" />
+      <point x="449" y="323" type="line" />
+      <point x="449" y="295" type="line" />
+      <point x="169" y="295" type="line" />
+    </contour>
+    <contour>
+      <point x="180.756" y="251.124" type="line" />
+      <point x="423.244" y="391.124" type="line" />
+      <point x="437.244" y="366.876" type="line" />
+      <point x="194.756" y="226.876" type="line" />
+    </contour>
+    <contour>
+      <point x="423.244" y="226.876" type="line" />
+      <point x="180.756" y="366.876" type="line" />
+      <point x="194.756" y="391.124" type="line" />
+      <point x="437.244" y="251.124" type="line" />
+    </contour>
+  </outline>
+</glyph>

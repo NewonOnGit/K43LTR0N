@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<glyph name="acedit.chron.001" format="2">
+  <advance width="618" />
+  <unicode hex="E3F4" />
+  <outline>
+    <contour>
+      <point x="451.028" y="391" type="line" />
+      <point x="309" y="473" type="line" />
+      <point x="166.972" y="391" type="line" />
+      <point x="166.972" y="227" type="line" />
+      <point x="309" y="145" type="line" />
+      <point x="451.028" y="227" type="line" />
+    </contour>
+    <contour>
+      <point x="426.779" y="241" type="line" />
+      <point x="309" y="173" type="line" />
+      <point x="191.22" y="241" type="line" />
+      <point x="191.22" y="377" type="line" />
+      <point x="309" y="445" type="line" />
+      <point x="426.779" y="377" type="line" />
+    </contour>
+    <contour>
+      <point x="197.22" y="314.5" type="line" />
+      <point x="420.779" y="314.5" type="line" />
+      <point x="420.779" y="303.5" type="line" />
+      <point x="197.22" y="303.5" type="line" />
+    </contour>
+  </outline>
+</glyph>

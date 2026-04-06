@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<glyph name="acedit.gov.004" format="2">
+  <advance width="618" />
+  <unicode hex="E413" />
+  <outline>
+    <contour>
+      <point x="188.934" y="188.934" type="line" />
+      <point x="429.066" y="188.934" type="line" />
+      <point x="429.066" y="429.066" type="line" />
+      <point x="188.934" y="429.066" type="line" />
+    </contour>
+    <contour>
+      <point x="216.934" y="401.066" type="line" />
+      <point x="401.066" y="401.066" type="line" />
+      <point x="401.066" y="216.934" type="line" />
+      <point x="216.934" y="216.934" type="line" />
+    </contour>
+    <contour>
+      <point x="221.451" y="168.934" type="line" />
+      <point x="237.451" y="168.934" type="line" />
+      <point x="237.451" y="184.934" type="line" />
+      <point x="221.451" y="184.934" type="line" />
+    </contour>
+    <contour>
+      <point x="274.483" y="168.934" type="line" />
+      <point x="290.483" y="168.934" type="line" />
+      <point x="290.483" y="184.934" type="line" />
+      <point x="274.483" y="184.934" type="line" />
+    </contour>
+    <contour>
+      <point x="327.517" y="168.934" type="line" />
+      <point x="343.517" y="168.934" type="line" />
+      <point x="343.517" y="184.934" type="line" />
+      <point x="327.517" y="184.934" type="line" />
+    </contour>
+    <contour>
+      <point x="380.55" y="168.934" type="line" />
+      <point x="396.55" y="168.934" type="line" />
+      <point x="396.55" y="184.934" type="line" />
+      <point x="380.55" y="184.934" type="line" />
+    </contour>
+  </outline>
+</glyph>

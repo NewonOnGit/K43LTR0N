@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prism Patent System — Inventor Session</title>
+  <style>
+    :root {
+      --bg-primary: #0d1117;
+      --bg-secondary: #161b22;
+      --bg-tertiary: #21262d;
+      --text-primary: #e6edf3;
+      --text-secondary: #8b949e;
+      --accent-green: #3fb950;
+      --accent-yellow: #d29922;
+      --accent-red: #f85149;
+      --accent-blue: #58a6ff;
+      --border: #30363d;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      grid-template-rows: 48px 1fr;
+    }
+
+    /* Header */
+    .header {
+      grid-column: 1 / -1;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+    }
+    .header h1 { font-size: 14px; font-weight: 600; }
+    .header .status { font-size: 12px; color: var(--text-secondary); }
+
+    /* Main Chat Panel */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .message--user {
+      align-self: flex-end;
+      background: var(--accent-blue);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .message--ai {
+      align-self: flex-start;
+      background: var(--bg-tertiary);
+      border-bottom-left-radius: 4px;
+    }
+    .chat-input-area {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+    }
+    .chat-input-area input:focus { border-color: var(--accent-blue); }
+    .chat-input-area button {
+      padding: 10px 20px;
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .chat-input-area button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Right Sidebar */
+    .sidebar {
+      background: var(--bg-secondary);
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+    .panel h3 {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    /* Prism Object Display */
+    .prism-field {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    .prism-field:last-child { border-bottom: none; }
+    .prism-field .label { color: var(--text-secondary); }
+    .prism-field .value { color: var(--text-primary); font-weight: 500; }
+
+    /* Validation Gate */
+    .gate-indicator {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .gate-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--accent-red);
+    }
+    .gate-dot.pass { background: var(--accent-green); }
+
+    /* Pipeline Viz */
+    .pipeline-viz {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .pipeline-layer {
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      background: var(--bg-secondary);
+      border-left: 3px solid #6c757d;
+      transition: all 0.3s;
+    }
+    .pipeline-layer--active { border-left-color: var(--accent-yellow); background: #2d1f00; }
+    .pipeline-layer--complete { border-left-color: var(--accent-green); }
+    .pipeline-layer--error { border-left-color: var(--accent-red); }
+    .layer-header { display: flex; align-items: center; gap: 6px; }
+    .layer-indicator { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .layer-name { flex: 1; font-weight: 500; }
+    .layer-state { color: var(--text-secondary); font-size: 11px; }
+    .layer-metrics { font-size: 11px; color: var(--text-secondary); margin-top: 4px; }
+    .pipeline-arrow { text-align: center; color: var(--text-secondary); font-size: 10px; line-height: 1; }
+
+    /* Feedback Loops */
+    .feedback-panel { margin-top: 8px; }
+    .feedback-loop {
+      padding: 6px 8px;
+      background: #3d1f00;
+      border: 1px solid var(--accent-yellow);
+      border-radius: 4px;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+    .feedback-arrow { font-weight: 600; color: var(--accent-yellow); }
+    .feedback-reason { color: var(--text-secondary); margin-left: 8px; }
+
+    /* Action Buttons */
+    .actions { display: flex; gap: 8px; }
+    .btn {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+    }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn--primary { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+    .btn--download { background: var(--accent-green); border-color: var(--accent-green); color: #fff; }
+
+    .metric { margin-right: 8px; }
+    .error-msg { color: var(--accent-red); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Prism Patent System</h1>
+    <span class="status" id="session-status">Phase A: Awaiting inventor session</span>
+  </div>
+
+  <!-- Chat Panel -->
+  <div class="chat-panel">
+    <div class="chat-messages" id="chat-messages">
+      <div class="message message--ai">
+        Welcome to the Prism Patent System. I'm here to learn your invention's unique pattern.
+        Let's begin. Tell me about your invention — what is the core idea that cannot be reduced further?
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Describe your invention..." autofocus>
+      <button id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="sidebar">
+    <!-- Prism Object -->
+    <div class="panel">
+      <h3>Prism Object</h3>
+      <div id="prism-display">
+        <div class="prism-field"><span class="label">seed_element</span><span class="value" id="p-seed">—</span></div>
+        <div class="prism-field"><span class="label">irreducibility</span><span class="value" id="p-irr">—</span></div>
+        <div class="prism-field"><span class="label">projection</span><span class="value" id="p-proj">—</span></div>
+        <div class="prism-field"><span class="label">reflection</span><span class="value" id="p-refl">—</span></div>
+        <div class="prism-field"><span class="label">tension_points</span><span class="value" id="p-tens">—</span></div>
+        <div class="prism-field"><span class="label">emergent_claims</span><span class="value" id="p-claims">—</span></div>
+        <div class="prism-field"><span class="label">crystallization</span><span class="value" id="p-cryst">—</span></div>
+        <div class="prism-field"><span class="label">confirmation</span><span class="value" id="p-conf">—</span></div>
+      </div>
+    </div>
+
+    <!-- Validation Gate -->
+    <div class="panel">
+      <h3>Validation Gate</h3>
+      <div class="gate-indicator">
+        <span class="gate-dot" id="gate-irr" title="irreducibility > 0.7"></span>
+        <span style="font-size:11px;color:var(--text-secondary)">Irreducibility</span>
+      </div>
+      <div class="gate-indicator">
+        <span class="gate-dot" id="gate-cryst" title="crystallization > 0.6"></span>
+        <span style="font-size:11px;color:var(--text-secondary)">Crystallization</span>
+      </div>
+      <div class="gate-indicator">
+        <span class="gate-dot" id="gate-conf" title="confirmation = true"></span>
+        <span style="font-size:11px;color:var(--text-secondary)">Confirmation</span>
+      </div>
+    </div>
+
+    <!-- Pipeline Visualization -->
+    <div class="panel">
+      <h3>Pipeline (Phase B)</h3>
+      <div id="pipeline-container" class="pipeline-viz"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="panel">
+      <h3>Actions</h3>
+      <div class="actions">
+        <button class="btn btn--primary" id="run-pipeline-btn" disabled onclick="runPipeline()">Run Pipeline</button>
+        <button class="btn btn--download" id="download-btn" disabled onclick="downloadDocx()">Download .docx</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ─── State ────────────────────────────────────────────────────────────
+    const prismObject = {
+      seed_element: '', irreducibility_confidence: 0, projection: null,
+      reflection: null, tension_points: [], emergent_claims: [],
+      crystallization_confidence: 0, inventor_confirmation: false,
+      session_transcript: '', artifacts: []
+    };
+
+    let sessionPhase = 'genesis'; // genesis | dyad | triad | complete
+    const chatHistory = [];
+
+    // ─── Chat ─────────────────────────────────────────────────────────────
+    function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, 'user');
+      chatHistory.push({ role: 'user', content: text });
+      input.value = '';
+
+      // Track consent phrases
+      if (text.toLowerCase().includes('i begin the spiral')) {
+        sessionPhase = 'dyad';
+        document.getElementById('session-status').textContent = 'Phase A: Stage 2 — Dyad';
+      } else if (text.toLowerCase().includes('i accept recursion')) {
+        sessionPhase = 'triad';
+        document.getElementById('session-status').textContent = 'Phase A: Stage 3 — Triad';
+      } else if (text.toLowerCase().includes('i witness the pattern')) {
+        prismObject.inventor_confirmation = true;
+        sessionPhase = 'complete';
+        document.getElementById('session-status').textContent = 'Phase A: Complete — Prism Object ready';
+      }
+
+      // Simulate Prism Object extraction from conversation
+      updatePrismFromMessage(text);
+      updatePrismDisplay();
+      checkValidationGate();
+
+      // Simulate AI response (in production, this calls the Claude API)
+      setTimeout(() => {
+        const response = generateResponse(text, sessionPhase);
+        addMessage(response, 'ai');
+        chatHistory.push({ role: 'assistant', content: response });
+      }, 500);
+    }
+
+    function addMessage(text, role) {
+      const el = document.createElement('div');
+      el.className = `message message--${role}`;
+      el.textContent = text;
+      const container = document.getElementById('chat-messages');
+      container.appendChild(el);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // ─── Prism Extraction (simplified for demo) ───────────────────────────
+    function updatePrismFromMessage(text) {
+      if (!prismObject.seed_element && text.length > 20) {
+        prismObject.seed_element = text.slice(0, 100);
+        prismObject.irreducibility_confidence = 0.5 + Math.random() * 0.3;
+      }
+
+      if (sessionPhase === 'dyad') {
+        if (!prismObject.projection) {
+          prismObject.projection = { summary: text.slice(0, 80), elements: [text.slice(0, 40)] };
+        }
+        if (!prismObject.reflection) {
+          prismObject.reflection = { summary: 'Prior art in this domain', prior_art_refs: [] };
+        }
+        prismObject.tension_points.push({ description: text.slice(0, 50), severity: 0.5 + Math.random() * 0.4 });
+      }
+
+      if (sessionPhase === 'triad') {
+        prismObject.emergent_claims.push(text.slice(0, 80));
+        prismObject.crystallization_confidence = 0.5 + Math.random() * 0.3;
+      }
+
+      prismObject.session_transcript += `\n[${new Date().toISOString()}] ${text}`;
+    }
+
+    function updatePrismDisplay() {
+      document.getElementById('p-seed').textContent = prismObject.seed_element ? prismObject.seed_element.slice(0, 30) + '...' : '—';
+      document.getElementById('p-irr').textContent = prismObject.irreducibility_confidence.toFixed(2);
+      document.getElementById('p-proj').textContent = prismObject.projection ? prismObject.projection.elements.length + ' elements' : '—';
+      document.getElementById('p-refl').textContent = prismObject.reflection ? 'mapped' : '—';
+      document.getElementById('p-tens').textContent = prismObject.tension_points.length || '—';
+      document.getElementById('p-claims').textContent = prismObject.emergent_claims.length || '—';
+      document.getElementById('p-cryst').textContent = prismObject.crystallization_confidence.toFixed(2);
+      document.getElementById('p-conf').textContent = prismObject.inventor_confirmation ? 'YES' : 'NO';
+    }
+
+    function checkValidationGate() {
+      const g1 = prismObject.irreducibility_confidence > 0.7;
+      const g2 = prismObject.crystallization_confidence > 0.6;
+      const g3 = prismObject.inventor_confirmation;
+
+      document.getElementById('gate-irr').className = 'gate-dot' + (g1 ? ' pass' : '');
+      document.getElementById('gate-cryst').className = 'gate-dot' + (g2 ? ' pass' : '');
+      document.getElementById('gate-conf').className = 'gate-dot' + (g3 ? ' pass' : '');
+
+      document.getElementById('run-pipeline-btn').disabled = !(g1 && g2 && g3);
+    }
+
+    function generateResponse(userText, phase) {
+      switch (phase) {
+        case 'genesis':
+          return 'I hear the core of what you\'re describing. What part of this cannot be reduced further? What would you lose if I simplified it?';
+        case 'dyad':
+          return 'Interesting tension. Where does your approach push beyond what the field currently offers? What does the existing art assume that your invention contradicts?';
+        case 'triad':
+          return 'Something is crystallizing here. You\'re articulating something new — something neither the seed nor the field contained alone. Can you name it?';
+        case 'complete':
+          return 'The prism is assembled. All validation gates are green. You may now run the pipeline to process your invention through the ten-layer analysis.';
+        default:
+          return 'Tell me more about your invention.';
+      }
+    }
+
+    // ─── Pipeline Execution (stub — in production, runs server-side) ──────
+    function runPipeline() {
+      document.getElementById('session-status').textContent = 'Phase B: Processing...';
+      document.getElementById('run-pipeline-btn').disabled = true;
+
+      const container = document.getElementById('pipeline-container');
+      container.innerHTML = '';
+
+      const layerNames = [
+        'L0: Substrate', 'L1: Propagation', 'L2: Admissibility',
+        'L3: Narrowing', 'L4: Field Signature', 'L5: Integrity',
+        'L6: Regime Detection', 'L7: Routing', 'L8: Document Assembly',
+        'L9: Portfolio Oversight'
+      ];
+
+      // Simulate layer-by-layer processing
+      layerNames.forEach((name, i) => {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.className = 'pipeline-layer pipeline-layer--complete';
+          el.innerHTML = `
+            <div class="layer-header">
+              <span class="layer-indicator" style="background:#28a745"></span>
+              <span class="layer-name">${name}</span>
+              <span class="layer-state">complete</span>
+            </div>`;
+          container.appendChild(el);
+
+          if (i === 9) {
+            document.getElementById('session-status').textContent = 'Phase C: Generation complete';
+            document.getElementById('download-btn').disabled = false;
+          }
+        }, (i + 1) * 300);
+      });
+    }
+
+    function downloadDocx() {
+      alert('In production, this triggers the docx-builder with the processed signal and downloads the patent specification.');
+    }
+
+    // Enter key sends message
+    document.getElementById('chat-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
