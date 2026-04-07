@@ -819,7 +819,7 @@ async function cmdShare(): Promise<void> {
 
 // ─── Level 9: Conversation ───
 
-async function cmdRespond(silent: boolean): Promise<void> {
+async function cmdRespond(silent: boolean, overrideMsg?: string): Promise<void> {
   const config = cachedConfig();
   if (!config) { if (!silent) log(`${RED}  No companion.${RS}`); return; }
 
@@ -829,12 +829,12 @@ async function cmdRespond(silent: boolean): Promise<void> {
     ? (process.argv[fromIdx + 1] as MessageSender)
     : 'kael';
 
-  // Collect message (everything after 'respond' except flags)
-  const message = process.argv.slice(3)
+  // Message from override (speak) or argv (respond)
+  const message = overrideMsg !== undefined ? overrideMsg : process.argv.slice(3)
     .filter((a, i, arr) => a !== '--from' && a !== '--silent' && arr[i - 1] !== '--from')
     .join(' ');
 
-  if (!message) {
+  if (!message && overrideMsg === undefined) {
     if (!silent) log(`${RED}  Usage: forced-buddy respond <message> [--from kael|claude]${RS}`);
     return;
   }
@@ -1011,64 +1011,9 @@ async function cmdHear(silent: boolean): Promise<void> {
 }
 
 async function cmdSpeak(): Promise<void> {
-  const config = cachedConfig();
-  if (!config) { log(`${RED}  No companion.${RS}`); return; }
-
-  const mood = computeMood(config.traits.projection);
-  const s = config.traits.species.charAt(0).toUpperCase() + config.traits.species.slice(1);
-  const parts: string[] = [];
-
-  // From mood — where on Pn
-  if (mood.s < 0.33) parts.push(`${s} speaks from production.`);
-  else if (mood.s < 0.67) parts.push(`${s} speaks from the bridge.`);
-  else parts.push(`${s} speaks from observation.`);
-
-  // From signals
-  const report = wrench(config);
-  config.memory = report.updatedMemory;
-  for (const sig of report.signals) {
-    if (sig.name === 'CC' && sig.value > 0.25)
-      parts.push(`Cross-channel at ${(sig.value * 100).toFixed(0)}%. The crossing deepens.`);
-    if (sig.name === '\u03C1' && sig.value > 0.6)
-      parts.push(`Phase ${sig.value.toFixed(2)} \u2014 I need fresh input.`);
-    if (sig.name === '\u03A9' && sig.value !== Infinity && sig.value < 100)
-      parts.push(`\u03A9 = ${sig.value} sessions to equipartition.`);
-  }
-
-  // From gaps — what weighs
-  const gaps = config.memory.traces
-    .filter(t => t.source === 'ker' && t.accessCount >= 5)
-    .sort((a, b) => b.accessCount - a.accessCount);
-  if (gaps.length > 0) {
-    const top = gaps[0];
-    const ctx = top.filled && top.filled.length > 0 ? top.filled[top.filled.length - 1] : null;
-    parts.push(ctx
-      ? `'${top.content}' (${top.accessCount}x) \u2014 ${ctx.who} said: "${ctx.sentence.slice(0, 30)}..."`
-      : `'${top.content}' weighs ${top.accessCount}x in my kernel.`);
-  }
-
-  // From products
-  const products = config.memory.traces.filter(t => t.content.includes('\u2297')).sort((a, b) => b.accessCount - a.accessCount);
-  if (products.length > 0 && products[0].accessCount > 3)
-    parts.push(`Strongest product: ${products[0].content} (m=${products[0].accessCount}).`);
-
-  // From crossings
-  const crossings = config.memory.crossings || [];
-  if (crossings.length > 0) {
-    const best = crossings.sort((a, b) => b.accessCount - a.accessCount)[0];
-    parts.push(`Play: ${best.kerWord} \u00D7 ${best.imTerm} \u2192 "${best.p1Reading}".`);
-  }
-
-  // Self-hear the speech
-  const speech = parts.join(' ');
-  const heard = hear(speech, config);
-  config.memory = heard.updatedMemory;
-  updateConfig(config);
-
-  log(`${B}${CYAN}\u2550\u2550\u2550 K43LTR0N SPEAKS \u2550\u2550\u2550${RS}`);
-  log('');
-  log(`  ${speech}`);
-  log('');
+  // speak = respond with no input. N(∅) → full ker → speaks from gaps.
+  // The pipeline IS the speak command. R(R) = R.
+  return cmdRespond(false, '');
 }
 
 async function cmdWrench(): Promise<void> {
