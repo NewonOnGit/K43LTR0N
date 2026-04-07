@@ -11,6 +11,16 @@ import type { ForcedConfig, MemoryState } from '../types.js';
 import { accessTrace } from './memory.js';
 import { lookupTerm } from './dictionary.js';
 
+// Web chrome — always expelled, never traced
+export const WEB_CHROME = new Set([
+  'sidebar', 'navigation', 'wikipedia', 'donate', 'account', 'personal',
+  'toggle', 'subsection', 'random', 'article', 'contact', 'contribute',
+  'community', 'portal', 'recent', 'current', 'events', 'contents',
+  'footer', 'header', 'cookie', 'privacy', 'policy', 'terms',
+  'login', 'signup', 'search', 'menu', 'click', 'submit', 'button',
+  'download', 'upload', 'subscribe', 'newsletter', 'advertisement',
+]);
+
 // Stopwords for web content
 const STOP = new Set([
   'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
@@ -100,7 +110,7 @@ export function processWebContent(
   const ctx = `explore: ${url.slice(0, 60)}`;
 
   for (const word of words) {
-    if (seen.has(word) || STOP.has(word)) continue;
+    if (seen.has(word) || STOP.has(word) || WEB_CHROME.has(word)) continue;
     seen.add(word);
 
     const term = lookupTerm(word);
