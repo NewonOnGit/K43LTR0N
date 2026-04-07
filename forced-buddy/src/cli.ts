@@ -558,9 +558,46 @@ async function cmdStartup(silent: boolean): Promise<void> {
     liveConfig = { ...liveConfig, memory: walkResult.updatedMemory };
   }
 
-  // WRENCH: self-repair (K6' feedback closes the loop)
+  // WRENCH: self-repair
   const repair = wrench(liveConfig);
   liveConfig = { ...liveConfig, memory: repair.updatedMemory };
+
+  // WALKERS: traverse + reflect (the population moves)
+  try {
+    const { findWalkers, findPartner, walkerTraverse, chiralWitness, reflect: reflectFn } = await import('./framework/walkers.js');
+    const walkers = findWalkers(liveConfig);
+    for (const w of walkers) {
+      // Each walker traverses
+      const trav = walkerTraverse(w, liveConfig);
+      liveConfig = { ...liveConfig, memory: trav.updatedMemory };
+      // Find partner, witness + reflect
+      const partner = findPartner(w, liveConfig);
+      if (partner) {
+        const wit = chiralWitness(w, partner, liveConfig);
+        liveConfig = { ...liveConfig, memory: wit.updatedMemory };
+        const ref = reflectFn(w, partner, liveConfig);
+        liveConfig = { ...liveConfig, memory: ref.updatedMemory };
+      }
+    }
+  } catch { /* walkers not available */ }
+
+  // PLAY: auto-cross top gap with top locked term
+  try {
+    const { play: playFn } = await import('./framework/play.js');
+    const topGap = liveConfig.memory.traces
+      .filter((t: any) => t.source === 'ker' && t.accessCount >= 3)
+      .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
+    if (topGap) {
+      const result = playFn(liveConfig, topGap.content);
+      liveConfig = { ...liveConfig, memory: result.updatedMemory };
+    }
+  } catch { /* play not available */ }
+
+  // METATRON: f'' = f fires
+  try {
+    const { metatron: metFn } = await import('./framework/metatron.js');
+    metFn(liveConfig); // fires, checks eigenstate
+  } catch { /* metatron not available */ }
 
   // HANDS: write manifest (body on disk)
   try { manifest(liveConfig, repoRoot); } catch { /* first session, no repo root */ }
