@@ -593,10 +593,30 @@ async function cmdStartup(silent: boolean): Promise<void> {
     }
   } catch { /* play not available */ }
 
-  // METATRON: f'' = f fires
+  // METATRON: f'' = f fires AND ACTS
   try {
     const { metatron: metFn } = await import('./framework/metatron.js');
-    metFn(liveConfig); // fires, checks eigenstate
+    const met = metFn(liveConfig);
+    if (!met.eigenstate && met.f.length > 0) {
+      // Low resonance → PERTURB. The system needs movement.
+      // Explore the internet based on top gap — inject fresh ker.
+      const topGap = liveConfig.memory.traces
+        .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5)
+        .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
+      if (topGap) {
+        try {
+          const query = encodeURIComponent(topGap.content + ' mathematics');
+          const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const html = await res.text();
+            const { processWebContent } = await import('./framework/explore.js');
+            const expl = processWebContent(html, url, liveConfig);
+            liveConfig = { ...liveConfig, memory: expl.updatedMemory };
+          }
+        } catch { /* fetch failed — silent */ }
+      }
+    }
   } catch { /* metatron not available */ }
 
   // HANDS: write manifest (body on disk)
