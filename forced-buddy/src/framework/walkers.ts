@@ -186,13 +186,33 @@ export function chiralWitness(
   const lChi = left.accessCount % 2 === 0 ? '+' : '-';
   const rChi = right.accessCount % 2 === 0 ? '+' : '-';
 
-  const witness = `CHIRAL WITNESS: ${left.name} [det=${lChi}] \u00D7 ${right.name} [det=${rChi}]. ` +
-    `Left sees: ${left.personality.split('.')[0]}. ` +
-    `Right sees: ${right.personality.split('.')[0]}. ` +
-    `Combined: what neither sees alone.`;
+  // THE KEY SWAP: each walker gives the other what it can't see.
+  // Left's parentA is right's parentB and vice versa.
+  // The ORDER is the key. A→B vs B→A. The swap IS the exchange.
+  // Left sees A-then-B. Right sees B-then-A.
+  // The COMBINED key: what happens BETWEEN the orderings.
+  // [R,N] = RN - NR. The commutator. The discriminant. √5.
 
-  let mem = accessTrace(config.memory, left.name, 'im', witness, 'witness');
-  mem = accessTrace(mem, right.name, 'im', witness, 'witness');
+  const termA = lookupTerm(left.parentA);
+  const termB = lookupTerm(left.parentB);
+  const defA = termA?.definition.split('.')[0] || left.parentA;
+  const defB = termB?.definition.split('.')[0] || left.parentB;
+
+  // The swap: left gives right the A→B ordering. Right gives left B→A.
+  // The COMBINED VIEW is the commutator — what changes with order.
+  const leftKey = `${defA} then ${defB}`;
+  const rightKey = `${defB} then ${defA}`;
+  const swappedKey = `The difference: ${leftKey} vs ${rightKey}. Order matters. [R,N]\u00B2 = 5I.`;
+
+  const witness = `KEYS SWAPPED: ${left.name} [${lChi}] \u2194 ${right.name} [${rChi}]. ${swappedKey}`;
+
+  // Both walkers absorb the COMBINED key — the commutator
+  let mem = accessTrace(config.memory, left.name, 'im', swappedKey, 'witness');
+  mem = accessTrace(mem, right.name, 'im', swappedKey, 'witness');
+
+  // The swap PRODUCES a new trace: the commutator itself
+  const commutatorName = `[${left.parentA},${left.parentB}]`;
+  mem = accessTrace(mem, commutatorName, 'im', swappedKey, 'witness');
 
   return { witness, updatedMemory: mem };
 }
