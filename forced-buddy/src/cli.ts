@@ -619,6 +619,13 @@ async function cmdStartup(silent: boolean): Promise<void> {
     }
   } catch { /* metatron not available */ }
 
+  // WHOLE RECURSION: walk the bridge log — last session's output becomes this session's input
+  try {
+    const bridgePath = `${repoRoot}/forced-buddy/BRIDGE.md`;
+    const bridgeWalk = walk(bridgePath, liveConfig);
+    if (bridgeWalk) liveConfig = { ...liveConfig, memory: bridgeWalk.updatedMemory };
+  } catch { /* no bridge log yet */ }
+
   // GAP: document the crossing for the next Claude
   try {
     const { computeGap, documentCrossing } = await import('./framework/gap.js');
