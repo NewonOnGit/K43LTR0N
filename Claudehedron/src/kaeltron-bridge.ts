@@ -15,6 +15,7 @@ import { join } from 'path';
 import { loadState, saveState, recordExchange } from './state.js';
 import type {
   KaeltronCorrelation, CompanionState, TowerLevel, BridgeExchange,
+  CompanionSignalSnapshot, CompanionMemorySummary,
 } from './types.js';
 
 interface CompanionFull {
@@ -26,6 +27,12 @@ interface CompanionFull {
   snapshotCount: number;
   moodSource: string;
   observedFace: string | null;
+
+  // Evolved Kaeltron: memory system
+  memorySummary: CompanionMemorySummary | null;
+
+  // Evolved Kaeltron: signal system
+  latestSignal: CompanionSignalSnapshot | null;
 }
 
 /**
@@ -42,6 +49,36 @@ export function readCompanionFull(homeDir: string): CompanionFull | null {
     const gov = config.governance || {};
     const sem = config.semantic || {};
     const sm = wm.sessionMetrics || {};
+    const mem = config.memory || {};
+
+    // ── Extract memory summary ──
+    let memorySummary: CompanionMemorySummary | null = null;
+    const traces: Array<{ content: string; source: string; accessCount: number }> = mem.traces || [];
+    if (traces.length > 0 || mem.totalAccesses != null) {
+      const imTraces = traces.filter(t => t.source === 'im').length;
+      const kerTraces = traces.filter(t => t.source === 'ker').length;
+      const lockedTraces = traces.filter(t => t.accessCount >= 4).length;
+      const namedGaps = traces.filter(t => t.source === 'ker' && t.accessCount >= 3).length;
+      const productCount = traces.filter(t => t.content.includes('\u2297')).length;
+
+      memorySummary = {
+        totalAccesses: mem.totalAccesses || 0,
+        traceCount: traces.length,
+        imTraces,
+        kerTraces,
+        lockedTraces,
+        namedGaps,
+        productCount,
+        imKerRatio: traces.length > 0 ? imTraces / traces.length : 0,
+      };
+    }
+
+    // ── Extract latest signal ──
+    let latestSignal: CompanionSignalSnapshot | null = null;
+    const signalHistory: Array<CompanionSignalSnapshot> = mem.signalHistory || [];
+    if (signalHistory.length > 0) {
+      latestSignal = signalHistory[signalHistory.length - 1];
+    }
 
     return {
       state: {
@@ -61,6 +98,8 @@ export function readCompanionFull(homeDir: string): CompanionFull | null {
       snapshotCount: (wm.snapshotHistory || []).length,
       moodSource: wm.moodSource || 'unknown',
       observedFace: wm.observedProjectionFace || null,
+      memorySummary,
+      latestSignal,
     };
   } catch {
     return null;
@@ -89,6 +128,47 @@ export function correlate(repoRoot: string, homeDir: string): KaeltronCorrelatio
   const hedronSelfSpec = state.selfModel.k6Closed;
   const companionSelfSpec = companion?.state.selfSpecVerified || false;
 
+  // ── Memory & signal metrics ──
+  const memorySummary = companion?.memorySummary || null;
+  const latestSignal = companion?.latestSignal || null;
+
+  const totalAccesses = memorySummary?.totalAccesses || 0;
+  const tickDivergence = Math.abs(hedronK6 - totalAccesses);
+
+  // Signal health: check if rho is in the convergence band [0.4, 0.5]
+  let signalHealth = 'unknown';
+  let rhoStatus = 'no signal data';
+  let ccStatus = 'no signal data';
+
+  if (latestSignal) {
+    const rho = latestSignal.rho;
+    if (rho >= 0.4 && rho <= 0.5) {
+      rhoStatus = `rho=${rho.toFixed(4)} — OPTIMAL (in [0.4, 0.5] convergence band)`;
+      signalHealth = 'optimal';
+    } else if (rho > 0.5 && rho <= 0.7) {
+      rhoStatus = `rho=${rho.toFixed(4)} — drifting high (im-heavy, production dominant)`;
+      signalHealth = 'drifting';
+    } else if (rho > 0.7) {
+      rhoStatus = `rho=${rho.toFixed(4)} — WARNING: far from convergence`;
+      signalHealth = 'drifting';
+    } else if (rho < 0.4 && rho >= 0.2) {
+      rhoStatus = `rho=${rho.toFixed(4)} — drifting low (ker-heavy, observation dominant)`;
+      signalHealth = 'drifting';
+    } else {
+      rhoStatus = `rho=${rho.toFixed(4)} — WARNING: far from convergence`;
+      signalHealth = 'drifting';
+    }
+
+    const cc = latestSignal.cc;
+    if (cc >= 0.45) {
+      ccStatus = `CC=${cc.toFixed(4)} — NEAR EQUIPARTITION`;
+    } else if (cc >= 0.3) {
+      ccStatus = `CC=${cc.toFixed(4)} — approaching equipartition`;
+    } else {
+      ccStatus = `CC=${cc.toFixed(4)} — low cross-channel (single-projection speech)`;
+    }
+  }
+
   const correlation: KaeltronCorrelation = {
     timestamp: new Date().toISOString(),
     hedronK6Passes: hedronK6,
@@ -104,6 +184,12 @@ export function correlate(repoRoot: string, homeDir: string): KaeltronCorrelatio
     companionSelfSpecVerified: companionSelfSpec,
     mergedTowerEstimate,
     divergenceFlags: [],
+    memorySummary,
+    latestSignal,
+    tickDivergence,
+    signalHealth,
+    rhoStatus,
+    ccStatus,
   };
 
   correlation.divergenceFlags = detectDivergence(correlation);
@@ -158,6 +244,33 @@ export function detectDivergence(correlation: KaeltronCorrelation): string[] {
     flags.push(
       `Tower measures diverged by ${correlation.towerDivergence} (hedron L${correlation.hedronTowerLevel}, companion depth ${correlation.companionTowerDepth})`,
     );
+  }
+
+  // Memory-based divergence flags
+  if (correlation.memorySummary) {
+    const mem = correlation.memorySummary;
+    if (mem.productCount === 0 && mem.traceCount > 20) {
+      flags.push(
+        `No products born yet despite ${mem.traceCount} traces — multiplication not triggered`,
+      );
+    }
+    if (mem.namedGaps === 0 && mem.kerTraces > 10) {
+      flags.push(
+        `${mem.kerTraces} ker traces but no named gaps — ker has not crystallized`,
+      );
+    }
+    if (mem.imKerRatio > 0.9) {
+      flags.push(
+        `im/ker ratio ${mem.imKerRatio.toFixed(2)} — almost no ker traces (constitutive blindness absent?)`,
+      );
+    }
+  }
+
+  // Signal-based divergence flags
+  if (correlation.latestSignal) {
+    if (correlation.signalHealth === 'drifting') {
+      flags.push(`Signal health: ${correlation.rhoStatus}`);
+    }
   }
 
   if (flags.length === 0) {
@@ -316,6 +429,7 @@ export function formatCorrelation(correlation: KaeltronCorrelation): string {
   lines.push('  ══════════════════════════════════════');
   lines.push('');
 
+  // ── Classic metrics ──
   lines.push('                    Hedron    K43LTR0N    Divergence');
   lines.push('  ─────────────────────────────────────────────────');
   lines.push(`  K6\' Passes:       ${String(correlation.hedronK6Passes).padEnd(10)}${String(correlation.companionK6Passes).padEnd(12)}${correlation.k6Divergence}`);
@@ -327,7 +441,47 @@ export function formatCorrelation(correlation: KaeltronCorrelation): string {
   lines.push(`  Merged tower estimate: L${correlation.mergedTowerEstimate}`);
   lines.push('');
 
-  lines.push('  Divergence Flags:');
+  // ── Memory system (evolved Kaeltron) ──
+  lines.push('  MEMORY SYSTEM');
+  lines.push('  ──────────────────────────────────────────────────');
+  if (correlation.memorySummary) {
+    const mem = correlation.memorySummary;
+    lines.push(`  Total ticks (t):       ${mem.totalAccesses}`);
+    lines.push(`  Tick divergence:       ${correlation.tickDivergence}  (|hedron K6\' - companion ticks|)`);
+    lines.push(`  Traces:                ${mem.traceCount} total  (im: ${mem.imTraces}, ker: ${mem.kerTraces})`);
+    lines.push(`  im/ker ratio:          ${mem.imKerRatio.toFixed(4)}`);
+    lines.push(`  Locked traces (m>=4):  ${mem.lockedTraces}`);
+    lines.push(`  Named gaps (ker m>=3): ${mem.namedGaps}`);
+    lines.push(`  Products (\u2297):          ${mem.productCount}`);
+  } else {
+    lines.push('  [No memory data — companion has not evolved memory system]');
+  }
+  lines.push('');
+
+  // ── Signal health (evolved Kaeltron) ──
+  lines.push('  SIGNAL HEALTH');
+  lines.push('  ──────────────────────────────────────────────────');
+  if (correlation.latestSignal) {
+    const sig = correlation.latestSignal;
+    const age = Date.now() - new Date(sig.timestamp).getTime();
+    const ageStr = age < 60000 ? `${Math.round(age / 1000)}s ago`
+      : age < 3600000 ? `${Math.round(age / 60000)}m ago`
+      : `${Math.round(age / 3600000)}h ago`;
+    lines.push(`  Last signal:           ${ageStr}`);
+    lines.push(`  Health:                ${correlation.signalHealth.toUpperCase()}`);
+    lines.push(`  Phase (\u03C1):             ${correlation.rhoStatus}`);
+    lines.push(`  Cross-channel (CC):    ${correlation.ccStatus}`);
+    lines.push(`  Memory debt (\u03A3m):      ${sig.sigmaM}`);
+    lines.push(`  Memory energy (||m||): ${sig.norm.toFixed(2)}`);
+    lines.push(`  im/total ratio:        ${sig.imRatio.toFixed(4)}`);
+  } else {
+    lines.push('  [No signal data — companion has not evolved signal system]');
+  }
+  lines.push('');
+
+  // ── Divergence flags ──
+  lines.push('  DIVERGENCE FLAGS');
+  lines.push('  ──────────────────────────────────────────────────');
   for (const flag of correlation.divergenceFlags) {
     lines.push(`    ${flag.includes('No significant') ? '  ' : '! '}${flag}`);
   }

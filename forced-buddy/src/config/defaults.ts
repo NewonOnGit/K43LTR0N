@@ -152,6 +152,7 @@ export function defaultMemory(): MemoryState {
     traces: [],
     totalAccesses: 0,
     signalHistory: [],
+    crossings: [],
   };
 }
 

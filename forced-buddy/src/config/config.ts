@@ -31,6 +31,8 @@ export function loadConfig(): ForcedConfig | null {
     // Ensure Level 9 fields exist (added post-v3)
     raw.conversation = raw.conversation ?? defaultConversation();
     raw.memory = raw.memory ?? defaultMemory();
+    // Migration: ensure crossings array exists on memory
+    raw.memory.crossings = raw.memory.crossings ?? [];
     // Add any new achievements that don't exist in config yet
     const allDefaults = defaultGovernance().achievements;
     const existingIds = new Set(raw.governance.achievements.map((a: { id: string }) => a.id));
@@ -97,6 +99,13 @@ export function saveConfig(config: ForcedConfig): void {
     config.memory.traces = [...fresh, ...staleIm, ...kerKept]
       .sort((a, b) => b.accessCount - a.accessCount)
       .slice(0, 250);
+  }
+  // Ensure crossings exist and cap at 50 (most recent kept)
+  config.memory.crossings = config.memory.crossings ?? [];
+  if (config.memory.crossings.length > 50) {
+    config.memory.crossings = config.memory.crossings
+      .sort((a, b) => b.accessCount - a.accessCount)
+      .slice(0, 50);
   }
   writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2) + '\n');
 }

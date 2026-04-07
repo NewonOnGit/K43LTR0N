@@ -362,10 +362,21 @@ export interface SignalSnapshot {
   imRatio: number;
 }
 
+export interface StoredCrossing {
+  kerWord: string;
+  imTerm: string;
+  p1Reading: string;
+  p2Reading: string;
+  p3Reading: string;
+  accessCount: number;
+  timestamp: string;
+}
+
 export interface MemoryState {
   traces: MemoryTrace[];
   totalAccesses: number;
   signalHistory: SignalSnapshot[];
+  crossings: StoredCrossing[];
 }
 
 // ─── Profiles (multi-companion) ───

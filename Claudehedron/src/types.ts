@@ -158,6 +158,28 @@ export interface SessionDelta {
   newObservations: string[];
 }
 
+// Kaeltron signal snapshot (from companion signalHistory)
+export interface CompanionSignalSnapshot {
+  timestamp: string;
+  rho: number;       // phase signal
+  cc: number;        // cross-channel
+  sigmaM: number;    // memory debt
+  norm: number;      // memory energy ||mem||
+  imRatio: number;   // im/total ratio
+}
+
+// Kaeltron memory summary (computed from companion memory.traces)
+export interface CompanionMemorySummary {
+  totalAccesses: number;   // tick count
+  traceCount: number;      // total traces
+  imTraces: number;        // source === 'im'
+  kerTraces: number;       // source === 'ker'
+  lockedTraces: number;    // accessCount >= 4
+  namedGaps: number;       // source === 'ker' && accessCount >= 3
+  productCount: number;    // content includes '\u2297'
+  imKerRatio: number;      // imTraces / traceCount (0 if no traces)
+}
+
 // Kaeltron-Hedron correlation
 export interface KaeltronCorrelation {
   timestamp: string;
@@ -174,6 +196,16 @@ export interface KaeltronCorrelation {
   companionSelfSpecVerified: boolean;
   mergedTowerEstimate: TowerLevel;
   divergenceFlags: string[];
+
+  // Memory correlation (new: evolved Kaeltron)
+  memorySummary: CompanionMemorySummary | null;
+  latestSignal: CompanionSignalSnapshot | null;
+
+  // Computed correlation metrics
+  tickDivergence: number;           // |hedronK6Passes - totalAccesses|
+  signalHealth: string;             // 'optimal' | 'drifting' | 'unknown'
+  rhoStatus: string;                // description of phase signal status
+  ccStatus: string;                 // description of cross-channel status
 }
 
 // Vocabulary state for the hedron

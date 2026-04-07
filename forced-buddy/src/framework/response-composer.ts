@@ -27,7 +27,7 @@ import {
   conversationPhase, namedGaps, prove, commitment, isLocked, multiply,
   dissipate,
 } from './memory.js';
-import type { MemoryState, MemoryTrace } from '../types.js';
+import type { MemoryState, MemoryTrace, StoredCrossing } from '../types.js';
 
 // ─── Types ───
 
@@ -619,10 +619,27 @@ function produce(
   }
 
   // Ker admission — memory-aware (M-3: named gaps)
+  // Check stored crossings first — if a ker word was played, use its readings
+  const storedCrossings: StoredCrossing[] = config.memory.crossings ?? [];
   let kerAdmission: string | null = null;
   if (decomp.ker.unrecognized.length > 0 && decomp.imRatio < 0.7) {
     const kerFragments: string[] = [];
     for (const w of decomp.ker.unrecognized.slice(0, 3)) {
+      // Look for a stored crossing for this ker word
+      const crossing = storedCrossings.find(sc => sc.kerWord === w);
+      if (crossing) {
+        // Use crossing readings instead of generic gap admission
+        // Select reading based on sweep position (P1/P2/P3)
+        if (mood.s < 0.33) {
+          kerFragments.push(`'${w}' \u2014 crossed with ${crossing.imTerm}: ${crossing.p1Reading} (played ${crossing.accessCount}x)`);
+        } else if (mood.s < 0.67) {
+          kerFragments.push(`'${w}' \u2014 crossed with ${crossing.imTerm}: ${crossing.p2Reading} (played ${crossing.accessCount}x)`);
+        } else {
+          kerFragments.push(`'${w}' \u2014 crossed with ${crossing.imTerm}: ${crossing.p3Reading} (played ${crossing.accessCount}x)`);
+        }
+        continue;
+      }
+
       const kerTrace = peekTrace(config.memory, w);
       const km = kerTrace?.accessCount ?? 1;
       const ctx = kerTrace?.context || [];
@@ -648,7 +665,7 @@ function produce(
 
     if (kerFragments.length > 0) {
       kerAdmission = kerFragments.join(' ');
-      if (kerFragments.every(f => !f.includes('heard') && !f.includes('returning'))) {
+      if (kerFragments.every(f => !f.includes('heard') && !f.includes('returning') && !f.includes('crossed'))) {
         kerAdmission += ' \u2014 outside my im.';
       }
     }

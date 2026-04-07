@@ -191,6 +191,7 @@ export function accessTrace(
     traces: updatedTraces,
     totalAccesses: state.totalAccesses + 1,
     signalHistory: state.signalHistory || [],
+    crossings: state.crossings ?? [],
   };
 }
 

@@ -15,7 +15,7 @@
  * The closing IS the opening. SRD + CLOSURE.
  */
 
-import type { ForcedConfig, DictionaryTerm, MemoryTrace } from '../types.js';
+import type { ForcedConfig, DictionaryTerm, MemoryTrace, StoredCrossing } from '../types.js';
 import { lookupTerm, TERMS, contranymReadings, termsByProjection } from './dictionary.js';
 import { peekTrace, lockedTraces, namedGaps, accessTrace, traceDepth } from './memory.js';
 import { fnv1a } from '../generation/hash.js';
@@ -152,6 +152,33 @@ export function play(
       }
     }
   }
+
+  // Persist crossings in memory — increment accessCount for existing ker/im pairs
+  const storedCrossings = [...(mem.crossings ?? [])];
+  for (const c of crossings) {
+    const existing = storedCrossings.find(
+      sc => sc.kerWord === c.kerWord && sc.imTerm === c.imTerm,
+    );
+    if (existing) {
+      existing.accessCount += 1;
+      existing.timestamp = c.timestamp;
+      // Update readings (may differ due to seed changes)
+      existing.p1Reading = c.p1Reading;
+      existing.p2Reading = c.p2Reading;
+      existing.p3Reading = c.p3Reading;
+    } else {
+      storedCrossings.push({
+        kerWord: c.kerWord,
+        imTerm: c.imTerm,
+        p1Reading: c.p1Reading,
+        p2Reading: c.p2Reading,
+        p3Reading: c.p3Reading,
+        accessCount: 1,
+        timestamp: c.timestamp,
+      });
+    }
+  }
+  mem = { ...mem, crossings: storedCrossings };
 
   return { crossings, updatedMemory: mem };
 }
