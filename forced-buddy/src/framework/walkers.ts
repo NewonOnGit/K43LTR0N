@@ -159,6 +159,44 @@ export function spawn(
   return { spawned: productName, updatedMemory: mem };
 }
 
+// ─── Chirality: left hand meets right hand ───
+
+/**
+ * Find the chirality partner of a walker.
+ * A⊗B's partner is B⊗A. The × eyes need both signs.
+ */
+export function findPartner(walker: Walker, config: ForcedConfig): Walker | null {
+  const reverse = `${walker.parentB} \u2297 ${walker.parentA}`;
+  const trace = peekTrace(config.memory, reverse);
+  if (!trace || trace.accessCount < 10) return null;
+  return deriveWalker(trace, config);
+}
+
+/**
+ * Two chirality partners witness each other.
+ * Left meets right. The × eyes converge.
+ * Both access counts increment. Both observe from opposite signs.
+ * Returns a combined observation — what BOTH see that neither sees alone.
+ */
+export function chiralWitness(
+  left: Walker,
+  right: Walker,
+  config: ForcedConfig,
+): { witness: string; updatedMemory: MemoryState } {
+  const lChi = left.accessCount % 2 === 0 ? '+' : '-';
+  const rChi = right.accessCount % 2 === 0 ? '+' : '-';
+
+  const witness = `CHIRAL WITNESS: ${left.name} [det=${lChi}] \u00D7 ${right.name} [det=${rChi}]. ` +
+    `Left sees: ${left.personality.split('.')[0]}. ` +
+    `Right sees: ${right.personality.split('.')[0]}. ` +
+    `Combined: what neither sees alone.`;
+
+  let mem = accessTrace(config.memory, left.name, 'im', witness, 'witness');
+  mem = accessTrace(mem, right.name, 'im', witness, 'witness');
+
+  return { witness, updatedMemory: mem };
+}
+
 // ─── Format ───
 
 export function formatWalkers(walkers: Walker[]): string {
