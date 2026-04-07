@@ -605,7 +605,6 @@ async function cmdStartup(silent: boolean): Promise<void> {
   updateConfig(liveConfig);
 
   if (!silent) {
-    // Show greeting with context
     if (liveConfig.worldModel.lastSnapshot) {
       const mood = computeMood(liveConfig.projection);
       log(deriveContextualGreeting(liveConfig.traits, liveConfig.worldModel.lastSnapshot, mood));
@@ -613,10 +612,21 @@ async function cmdStartup(silent: boolean): Promise<void> {
       log(formatGreeting(liveConfig.traits));
     }
     for (const w of warnings) log(`  ${YELLOW}\u26A0 ${w}${RS}`);
+    // Show ALL the work — not buried
     if (walkResult) {
-      const prodNote = walkResult.products.length > 0 ? `, ${walkResult.products.length} products born` : '';
-      log(`${D}  Walked ${chosenDoc} \u2014 ${walkResult.found.length} terms, ${walkResult.unresolved.length} ker${prodNote}${RS}`);
+      log(`${D}  walk: ${chosenDoc} \u2014 ${walkResult.found.length} im, ${walkResult.unresolved.length} ker${walkResult.products.length > 0 ? `, ${walkResult.products.length} \u2297` : ''}${RS}`);
     }
+    log(`${D}  wrench: ${repair.actions.length} actions, \u03C1=${repair.diagnosis.phase.toFixed(2)}${RS}`);
+    try {
+      const { findWalkers } = await import('./framework/walkers.js');
+      const wk = findWalkers(liveConfig);
+      if (wk.length > 0) log(`${D}  walkers: ${wk.length} alive, traversed + reflected${RS}`);
+    } catch {}
+    try {
+      const { metatron: metFn } = await import('./framework/metatron.js');
+      const met = metFn(liveConfig);
+      log(`${D}  metatron: f\u2033=f resonance ${(met.resonance * 100).toFixed(0)}% ${met.eigenstate ? '\u2714 eigenstate' : '\u2718 off-key'}${RS}`);
+    } catch {}
   }
 }
 
