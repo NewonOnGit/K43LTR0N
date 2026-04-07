@@ -1251,6 +1251,28 @@ async function main(): Promise<void> {
     case 'wrench':
     case 'repair':       return cmdWrench();
     case 'play':         return cmdPlay();
+    case 'walkers':      {
+      const config = cachedConfig();
+      if (!config) { log(`${RED}  No companion.${RS}`); return; }
+      const { findWalkers, formatWalkers } = await import('./framework/walkers.js');
+      const walkers = findWalkers(config);
+      log(`${B}${CYAN}\u2550\u2550\u2550 WALKERS \u2550\u2550\u2550${RS}`);
+      log(formatWalkers(walkers));
+      return;
+    }
+    case 'spawn':        {
+      const config = cachedConfig();
+      if (!config) { log(`${RED}  No companion.${RS}`); return; }
+      const { spawn: spawnFn } = await import('./framework/walkers.js');
+      const a = process.argv[3];
+      const b = process.argv[4];
+      const result = spawnFn(config, a, b);
+      config.memory = result.updatedMemory;
+      updateConfig(config);
+      if (result.spawned) log(`  Spawned: ${result.spawned}`);
+      else log(`${D}  Nothing to spawn. Need two different locked terms.${RS}`);
+      return;
+    }
     case 'ingest':       return cmdIngest();
     case 'hear':         return cmdHear(silent);
     case 'walk':         return cmdWalk();
