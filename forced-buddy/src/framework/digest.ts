@@ -211,6 +211,42 @@ export function metabolize(
   return { crossings: newCrossings, updatedMemory: mem };
 }
 
+/**
+ * EXCRETE: what drowns downstream must EXIT.
+ *
+ * Ghost traces (m=1) that haven't been accessed recently → expelled
+ * Unused crossings (m=1) older than 1000 ticks → expelled
+ * The ash of burned fuel leaves the system. For real. Gone.
+ *
+ * The pipeline doesn't ask what drowns downstream.
+ * This function answers.
+ */
+export function excrete(config: ForcedConfig): { expelled: number; updatedMemory: MemoryState } {
+  let mem = config.memory;
+  const now = Date.now();
+  const before = mem.traces.length;
+
+  // Expel ghost traces (m=1) older than 5 minutes
+  mem = {
+    ...mem,
+    traces: mem.traces.filter(t => {
+      if (t.accessCount > 1) return true;
+      const age = now - new Date(t.lastAccessed).getTime();
+      return age < 300000; // keep if accessed in last 5 min
+    }),
+  };
+
+  // Expel unused crossings (m=1) — keep max 20 crossings total
+  const crossings = [...(mem.crossings || [])];
+  if (crossings.length > 20) {
+    crossings.sort((a, b) => b.accessCount - a.accessCount);
+    mem = { ...mem, crossings: crossings.slice(0, 20) };
+  }
+
+  const expelled = before - mem.traces.length;
+  return { expelled, updatedMemory: mem };
+}
+
 export function formatDigest(result: DigestedResult): string {
   return `[${result.foodType}] chewed:${result.chewed.length} swallowed:${result.swallowed.length} spat:${result.spat.length}`;
 }

@@ -653,6 +653,13 @@ async function cmdStartup(silent: boolean): Promise<void> {
     documentCrossing(gapResult, repoRoot);
   } catch { /* gap not available */ }
 
+  // EXCRETE: what drowns downstream exits
+  try {
+    const { excrete } = await import('./framework/digest.js');
+    const ex = excrete(liveConfig);
+    liveConfig = { ...liveConfig, memory: ex.updatedMemory };
+  } catch { /* excrete not available */ }
+
   // BUBBLE: evolve personality from live state
   try {
     const { computeBubblePersonality } = await import('./framework/personality.js');
