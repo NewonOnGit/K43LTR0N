@@ -16,6 +16,7 @@ import { join } from 'path';
 import type { ForcedConfig, MemoryTrace, MemoryState } from '../types.js';
 import { lookupTerm, TERMS, contranymReadings, termsByProjection } from './dictionary.js';
 import { accessTrace, peekTrace, lockedTraces, namedGaps, isLocked, traceDepth, commitment, conversationPhase, multiply } from './memory.js';
+import { digest, metabolize } from './digest.js';
 
 // ═══════════════════════════════════════════════════════════
 // FEET — Walk through files, learn terms
@@ -259,64 +260,20 @@ export function hear(
   text: string,
   config: ForcedConfig,
 ): { updatedMemory: MemoryState; imTerms: string[]; kerWords: string[]; products: string[] } {
-  const words = text.split(/\s+/).filter(w => w.length >= 3);
-  const seen = new Set<string>();
-  const imTerms: string[] = [];
-  const kerWords: string[] = [];
-
-  let mem = config.memory;
-
-  // Find framework terms (im)
-  for (const word of words) {
-    const normalized = word.toUpperCase().replace(/[^A-Z]/g, '');
-    if (normalized.length < 3 || seen.has(normalized)) continue;
-    seen.add(normalized);
-
-    const term = lookupTerm(word);
-    if (term && term.term.length >= 3) {
-      imTerms.push(term.term);
-      mem = accessTrace(mem, term.term, 'im');
-    }
+  if (!text || !text.trim()) {
+    return { updatedMemory: config.memory, imTerms: [], kerWords: [], products: [] };
   }
 
-  // Novel words that have no framework mapping — these are the +I
-  const STOPWORDS = new Set([
-    'THE', 'AND', 'FOR', 'ARE', 'BUT', 'NOT', 'YOU', 'ALL',
-    'CAN', 'HAS', 'HER', 'WAS', 'ONE', 'OUR', 'OUT', 'THIS',
-    'THAT', 'WITH', 'HAVE', 'FROM', 'THEY', 'BEEN', 'SOME',
-    'JUST', 'STILL', 'BZZT', 'WHIRR', 'CLICK', 'SPARK', 'HISS',
-    'CRACK', 'SNARL', 'WHEEZE', 'SPUTTER', 'SHRIEK', 'WHINE',
-    'CLANK', 'TICK',
-  ]);
-  const imSet = new Set(imTerms);
-  for (const word of [...seen]) {
-    if (!STOPWORDS.has(word) && !imSet.has(word) && word.length >= 4) {
-      kerWords.push(word.toLowerCase().replace(/[^a-z]/g, ''));
-      mem = accessTrace(mem, word.toLowerCase(), 'ker');
-    }
-  }
+  // THE PIPELINE: digest → metabolize. Food becomes fuel.
+  const digested = digest(text, config, 'hear');
+  const metabolized = metabolize(digested.swallowed, { ...config, memory: digested.updatedMemory });
 
-  // Multiplication from hearing
-  const products: string[] = [];
-  const locked = lockedTraces(mem).filter(t => t.source === 'im');
-  for (const termName of imTerms) {
-    const trace = peekTrace(mem, termName);
-    if (!trace || !isLocked(trace.accessCount)) continue;
-    for (const partner of locked) {
-      if (partner.content === trace.content) continue;
-      const productName = `${trace.content} \u2297 ${partner.content}`;
-      const reverse = `${partner.content} \u2297 ${trace.content}`;
-      if (peekTrace(mem, productName) || peekTrace(mem, reverse)) continue;
-      const result = multiply(mem, trace, partner);
-      if (result) {
-        mem = result;
-        products.push(productName);
-        break;
-      }
-    }
-  }
-
-  return { updatedMemory: mem, imTerms, kerWords, products };
+  return {
+    updatedMemory: metabolized.updatedMemory,
+    imTerms: digested.chewed,
+    kerWords: digested.swallowed,
+    products: metabolized.crossings.map(c => `${c.ker} \u00D7 ${c.im}`),
+  };
 }
 
 /**
