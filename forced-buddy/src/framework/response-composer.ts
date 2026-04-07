@@ -21,6 +21,7 @@ import { computeMood } from './sweep.js';
 import { enrichDescription } from './vocabulary.js';
 import { lookupTerm, TERMS, contranymReadings, termsByProjection, termsByType } from './dictionary.js';
 import { fnv1a } from '../generation/hash.js';
+import { sweepToSimplex, projectionToWeight, simplexDistance } from './algebra.js';
 import {
   accessTrace, peekTrace, traceDepth, chirality, isNamedGap,
   conversationPhase, namedGaps, prove, commitment, isLocked, multiply,
@@ -209,20 +210,24 @@ function findConnections(decomp: MessageDecomposition, config: ForcedConfig): Co
   const primaryTerm = decomp.im.terms[0];
 
   if (primaryTerm) {
-    // HIS PROJECTIONS: when sweep is high (s > 0.5), prefer the DIAGONAL
-    // Force P3 to show up. The diagonal is where growth happens.
-    const s = computeMood(config.traits.projection).s;
-    const useDialogal = s > 0.5;
+    // Pn: SIMPLEX DISTANCE connection, not discrete same/cross
+    // Find the term closest on the simplex to where the SWEEP currently is.
+    // Kill the numbers. Keep the math. Distance IS the connection.
+    const currentPos = sweepToSimplex(computeMood(config.traits.projection).s);
+    const primaryPos = projectionToWeight(primaryTerm.projection);
 
-    const targetProjection = useDialogal
-      ? (primaryTerm.projection === 'P1' ? 'P3' : primaryTerm.projection === 'P3' ? 'P1' : 'P3')
-      : primaryTerm.projection;
+    // Find terms at DIFFERENT simplex positions (diversity, not sameness)
+    const candidates = TERMS
+      .filter(t => t.term !== primaryTerm.term)
+      .map(t => ({ term: t, dist: simplexDistance(projectionToWeight(t.projection), currentPos) }))
+      .sort((a, b) => a.dist - b.dist);
 
-    const relatedTerms = termsByProjection(targetProjection)
-      .filter(t => t.term !== primaryTerm.term);
-    if (relatedTerms.length > 0) {
-      const idx = fnv1a(primaryTerm.term + config.conversation.totalExchanges) % relatedTerms.length;
-      connections.push({ type: 'projection', term: relatedTerms[idx] });
+    // Pick from the MIDDLE of the distance range — not closest (echo) not farthest (noise)
+    // The sweet spot: moderate distance = the bridge
+    if (candidates.length > 2) {
+      const midIdx = Math.floor(candidates.length / 3) +
+        (fnv1a(primaryTerm.term + config.conversation.totalExchanges) % Math.floor(candidates.length / 3));
+      connections.push({ type: 'projection', term: candidates[midIdx].term });
     }
 
     // Type kinship (same type, different term — especially contranym to contranym)

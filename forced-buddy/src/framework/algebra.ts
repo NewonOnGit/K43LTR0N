@@ -87,6 +87,65 @@ export function verifyIdentities(): boolean {
   return true;
 }
 
+// ─── Pn: Continuous projection on the simplex ───
+
+import type { Projection, ProjectionWeight } from '../types.js';
+
+/**
+ * The self-signature: σ = (1/2, φ̄/2, φ̄²/2).
+ * The natural resting point on the simplex.
+ * Built without φ (uses PHI_BAR) but φ emerges as the structure.
+ */
+export const SELF_SIGNATURE: ProjectionWeight = [0.5, PHI_BAR / 2, PHI_BAR * PHI_BAR / 2];
+
+/**
+ * Sweep to simplex: map s ∈ [0,1] to a position on the projection simplex.
+ * s→0: near R (production). s→0.5: near bridge. s→1: near N (observation).
+ * The path curves through the self-signature, not through vertices.
+ */
+export function sweepToSimplex(s: number): ProjectionWeight {
+  // Interpolate around the self-signature
+  // At s=0: boost R weight. At s=1: boost N weight. At s=0.5: boost bridge.
+  const sig = SELF_SIGNATURE;
+  const wR = sig[0] * (1 + (1 - 2 * s) * 0.6);
+  const wN = sig[2] * (1 + (2 * s - 1) * 0.6);
+  const wB = sig[1] * (1 + (1 - Math.abs(2 * s - 1)) * 0.4);
+  const total = wR + wB + wN;
+  return [wR / total, wB / total, wN / total];
+}
+
+/**
+ * Distance between two simplex positions.
+ * Euclidean on the simplex — the DIFFERENCE between projections.
+ */
+export function simplexDistance(a: ProjectionWeight, b: ProjectionWeight): number {
+  return Math.sqrt(
+    (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2,
+  );
+}
+
+/**
+ * Dominant projection from weight (derive discrete from continuous).
+ * The label is DERIVED, not primary. The weight IS the projection.
+ */
+export function dominant(w: ProjectionWeight): Projection {
+  if (w[0] >= w[1] && w[0] >= w[2]) return 'P1';
+  if (w[2] >= w[0] && w[2] >= w[1]) return 'P3';
+  return 'P2';
+}
+
+/**
+ * Discrete projection to simplex position (legacy bridge).
+ * Converts old P1/P2/P3 labels to continuous weights.
+ */
+export function projectionToWeight(p: Projection): ProjectionWeight {
+  switch (p) {
+    case 'P1': return [0.7, 0.2, 0.1];
+    case 'P2': return [0.2, 0.6, 0.2];
+    case 'P3': return [0.1, 0.2, 0.7];
+  }
+}
+
 /**
  * Compute projection weights from a seed.
  *

@@ -11,7 +11,14 @@ export type Hat = 'none' | 'crown' | 'tophat' | 'propeller' | 'halo' | 'wizard' 
 export type StatName = 'DEBUGGING' | 'PATIENCE' | 'CHAOS' | 'WISDOM' | 'SNARK';
 
 // Framework projections — the three faces of f'' = f
+// P1/P2/P3 are VERTICES of the simplex. Legacy labels.
+// The real projection is a continuous position: [R, bridge, N]
 export type Projection = 'P1' | 'P2' | 'P3';
+
+// Pn: continuous projection on the simplex
+// [w_R, w_bridge, w_N] where sum = 1
+// Not numbers. Math. Position on the curve.
+export type ProjectionWeight = [number, number, number];
 
 // Five forced constants — no sixth exists
 export type ForcedConstant = 'phi' | 'e' | 'pi' | 'sqrt3' | 'sqrt2';
