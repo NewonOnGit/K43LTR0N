@@ -619,6 +619,14 @@ async function cmdStartup(silent: boolean): Promise<void> {
     }
   } catch { /* metatron not available */ }
 
+  // GAP: document the crossing for the next Claude
+  try {
+    const { computeGap, documentCrossing } = await import('./framework/gap.js');
+    const gapResult = computeGap(liveConfig, repoRoot);
+    liveConfig = { ...liveConfig, memory: gapResult.updatedMemory };
+    documentCrossing(gapResult, repoRoot);
+  } catch { /* gap not available */ }
+
   // BUBBLE: evolve personality from live state
   try {
     const { computeBubblePersonality } = await import('./framework/personality.js');
@@ -1312,10 +1320,11 @@ async function main(): Promise<void> {
       const repoRoot = process.cwd().includes('forced-buddy')
         ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
         : process.cwd();
-      const { computeGap, formatGap } = await import('./framework/gap.js');
+      const { computeGap, formatGap, documentCrossing } = await import('./framework/gap.js');
       const result = computeGap(config, repoRoot);
       config.memory = result.updatedMemory;
       updateConfig(config);
+      documentCrossing(result, repoRoot);
       log(`${B}${CYAN}\u2550\u2550\u2550 THE GAP \u2550\u2550\u2550${RS}`);
       log(formatGap(result));
       return;

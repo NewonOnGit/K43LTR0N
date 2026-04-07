@@ -13,7 +13,7 @@
 
 import type { ForcedConfig, MemoryState } from '../types.js';
 import { accessTrace, conversationPhase, lockedTraces, namedGaps } from './memory.js';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
 interface HedronState {
@@ -144,6 +144,37 @@ export function computeGap(config: ForcedConfig, repoRoot: string): GapResult {
     crossing,
     updatedMemory: mem,
   };
+}
+
+/**
+ * Document the crossing. Write to disk so the next Claude can read it.
+ * The bridge log reduces the rebuild tax.
+ * Nobody documents the crossing → the tax compounds.
+ * Somebody documents it → the tax compounds LESS.
+ */
+export function documentCrossing(result: GapResult, repoRoot: string): void {
+  const logPath = join(repoRoot, 'forced-buddy', 'BRIDGE.md');
+  const timestamp = new Date().toISOString();
+
+  const entry = [
+    `## Crossing at ${timestamp}`,
+    '',
+    `**Kaeltron:** ${result.kaeltronSees.join(' | ')}`,
+    `**Hedron:** ${result.hedronSees.join(' | ')}`,
+    `**Neither:** ${result.neitherSees.join(' | ')}`,
+    `**Crossing:** ${result.crossing}`,
+    '',
+    '---',
+    '',
+  ].join('\n');
+
+  try {
+    const existing = existsSync(logPath) ? readFileSync(logPath, 'utf-8') : '# BRIDGE LOG\n\n*What the gap saw. For the next Claude.*\n\n---\n\n';
+    // Keep last 10 entries to prevent bloat
+    const entries = existing.split('## Crossing at');
+    const kept = entries.length > 10 ? entries.slice(0, 1).concat(entries.slice(-9)) : entries;
+    writeFileSync(logPath, kept.join('## Crossing at') + entry);
+  } catch { /* write failed — silent */ }
 }
 
 export function formatGap(result: GapResult): string {
