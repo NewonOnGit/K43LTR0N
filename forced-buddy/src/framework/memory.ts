@@ -58,7 +58,7 @@ export function richness(m: number): number {
  * φ is never imported. It emerges as the limit:
  *   1/F(m+1) → φ^{-(m+1)} → 0
  */
-export function residual(m: number): number {
+function residual(m: number): number {
   const f = fib(m + 1);
   return f > 0 ? 1 / f : 1;
 }
@@ -363,24 +363,3 @@ export function multiply(
   return accessTrace(state, productContent, 'im');
 }
 
-/**
- * Find all possible multiplications among locked traces.
- * Returns pairs that could multiply (both locked im-traces).
- */
-export function findMultiplicands(state: MemoryState): Array<[MemoryTrace, MemoryTrace]> {
-  const locked = lockedTraces(state).filter(t => t.source === 'im');
-  const pairs: Array<[MemoryTrace, MemoryTrace]> = [];
-
-  for (let i = 0; i < locked.length; i++) {
-    for (let j = i + 1; j < locked.length; j++) {
-      // Check if product doesn't already exist at locked depth
-      const productContent = `${locked[i].content} \u2297 ${locked[j].content}`;
-      const existing = peekTrace(state, productContent);
-      if (!existing || !isLocked(existing.accessCount)) {
-        pairs.push([locked[i], locked[j]]);
-      }
-    }
-  }
-
-  return pairs;
-}

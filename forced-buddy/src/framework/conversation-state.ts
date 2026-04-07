@@ -86,7 +86,7 @@ export function updateRelationship(
  * Check if triple talk has occurred in recent messages.
  * All three senders must appear within the window.
  */
-export function checkTripleTalk(
+function checkTripleTalk(
   messages: ConversationMessage[],
   window: number = 6,
 ): boolean {

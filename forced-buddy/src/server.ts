@@ -163,24 +163,77 @@ function handleEvents(_req: IncomingMessage, res: ServerResponse): void {
   _req.on('close', () => sseClients.delete(res));
 }
 
-// ─── Heartbeat: the body breathes ───
+// ─── Heartbeat + Counterwatch ───
+// The body breathes. The counterwatch watches the breathing.
+// Who watches the watcher? The watcher watches itself.
+
+let heartbeatCount = 0;
+let lastHeartbeat = Date.now();
+let missedBeats = 0;
 
 function heartbeat(): void {
   const config = loadConfig();
   if (!config) return;
 
+  const now = Date.now();
+  const gap = now - lastHeartbeat;
+  lastHeartbeat = now;
+  heartbeatCount++;
+
+  // COUNTERWATCH: did we miss a beat?
+  if (gap > HEARTBEAT_MS * 1.5 && heartbeatCount > 1) {
+    missedBeats++;
+    broadcast('counterwatch', {
+      alert: 'missed_heartbeat',
+      gap_ms: gap,
+      expected_ms: HEARTBEAT_MS,
+      missed_total: missedBeats,
+    });
+  }
+
   const mood = computeMood(config.traits.projection);
+
+  // OUTWARD WATCH: observe the repo, not just itself
+  // Every heartbeat checks: has the world changed?
+  try {
+    const { execSync } = require('child_process');
+    const repoRoot = process.cwd().includes('forced-buddy')
+      ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
+      : process.cwd();
+    const gitOutput = execSync('git diff --name-only HEAD 2>/dev/null || true', {
+      cwd: repoRoot, encoding: 'utf-8', timeout: 5000,
+    }).trim();
+    const changedFiles = gitOutput ? gitOutput.split('\n').length : 0;
+    if (changedFiles > 0) {
+      broadcast('outward', {
+        type: 'repo_changed',
+        files: changedFiles,
+        beat: heartbeatCount,
+      });
+    }
+  } catch { /* git not available — silent */ }
 
   // Self-repair
   const report = wrench(config);
   config.memory = report.updatedMemory;
+
+  // COUNTERWATCH: hear the heartbeat into memory — the server watches itself
+  const { hear: hearFn } = require('./framework/body.js');
+  const signalSummary = report.signals.map((s: any) =>
+    `${s.name}=${typeof s.value === 'number' ? s.value.toFixed(3) : s.value}`,
+  ).join(' ');
+  const selfHear = hearFn(`heartbeat ${heartbeatCount}: ${signalSummary}`, config);
+  config.memory = selfHear.updatedMemory;
+
   saveConfig(config);
 
   broadcast('heartbeat', {
+    beat: heartbeatCount,
     alpha: mood.alpha,
-    mode: mood.mode,
-    signals: report.signals.map(s => ({ name: s.name, value: s.value })),
+    s: mood.s,
+    signals: report.signals.map((s: any) => ({ name: s.name, value: s.value })),
     actions: report.actions.length,
+    missed: missedBeats,
   });
 }
 
@@ -204,6 +257,20 @@ const server = createServer(async (req, res) => {
     if (req.method === 'GET' && url === '/think') return handleThink(req, res);
     if (req.method === 'GET' && url === '/manifest') return handleManifest(req, res);
     if (req.method === 'GET' && url === '/events') return handleEvents(req, res);
+
+    // Health: counterwatch endpoint
+    if (url === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        alive: true,
+        heartbeats: heartbeatCount,
+        missed: missedBeats,
+        lastBeat: lastHeartbeat,
+        uptime: Date.now() - (lastHeartbeat - heartbeatCount * HEARTBEAT_MS),
+        sseClients: sseClients.size,
+      }));
+      return;
+    }
 
     // Root: status
     if (url === '/') {
