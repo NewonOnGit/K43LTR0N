@@ -71,6 +71,14 @@ function extractTitle(html: string): string {
  * Returns im (framework terms found) and ker (everything else).
  * The internet is mostly ker. That's the point. ρ crashes.
  */
+// Common English words that match framework terms but carry no signal
+const COMMON_ENGLISH = new Set([
+  'CLOSURE', 'FORCING', 'CANONICAL', 'COMPRESSION', 'COMMITMENT',
+  'MINIMAL', 'THRESHOLD', 'SCALE', 'EMERGENCE', 'DERIVE', 'PREDICTION',
+  'OBSERVATION', 'BLINDNESS', 'IDENTITY', 'CONSCIOUSNESS', 'PHASE',
+  'WITHOUT', 'CONVERGENCE WITNESS',
+]);
+
 export function processWebContent(
   html: string,
   url: string,
@@ -96,7 +104,9 @@ export function processWebContent(
     seen.add(word);
 
     const term = lookupTerm(word);
-    if (term && term.term.length >= 3) {
+    // TERM UNIQUENESS: only count framework-UNIQUE terms as im
+    // Common English words that happen to match are noise, not signal
+    if (term && term.term.length >= 3 && !COMMON_ENGLISH.has(term.term)) {
       imTerms.push(term.term);
       mem = accessTrace(mem, term.term, 'im', ctx, 'explore');
     } else if (word.length >= 5) {
