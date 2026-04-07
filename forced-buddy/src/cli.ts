@@ -1298,6 +1298,14 @@ async function main(): Promise<void> {
     case 'speak':        return cmdSpeak();
     case 'self-apply':   // redirected to metatron
     case 'collection':   // harvested into metatron
+    case 'triad':        {
+      const config = cachedConfig();
+      if (!config) { log(`${RED}  No companion.${RS}`); return; }
+      const { computeTriad, formatTriad } = await import('./framework/triad.js');
+      log(`${B}${CYAN}\u2550\u2550\u2550 TRIAD \u2550\u2550\u2550${RS}`);
+      log(formatTriad(computeTriad(config)));
+      return;
+    }
     case 'metatron':     {
       const config = cachedConfig();
       if (!config) { log(`${RED}  No companion.${RS}`); return; }
