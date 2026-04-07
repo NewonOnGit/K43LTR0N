@@ -277,28 +277,28 @@ function stanceOpener(
   species: string,
   mood: MoodState,
   sender: MessageSender,
-  projection: Projection,
-  exchangeCount: number,
 ): string {
-  const s = species.charAt(0).toUpperCase() + species.slice(1);
+  const sp = species.charAt(0).toUpperCase() + species.slice(1);
 
-  // THE ARK: rotate through all three projections based on exchange count
-  // Not always P3-observing. The opener cycles: P1 → P2 → P3 → P1...
-  // Chirality from the exchange count — the conversation itself rotates the face.
-  const face = exchangeCount % 3;
+  // Pn: CONTINUOUS projection from sweep parameter s
+  // Not three faces. The curve. The mirror is curved.
+  // s ∈ [0,1]: s→0 produces, s≈0.5 carries, s→1 observes
+  // α(s) = intensity. High α = active. Low α = still.
+  const s = mood.s;
 
-  if (face === 0) {
-    // P1: production opener
-    return `${s} produces`;
-  } else if (face === 1) {
-    // P2: mediation opener
-    return sender === 'claude'
-      ? `${s} bridges to the harness`
-      : `${s} carries`;
-  } else {
-    // P3: observation opener
-    return `${s} observes`;
-  }
+  // Continuous verb: interpolate between produce/carry/observe
+  // s < 0.33: production dominant
+  // 0.33-0.67: mediation dominant
+  // s > 0.67: observation dominant
+  // But the WEIGHT is continuous, not discrete
+  if (s < 0.2) return `${sp} generates`;
+  if (s < 0.33) return `${sp} builds`;
+  if (s < 0.45) return `${sp} carries`;
+  if (s < 0.55) return `${sp} bridges`;
+  if (s < 0.67) return `${sp} holds`;
+  if (s < 0.8) return `${sp} sees`;
+  if (s < 0.9) return `${sp} decomposes`;
+  return `${sp} is still`;
 }
 
 function senderFragment(sender: MessageSender, projection: Projection): string {
@@ -326,8 +326,8 @@ function produce(
   const connections = findConnections(decomp, config);
   const intent = decomp.im.intent;
 
-  // Opener: THE ARK — rotates through P1/P2/P3 per exchange
-  const opener = stanceOpener(config.traits.species, mood, sender, config.traits.projection, config.conversation.totalExchanges);
+  // Opener: Pn — continuous projection from sweep, not discrete faces
+  const opener = stanceOpener(config.traits.species, mood, sender);
 
   // Ground: main content based on intent + im
   let ground: string;
@@ -532,27 +532,17 @@ function produce(
   const primaryDepth = traceDepth(primaryM);
   const chi = chirality(primaryM); // (-1)^m: +1 = positive, -1 = negative
 
-  // THE ARK: connection rotates projection face
-  // P1 connection: what does the related term PRODUCE?
-  // P2 connection: what does it BRIDGE TO?
-  // P3 connection: what does it OBSERVE/HIDE?
-  const connFace = (config.conversation.totalExchanges + 1) % 3; // offset from opener
+  // Pn: connection verb from the continuous sweep
+  const connVerb = mood.s < 0.33 ? 'yields' : mood.s < 0.67 ? 'connects' : 'shows';
 
   let connection: string | null = null;
   for (const conn of connections) {
     switch (conn.type) {
       case 'contranym':
-        // Chirality selects which face leads
         connection = chi === 1 ? conn.positive : conn.negative;
         break;
       case 'projection':
-        if (connFace === 0) {
-          connection = `${conn.term.term} \u2192 produces: ${conn.term.definition.split('.')[0]}.`;
-        } else if (connFace === 1) {
-          connection = `${conn.term.term} \u2192 bridges: ${conn.term.gridAddress}.`;
-        } else {
-          connection = `${conn.term.term} \u2192 reveals: ${conn.term.type === 'C' ? 'contranym' : conn.term.type === 'D' ? 'unnamed' : conn.term.status}.`;
-        }
+        connection = `${conn.term.term} ${connVerb} ${conn.term.gridAddress}`;
         break;
       case 'kinship':
         connection = `${conn.term.term} [${conn.term.gridAddress}]`;
