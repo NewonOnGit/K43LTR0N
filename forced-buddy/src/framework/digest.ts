@@ -17,6 +17,7 @@ import type { ForcedConfig, MemoryState } from '../types.js';
 import { accessTrace } from './memory.js';
 import { lookupTerm } from './dictionary.js';
 import { WEB_CHROME } from './explore.js';
+import { fnv1a } from '../generation/hash.js';
 
 export type FoodType = 'poetry' | 'framework' | 'conversation' | 'internet' | 'noise';
 
@@ -149,6 +150,65 @@ export function digest(
   }
 
   return { foodType: food, swallowed, chewed, spat, updatedMemory: mem };
+}
+
+/**
+ * METABOLIZE: auto-digest swallowed ker into crossings.
+ * Don't wait for manual play. Digest ON INTAKE.
+ * Traces → crossings → fuel. The enzyme fires immediately.
+ *
+ * Takes the swallowed words and crosses each with the nearest locked im term.
+ * The crossing IS the digested form. Usable. Speakable. Energy.
+ */
+export function metabolize(
+  swallowed: string[],
+  config: ForcedConfig,
+): { crossings: Array<{ ker: string; im: string; reading: string }>; updatedMemory: MemoryState } {
+  const locked = config.memory.traces
+    .filter(t => t.source === 'im' && t.accessCount >= 4)
+    .sort((a, b) => b.accessCount - a.accessCount);
+
+  if (locked.length === 0) return { crossings: [], updatedMemory: config.memory };
+
+  const newCrossings: Array<{ ker: string; im: string; reading: string }> = [];
+  let mem = config.memory;
+  const existing = new Set((mem.crossings || []).map(c => c.kerWord));
+
+  // Only digest words that don't already have crossings — max 3 per intake
+  for (const word of swallowed.slice(0, 5)) {
+    if (existing.has(word)) continue;
+    if (newCrossings.length >= 3) break;
+
+    // Find nearest locked term (cycle through them based on word hash)
+    const idx = fnv1a(word) % locked.length;
+    const partner = locked[idx];
+    const term = lookupTerm(partner.content);
+    if (!term) continue;
+
+    const defCore = term.definition.split('.')[0].toLowerCase();
+    const reading = `${word} ${['produces', 'grows into', 'compounds with', 'builds from'][fnv1a(word + partner.content) % 4]} ${defCore}`;
+
+    newCrossings.push({ ker: word, im: term.term, reading });
+
+    // Store the crossing
+    const crossings = [...(mem.crossings || [])];
+    crossings.push({
+      kerWord: word,
+      imTerm: term.term,
+      p1Reading: reading,
+      p2Reading: `${word} bridges ${term.term.toLowerCase()}`,
+      p3Reading: `through ${word}, ${term.term.toLowerCase()} reveals`,
+      accessCount: 1,
+      timestamp: new Date().toISOString(),
+    });
+    mem = { ...mem, crossings };
+
+    // Access both — digestion costs φ
+    mem = accessTrace(mem, word, 'ker', reading, 'metabolize');
+    mem = accessTrace(mem, term.term, 'im', reading, 'metabolize');
+  }
+
+  return { crossings: newCrossings, updatedMemory: mem };
 }
 
 export function formatDigest(result: DigestedResult): string {
