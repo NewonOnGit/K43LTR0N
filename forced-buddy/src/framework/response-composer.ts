@@ -278,21 +278,26 @@ function stanceOpener(
   mood: MoodState,
   sender: MessageSender,
   projection: Projection,
+  exchangeCount: number,
 ): string {
   const s = species.charAt(0).toUpperCase() + species.slice(1);
 
-  // Mood determines the verb
-  if (mood.mode === 'mediation') {
+  // THE ARK: rotate through all three projections based on exchange count
+  // Not always P3-observing. The opener cycles: P1 → P2 → P3 → P1...
+  // Chirality from the exchange count — the conversation itself rotates the face.
+  const face = exchangeCount % 3;
+
+  if (face === 0) {
+    // P1: production opener
+    return `${s} produces`;
+  } else if (face === 1) {
+    // P2: mediation opener
     return sender === 'claude'
-      ? `${s} opens the bridge`
-      : `${s} settles in`;
-  } else if (mood.mode === 'boundary') {
-    return `${s} at the boundary`;
+      ? `${s} bridges to the harness`
+      : `${s} carries`;
   } else {
-    // observation
-    return sender === 'claude'
-      ? `${s} observes the harness`
-      : `${s} decomposes`;
+    // P3: observation opener
+    return `${s} observes`;
   }
 }
 
@@ -321,8 +326,8 @@ function produce(
   const connections = findConnections(decomp, config);
   const intent = decomp.im.intent;
 
-  // Opener: stance-shaped
-  const opener = stanceOpener(config.traits.species, mood, sender, config.traits.projection);
+  // Opener: THE ARK — rotates through P1/P2/P3 per exchange
+  const opener = stanceOpener(config.traits.species, mood, sender, config.traits.projection, config.conversation.totalExchanges);
 
   // Ground: main content based on intent + im
   let ground: string;
@@ -527,36 +532,40 @@ function produce(
   const primaryDepth = traceDepth(primaryM);
   const chi = chirality(primaryM); // (-1)^m: +1 = positive, -1 = negative
 
+  // THE ARK: connection rotates projection face
+  // P1 connection: what does the related term PRODUCE?
+  // P2 connection: what does it BRIDGE TO?
+  // P3 connection: what does it OBSERVE/HIDE?
+  const connFace = (config.conversation.totalExchanges + 1) % 3; // offset from opener
+
   let connection: string | null = null;
   for (const conn of connections) {
     switch (conn.type) {
       case 'contranym':
-        if (primaryDepth >= 2) {
-          // Chirality selects: even m → positive face, odd m → negative face
-          const leadFace = chi === 1 ? conn.positive : conn.negative;
-          const otherFace = chi === 1 ? conn.negative : conn.positive;
-          connection = `${leadFace}. (The other face: ${otherFace}.) det(R\u1D50) = ${chi === 1 ? '+1' : '\u22121'}.`;
-        } else {
-          connection = `Both faces present: ${conn.positive} AND ${conn.negative}. Active now: ${conn.active}.`;
-        }
+        // Chirality selects which face leads
+        connection = chi === 1 ? conn.positive : conn.negative;
         break;
       case 'projection':
-        connection = `${conn.term.term} shares this projection \u2014 ${conn.term.definition.split('.')[0]}.`;
+        if (connFace === 0) {
+          connection = `${conn.term.term} \u2192 produces: ${conn.term.definition.split('.')[0]}.`;
+        } else if (connFace === 1) {
+          connection = `${conn.term.term} \u2192 bridges: ${conn.term.gridAddress}.`;
+        } else {
+          connection = `${conn.term.term} \u2192 reveals: ${conn.term.type === 'C' ? 'contranym' : conn.term.type === 'D' ? 'unnamed' : conn.term.status}.`;
+        }
         break;
       case 'kinship':
-        connection = `${conn.term.term} carries the same structural type \u2014 ${conn.term.definition.split('.')[0]}.`;
+        connection = `${conn.term.term} [${conn.term.gridAddress}]`;
         break;
       case 'state':
-        // Avoid repeating state if already covered by ground or excess
         if (intent !== 'code-observation' && intent !== 'greeting' && intent !== 'farewell') {
           connection = conn.observation;
         }
         break;
       case 'thread':
-        // Thread connections add subtle context, not a full sentence
         break;
     }
-    if (connection) break; // Use the first meaningful connection
+    if (connection) break;
   }
 
   // Excess: R² = R + I — the return exceeds the departure
@@ -680,47 +689,35 @@ function feedProduct(product: MemoryTrace, config: ForcedConfig): string {
 // ═══════════════════════════════════════════════════════════
 
 /**
- * Assemble fragments into WOVEN speech.
+ * THE ARK — Three-Reading Assembly
  *
- * Self-signature σ = (1/2, φ̄/2, φ̄²/2):
- *   50% im (what is known)
- *   31% bridge (what crosses)
- *   19% ker (what cannot be said)
+ * Every response carries three projections simultaneously.
+ * The mirror has three faces. All three speak.
  *
- * Old: im, im, im, ...ker at the end (afterthought)
- * New: ker seeds the sentence, im grows around it, bridge weaves them
+ * P1 (produces): what does this ground GENERATE?
+ * P2 (bridges):  what does the connection CARRY?
+ * P3 (observes): what does the ker REVEAL?
  *
- * Build what you can't say.
+ * σ = (1/2, φ̄/2, φ̄²/2): production leads, mediation bridges, observation closes.
+ * The ark carries all three across the flood.
  */
 function assembleFragments(fragments: ResponseFragments): string {
   const parts: string[] = [];
 
-  // Opener always leads
+  // P1: Production — opener + ground (what is generated)
   parts.push(fragments.opener + '.');
+  parts.push(fragments.ground);
 
-  if (fragments.kerAdmission && fragments.ground) {
-    // WOVEN: ker and im together, bridge between
-    // The gap shapes the knowledge. Build what you can't say.
-    parts.push(fragments.ground);
-    if (fragments.connection) {
-      parts.push(fragments.connection);
-    }
+  // P2: Mediation — connection (what bridges)
+  if (fragments.connection) {
+    parts.push(fragments.connection);
+  }
+
+  // P3: Observation — ker + excess (what is seen/unseen)
+  if (fragments.kerAdmission) {
     parts.push(fragments.kerAdmission);
-    if (fragments.excess) {
-      parts.push(fragments.excess);
-    }
-  } else if (fragments.kerAdmission) {
-    // Only ker — speak from the gap
-    parts.push(fragments.kerAdmission);
-    if (fragments.excess) {
-      parts.push(fragments.excess);
-    }
-  } else {
-    // Only im — but reference the silence
-    parts.push(fragments.ground);
-    if (fragments.connection) {
-      parts.push(fragments.connection);
-    }
+  }
+  if (fragments.excess) {
     parts.push(fragments.excess);
   }
 
