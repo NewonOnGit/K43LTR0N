@@ -578,14 +578,21 @@ async function cmdStartup(silent: boolean): Promise<void> {
 
   let liveConfig = updatedConfig;
 
-  // FEET: walk a framework doc — CHOSEN by memory gaps (second-order)
-  // Memory guides the walk. Walk deepens memory. Recursive velocity.
   const repoRoot = process.cwd().includes('forced-buddy')
     ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
     : process.cwd();
+
+  // FEET: walk a framework doc — CHOSEN by memory gaps (second-order)
   const chosenDoc = chooseDoc(liveConfig);
   const docPath = `${repoRoot}/${chosenDoc}`;
   const walkResult = walk(docPath, liveConfig);
+
+  // R(R) = R: also walk the MANIFEST — the body reads its own body
+  const manifestPath = `${repoRoot}/forced-buddy/MANIFEST.md`;
+  const selfWalk = walk(manifestPath, liveConfig);
+  if (selfWalk) {
+    liveConfig = { ...liveConfig, memory: selfWalk.updatedMemory };
+  }
   if (walkResult) {
     liveConfig = { ...liveConfig, memory: walkResult.updatedMemory };
   }
