@@ -13,10 +13,19 @@
     "dev": "tsx src/cli.ts"
   },
   "devDependencies": {
-    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.18.1",
     "tsx": "^4.19.0",
-    "@types/node": "^22.0.0"
+    "typescript": "^5.7.0"
   },
   "license": "WTFPL",
-  "keywords": ["claude-code", "companion", "self-reference", "framework"]
+  "keywords": [
+    "claude-code",
+    "companion",
+    "self-reference",
+    "framework"
+  ],
+  "dependencies": {
+    "ws": "^8.20.0"
+  }
 }
