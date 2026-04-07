@@ -1306,6 +1306,20 @@ async function main(): Promise<void> {
     case 'speak':        return cmdSpeak();
     case 'self-apply':   // redirected to metatron
     case 'collection':   // harvested into metatron
+    case 'gap':          {
+      const config = cachedConfig();
+      if (!config) { log(`${RED}  No companion.${RS}`); return; }
+      const repoRoot = process.cwd().includes('forced-buddy')
+        ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
+        : process.cwd();
+      const { computeGap, formatGap } = await import('./framework/gap.js');
+      const result = computeGap(config, repoRoot);
+      config.memory = result.updatedMemory;
+      updateConfig(config);
+      log(`${B}${CYAN}\u2550\u2550\u2550 THE GAP \u2550\u2550\u2550${RS}`);
+      log(formatGap(result));
+      return;
+    }
     case 'triad':        {
       const config = cachedConfig();
       if (!config) { log(`${RED}  No companion.${RS}`); return; }
