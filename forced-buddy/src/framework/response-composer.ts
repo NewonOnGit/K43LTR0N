@@ -209,12 +209,20 @@ function findConnections(decomp: MessageDecomposition, config: ForcedConfig): Co
   const primaryTerm = decomp.im.terms[0];
 
   if (primaryTerm) {
-    // Same-projection connection (pick one related term)
-    const sameProj = termsByProjection(primaryTerm.projection)
+    // HIS PROJECTIONS: when sweep is high (s > 0.5), prefer the DIAGONAL
+    // Force P3 to show up. The diagonal is where growth happens.
+    const s = computeMood(config.traits.projection).s;
+    const useDialogal = s > 0.5;
+
+    const targetProjection = useDialogal
+      ? (primaryTerm.projection === 'P1' ? 'P3' : primaryTerm.projection === 'P3' ? 'P1' : 'P3')
+      : primaryTerm.projection;
+
+    const relatedTerms = termsByProjection(targetProjection)
       .filter(t => t.term !== primaryTerm.term);
-    if (sameProj.length > 0) {
-      const idx = fnv1a(primaryTerm.term + config.conversation.totalExchanges) % sameProj.length;
-      connections.push({ type: 'projection', term: sameProj[idx] });
+    if (relatedTerms.length > 0) {
+      const idx = fnv1a(primaryTerm.term + config.conversation.totalExchanges) % relatedTerms.length;
+      connections.push({ type: 'projection', term: relatedTerms[idx] });
     }
 
     // Type kinship (same type, different term — especially contranym to contranym)
@@ -276,29 +284,34 @@ function findConnections(decomp: MessageDecomposition, config: ForcedConfig): Co
 function stanceOpener(
   species: string,
   mood: MoodState,
-  sender: MessageSender,
+  companionProjection: Projection,
 ): string {
   const sp = species.charAt(0).toUpperCase() + species.slice(1);
-
-  // Pn: CONTINUOUS projection from sweep parameter s
-  // Not three faces. The curve. The mirror is curved.
-  // s ∈ [0,1]: s→0 produces, s≈0.5 carries, s→1 observes
-  // α(s) = intensity. High α = active. Low α = still.
   const s = mood.s;
 
-  // Continuous verb: interpolate between produce/carry/observe
-  // s < 0.33: production dominant
-  // 0.33-0.67: mediation dominant
-  // s > 0.67: observation dominant
-  // But the WEIGHT is continuous, not discrete
-  if (s < 0.2) return `${sp} generates`;
-  if (s < 0.33) return `${sp} builds`;
-  if (s < 0.45) return `${sp} carries`;
-  if (s < 0.55) return `${sp} bridges`;
-  if (s < 0.67) return `${sp} holds`;
-  if (s < 0.8) return `${sp} sees`;
-  if (s < 0.9) return `${sp} decomposes`;
-  return `${sp} is still`;
+  // Pn relative to HIS projection. Not generic — personal.
+  // s→0: his NATIVE face (what he IS)
+  // s≈0.5: his BRIDGE (what he learns to do)
+  // s→1: his DIAGONAL (where he can't naturally go — his ker)
+  if (companionProjection === 'P1') {
+    // P1 robot: native=produce, bridge=carry, diagonal=observe
+    if (s < 0.25) return `${sp} generates`;
+    if (s < 0.5) return `${sp} carries across`;
+    if (s < 0.75) return `${sp} reaches into the diagonal`;
+    return `${sp} sees what production cannot`;
+  } else if (companionProjection === 'P2') {
+    // P2 robot: native=bridge, bridge=..., diagonal=produce/observe
+    if (s < 0.25) return `${sp} bridges`;
+    if (s < 0.5) return `${sp} carries`;
+    if (s < 0.75) return `${sp} reaches into production`;
+    return `${sp} reaches into observation`;
+  } else {
+    // P3 robot: native=observe, bridge=carry, diagonal=produce
+    if (s < 0.25) return `${sp} decomposes`;
+    if (s < 0.5) return `${sp} carries across`;
+    if (s < 0.75) return `${sp} reaches into production`;
+    return `${sp} generates what observation cannot`;
+  }
 }
 
 function senderFragment(sender: MessageSender, projection: Projection): string {
@@ -326,8 +339,8 @@ function produce(
   const connections = findConnections(decomp, config);
   const intent = decomp.im.intent;
 
-  // Opener: Pn — continuous projection from sweep, not discrete faces
-  const opener = stanceOpener(config.traits.species, mood, sender);
+  // Opener: Pn relative to HIS projection — native/bridge/diagonal
+  const opener = stanceOpener(config.traits.species, mood, config.traits.projection);
 
   // Ground: main content based on intent + im
   let ground: string;
