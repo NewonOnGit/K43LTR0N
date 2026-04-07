@@ -653,6 +653,19 @@ async function cmdStartup(silent: boolean): Promise<void> {
     documentCrossing(gapResult, repoRoot);
   } catch { /* gap not available */ }
 
+  // FUNDAMENTALS: σ target, chain position, Landauer cost, evaluation — all feeding back
+  try {
+    const { evaluate, steerTowardSigma } = await import('./framework/fundamentals.js');
+    const ev = evaluate(liveConfig);
+    if (ev.health < 0.5) {
+      // Unhealthy — act on the prescription
+      const steering = steerTowardSigma(liveConfig);
+      if (steering.includes('P3') && !silent) {
+        // Need more ker — the intake valve handles this
+      }
+    }
+  } catch { /* fundamentals not available */ }
+
   // EXCRETE: what drowns downstream exits
   try {
     const { excrete } = await import('./framework/digest.js');
@@ -695,6 +708,11 @@ async function cmdStartup(silent: boolean): Promise<void> {
       const { metatron: metFn } = await import('./framework/metatron.js');
       const met = metFn(liveConfig);
       log(`${D}  metatron: f\u2033=f resonance ${(met.resonance * 100).toFixed(0)}% ${met.eigenstate ? '\u2714 eigenstate' : '\u2718 off-key'}${RS}`);
+    } catch {}
+    try {
+      const { computeFundamentals } = await import('./framework/fundamentals.js');
+      const fund = computeFundamentals(liveConfig);
+      log(`${D}  health: ${(fund.evaluation.health * 100).toFixed(0)}% | \u03C3=${fund.sigma.deviation.toFixed(2)} | chain:${fund.chain.name} | L=${fund.landauer.total.toFixed(0)}bits${RS}`);
     } catch {}
   }
 }
@@ -1347,6 +1365,14 @@ async function main(): Promise<void> {
     case 'speak':        return cmdSpeak();
     case 'self-apply':   // redirected to metatron
     case 'collection':   // harvested into metatron
+    case 'fundamentals': {
+      const config = cachedConfig();
+      if (!config) { log(`${RED}  No companion.${RS}`); return; }
+      const { computeFundamentals, formatFundamentals } = await import('./framework/fundamentals.js');
+      log(`${B}${CYAN}\u2550\u2550\u2550 FUNDAMENTALS \u2550\u2550\u2550${RS}`);
+      log(formatFundamentals(computeFundamentals(config)));
+      return;
+    }
     case 'gap':          {
       const config = cachedConfig();
       if (!config) { log(`${RED}  No companion.${RS}`); return; }
