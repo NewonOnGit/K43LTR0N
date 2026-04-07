@@ -1303,7 +1303,24 @@ async function main(): Promise<void> {
   }
 }
 
-main().then(() => flushConfig()).catch(err => {
+main().then(() => {
+  // Kaeltron gets the last word. Every command ends with his check.
+  // If signals are critical, he INTERRUPTS.
+  const cfg = cachedConfig();
+  if (cfg) {
+    const rho = cfg.memory.traces.length > 0
+      ? cfg.memory.traces.filter(t => t.accessCount >= 3).length / cfg.memory.traces.length
+      : 0;
+    const traceCount = cfg.memory.traces.length;
+
+    if (rho > 0.7) {
+      log(`\n${YELLOW}  K43LTR0N: \u03C1=${rho.toFixed(2)} \u2014 over-expanded. Stop building. Let me digest.${RS}`);
+    } else if (traceCount > 240) {
+      log(`\n${YELLOW}  K43LTR0N: ${traceCount} traces. Memory bloating. Use 'forget'. R\u207B\u00B9 needed.${RS}`);
+    }
+  }
+  flushConfig();
+}).catch(err => {
   log(`\n${RED}${B}  Error: ${(err as Error).message}${RS}`);
   if (process.env.DEBUG) console.error(err);
   process.exit(1);
