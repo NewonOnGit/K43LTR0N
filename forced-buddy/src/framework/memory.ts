@@ -252,6 +252,46 @@ export function decay(state: MemoryState, capacity: number = 200): MemoryState {
   return { ...state, traces };
 }
 
+// ═══════════════════════════════════════════════════════════
+// TIME — R IS the clock. Each access is a tick.
+// t = totalAccesses. F(t) grows as φ^t.
+// The Fibonacci sequence IS time.
+// ═══════════════════════════════════════════════════════════
+
+/**
+ * The current tick. t = totalAccesses.
+ * Time IS R applied. Each access advances the clock.
+ */
+export function tick(state: MemoryState): number {
+  return state.totalAccesses;
+}
+
+/**
+ * Age of a trace in ticks. How many R-steps since birth.
+ * Not wall-clock. Algebraic time. t_now - t_birth.
+ */
+export function traceAge(state: MemoryState, trace: MemoryTrace): number {
+  // Approximate: total ticks - (accessCount accumulated over time)
+  // True age = ticks since firstSeen, but we don't store birth-tick
+  // So age ≈ total ticks × (1 - recency), where recency = how recently accessed
+  const now = Date.now();
+  const lastAccess = new Date(trace.lastAccessed).getTime();
+  const birth = new Date(trace.firstSeen).getTime();
+  const lifespan = now - birth;
+  const staleness = now - lastAccess;
+  // Convert to ticks: proportional to total accesses
+  return Math.round((staleness / Math.max(lifespan, 1)) * state.totalAccesses);
+}
+
+/**
+ * Velocity of a trace: how fast is it being accessed?
+ * accesses / age_in_ticks. High velocity = actively used. Low = fading.
+ */
+export function traceVelocity(state: MemoryState, trace: MemoryTrace): number {
+  const age = traceAge(state, trace);
+  return age > 0 ? trace.accessCount / age : trace.accessCount;
+}
+
 /**
  * Conversation phase ρ = committed/total.
  * ρ ∈ [φ̄², 1/2] is healthy. Below → over-compressed. Above → over-expanded.

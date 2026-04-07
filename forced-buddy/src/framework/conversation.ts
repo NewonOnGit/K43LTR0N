@@ -15,37 +15,12 @@
 
 import type {
   ForcedConfig, MessageSender, ConversationIntent,
-  ConversationMessage, ConversationState, DictionaryTerm,
+  ConversationMessage, ConversationState,
 } from '../types.js';
 import { computeMood } from './sweep.js';
 import { enrichDescription } from './vocabulary.js';
-import { lookupTerm, TERMS } from './dictionary.js';
-import { composeResponse as composeNR, decompose } from './response-composer.js';
+import { composeResponse as composeNR } from './response-composer.js';
 import { addMessage, trackTopic, updateRelationship, currentExchangeLength } from './conversation-state.js';
-
-/**
- * Classify message intent (delegates to decompose for consistency).
- * Kept for backward compatibility.
- */
-export function classifyIntent(message: string, config?: ForcedConfig): ConversationIntent {
-  if (config) {
-    return decompose(message, config).decomposition.im.intent;
-  }
-  // Lightweight fallback when no config available
-  const patterns: Array<[ConversationIntent, RegExp]> = [
-    ['greeting',          /^(hey|hi|hello|yo|sup|greetings|good\s+(morning|evening|night|day))\b/i],
-    ['farewell',          /\b(bye|goodbye|later|see\s+you|goodnight|signing\s+off|gotta\s+go)\b/i],
-    ['status-query',      /\b(how\s+are\s+you|what.*mood|how.*feeling|what.*state|status|doing\s+(today|well|ok))\b/i],
-    ['self-reference',    /\b(who\s+are\s+you|what\s+are\s+you|your\s+(name|projection|species|nature)|tell\s+me\s+about\s+(yourself|you)|kaeltron|k43l)\b/i],
-    ['code-observation',  /\b(code\w*|repo|commit|branch|file|bug|test|build|deploy|git|merge|PR|diff|refactor)\b/i],
-    ['meta-conversation', /\b(conversation|talking|chat|discuss|triple|dialogue|exchange|spoke)\b/i],
-  ];
-  for (const [intent, pattern] of patterns) {
-    if (pattern.test(message)) return intent;
-  }
-  if (lookupTerm(message)) return 'framework-question';
-  return 'freeform';
-}
 
 // ─── Response Generation ───
 

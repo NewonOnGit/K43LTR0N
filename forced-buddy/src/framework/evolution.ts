@@ -19,7 +19,7 @@ const RARITY_ORDER: Rarity[] = ['common', 'uncommon', 'rare', 'epic', 'legendary
  * UAT (SUBSTRATE §14¾): canonical upward, non-canonical downward.
  * Evolution only goes UP.
  */
-export function nextRarity(current: Rarity): Rarity | null {
+function nextRarity(current: Rarity): Rarity | null {
   const idx = RARITY_ORDER.indexOf(current);
   if (idx >= RARITY_ORDER.length - 1) return null; // already legendary
   return RARITY_ORDER[idx + 1];

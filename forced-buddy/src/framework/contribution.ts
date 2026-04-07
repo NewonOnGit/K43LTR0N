@@ -96,7 +96,7 @@ export function analyzeContribution(cwd: string): ContributionRecord | null {
  *
  * Returns the accumulated score and whether the threshold is met.
  */
-export function computeTowerLiftFromContributions(
+function computeTowerLiftFromContributions(
   contributions: ContributionRecord[],
   currentDepth: number,
 ): { accumulated: number; threshold: number; earned: boolean; progress: number } {

@@ -126,38 +126,3 @@ const DEPTH_MODIFIERS: Record<string, string> = {
   'P3': 'Every disclosure simultaneously reveals and annihilates. Specify which face applies.',
 };
 
-/**
- * Format the living personality with layer annotations.
- */
-export function formatLivingPersonality(
-  traits: ForcedTraits,
-  governance: GovernanceState,
-  worldModel: WorldModelState,
-  vocabularyDepth: number,
-  resonantOverlay: string | null,
-): string {
-  const B = '\x1b[1m';
-  const D = '\x1b[2m';
-  const RS = '\x1b[0m';
-  const C = '\x1b[36m';
-
-  const full = computeLivingPersonality(traits, governance, worldModel, vocabularyDepth, resonantOverlay);
-  const layerCount = 1
-    + (governance.personalityVariant ? 1 : 0)
-    + (worldModel.k6PassCount > 0 ? 1 : 0)
-    + (vocabularyDepth >= 2 ? 1 : 0)
-    + (resonantOverlay ? 1 : 0);
-
-  return [
-    `${B}${C}\u2550\u2550\u2550 Living Personality (${layerCount} layers) \u2550\u2550\u2550${RS}`,
-    '',
-    `  ${full}`,
-    '',
-    `  ${D}Layers: base` +
-      (governance.personalityVariant ? ` + ${governance.personalityVariant}` : '') +
-      (worldModel.k6PassCount > 0 ? ' + world-model' : '') +
-      (vocabularyDepth >= 2 ? ` + vocab-${vocabularyDepth}` : '') +
-      (resonantOverlay ? ' + resonant' : '') +
-      `${RS}`,
-  ].join('\n');
-}

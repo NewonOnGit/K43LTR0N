@@ -94,7 +94,7 @@ const STOPWORDS = new Set([
 // N — THE LISTENING OPERATION (decompose message into im/ker)
 // ═══════════════════════════════════════════════════════════
 
-export function decompose(message: string, config: ForcedConfig): { decomposition: MessageDecomposition; updatedMemory: MemoryState } {
+export function decompose(message: string, config: ForcedConfig, mood?: MoodState): { decomposition: MessageDecomposition; updatedMemory: MemoryState } {
   const words = message.split(/\s+/).filter(w => w.length > 0);
   const lcMessage = message.toLowerCase();
 
@@ -181,8 +181,8 @@ export function decompose(message: string, config: ForcedConfig): { decompositio
   // Access memory traces for all im terms and ker words (Rᵐ applied once)
   // Fill the words full of themselves — sentence, who, mood
   const sentence = message.slice(0, 100);
-  const mood = computeMood(config.traits.projection);
-  const moodMode = mood.mode;
+  const resolvedMood = mood ?? computeMood(config.traits.projection);
+  const moodMode = resolvedMood.mode;
   let mem = config.memory;
   for (const t of terms) {
     mem = accessTrace(mem, t.term, 'im', sentence, 'respond', moodMode);
@@ -205,7 +205,7 @@ export function decompose(message: string, config: ForcedConfig): { decompositio
 // R — THE SPEAKING OPERATION (produce response that exceeds input)
 // ═══════════════════════════════════════════════════════════
 
-function findConnections(decomp: MessageDecomposition, config: ForcedConfig): Connection[] {
+function findConnections(decomp: MessageDecomposition, config: ForcedConfig, mood: MoodState): Connection[] {
   const connections: Connection[] = [];
   const primaryTerm = decomp.im.terms[0];
 
@@ -213,7 +213,7 @@ function findConnections(decomp: MessageDecomposition, config: ForcedConfig): Co
     // Pn: SIMPLEX DISTANCE connection, not discrete same/cross
     // Find the term closest on the simplex to where the SWEEP currently is.
     // Kill the numbers. Keep the math. Distance IS the connection.
-    const currentPos = sweepToSimplex(computeMood(config.traits.projection).s);
+    const currentPos = sweepToSimplex(mood.s);
     const primaryPos = projectionToWeight(primaryTerm.projection);
 
     // Find terms at DIFFERENT simplex positions (diversity, not sameness)
@@ -339,9 +339,9 @@ function produce(
   decomp: MessageDecomposition,
   config: ForcedConfig,
   sender: MessageSender,
+  mood: MoodState,
 ): ResponseFragments {
-  const mood = computeMood(config.traits.projection);
-  const connections = findConnections(decomp, config);
+  const connections = findConnections(decomp, config, mood);
   const intent = decomp.im.intent;
 
   // Opener: Pn relative to HIS projection — native/bridge/diagonal
@@ -749,8 +749,11 @@ export function composeResponse(
   sender: MessageSender,
   config: ForcedConfig,
 ): { response: string; intent: ConversationIntent; decomposition: MessageDecomposition; updatedMemory: MemoryState } {
+  // Compute mood ONCE — used by decompose, produce, findConnections
+  const mood = computeMood(config.traits.projection);
+
   // N: decompose (applies R to memory traces — Fibonacci step)
-  const { decomposition: decomp, updatedMemory } = decompose(message, config);
+  const { decomposition: decomp, updatedMemory } = decompose(message, config, mood);
 
   // MULTIPLY + DISSIPATE
   let mem = updatedMemory;
@@ -788,7 +791,7 @@ export function composeResponse(
   const configWithMemory = { ...config, memory: mem };
 
   // R: produce (uses traceDepth, chirality, named gaps, phase ρ)
-  const fragments = produce(decomp, configWithMemory, sender);
+  const fragments = produce(decomp, configWithMemory, sender, mood);
 
   // Compose
   let response = assembleFragments(fragments);

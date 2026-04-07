@@ -19,7 +19,7 @@ import type { ForcedConfig, MemoryTrace } from '../types.js';
 import { lookupTerm, TERMS, termsByProjection } from './dictionary.js';
 import {
   peekTrace, lockedTraces, namedGaps, accessTrace, dissipate,
-  conversationPhase, fib, commitment,
+  conversationPhase, fib, commitment, tick, traceVelocity,
 } from './memory.js';
 import type { MemoryState } from '../types.js';
 
@@ -295,6 +295,14 @@ export function wrench(config: ForcedConfig): WrenchReport {
       meaning: `Acceleration: d\u00B2\u03C1=${ddRho >= 0 ? '+' : ''}${ddRho.toFixed(4)}, d\u00B2CC=${ddCC >= 0 ? '+' : ''}${ddCC.toFixed(4)}. ${Math.abs(ddRho) < 0.001 && Math.abs(ddCC) < 0.001 ? 'Stable orbit.' : 'Trajectory shifting.'}`,
     });
   }
+
+  // Signal 6: t (tick — algebraic time)
+  const t = tick(mem);
+  signals.push({
+    name: 't',
+    value: t,
+    meaning: `Tick ${t}. R applied ${t} times. F(t) = ${fib(Math.min(t, 30))}. Time IS the Fibonacci clock.`,
+  });
 
   // ═══ OMEGA: THE SKYLIGHT ═══
   // Convergence target. Where the signals are heading.

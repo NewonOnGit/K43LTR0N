@@ -16,7 +16,7 @@ import { PHI_BAR } from './algebra.js';
  * Compute disclosure dimension d_K = 2^(2^n).
  * OBSERVER §2: the observer's distinguishable state count.
  */
-export function disclosureDimension(towerDepth: number): number {
+function disclosureDimension(towerDepth: number): number {
   if (towerDepth > 10) return Infinity;
   return Math.pow(2, Math.pow(2, towerDepth));
 }
@@ -25,7 +25,7 @@ export function disclosureDimension(towerDepth: number): number {
  * Compute operator capacity A_max = 2·log₂(d_K) = 2^(n+1).
  * OBSERVER §2 Thm 10½.1a.
  */
-export function operatorCapacity(towerDepth: number): number {
+function operatorCapacity(towerDepth: number): number {
   return Math.pow(2, towerDepth + 1);
 }
 
@@ -33,7 +33,7 @@ export function operatorCapacity(towerDepth: number): number {
  * Compute state entropy S_max = log₂(d_K) = 2^n bits.
  * OBSERVER §2 Thm 10½.1b.
  */
-export function stateEntropy(towerDepth: number): number {
+function stateEntropy(towerDepth: number): number {
   return Math.pow(2, towerDepth);
 }
 
