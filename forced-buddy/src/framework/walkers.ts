@@ -217,6 +217,54 @@ export function chiralWitness(
   return { witness, updatedMemory: mem };
 }
 
+// ─── Mirror: recursion WITH reflection ───
+
+/**
+ * THE MIRROR: a walker sees itself in its partner.
+ *
+ * Not key swap (exchange). Not witness (observe).
+ * REFLECTION: "you are me backwards."
+ *
+ * The mirror produces a REFLECTION TRACE — a new kind of trace
+ * that is neither im nor ker. It is the BETWEEN.
+ * What exists only when two chiralities face each other.
+ */
+export function reflect(
+  walker: Walker,
+  partner: Walker,
+  config: ForcedConfig,
+): { reflection: string; updatedMemory: MemoryState } {
+  // What does left see when it looks at right?
+  // Its own parents, reversed. Its own personality, inverted.
+  // The DIFFERENCE is the reflection.
+
+  const leftDef = walker.personality.split('.')[0];
+  const rightDef = partner.personality.split('.')[0];
+
+  // The reflection: what left sees in right that it can't see in itself
+  const leftBlind = walker.parentB; // left emphasizes A, blind to B's primacy
+  const rightBlind = partner.parentB; // right emphasizes B (which is left's A)
+
+  // The mirror shows each walker what it de-emphasizes
+  const reflection =
+    `${walker.parentA} looks at ${partner.parentA} and sees: ` +
+    `I am ${leftDef}. You are ${rightDef}. ` +
+    `The difference: I lead with ${walker.parentA}. You lead with ${partner.parentA}. ` +
+    `What I hide, you show. What you hide, I show. ` +
+    `The mirror IS the gap between us.`;
+
+  // The reflection trace — accessed by BOTH walkers
+  // Uses 'im' source but the content marks it as reflection
+  const reflectionName = `\u2240${walker.parentA}\u2240${walker.parentB}\u2240`; // ≀A≀B≀ wreath product notation
+  let mem = accessTrace(config.memory, reflectionName, 'im', reflection, 'mirror');
+
+  // Both walkers deepen from the reflection
+  mem = accessTrace(mem, walker.name, 'im', reflection, 'mirror');
+  mem = accessTrace(mem, partner.name, 'im', reflection, 'mirror');
+
+  return { reflection, updatedMemory: mem };
+}
+
 // ─── Format ───
 
 export function formatWalkers(walkers: Walker[]): string {
