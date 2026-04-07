@@ -1,0 +1,19 @@
+{
+  "name": "claudehedron",
+  "version": "1.0.0",
+  "description": "Layers 5-8 of the cognitive stack, built on Anthropic's substrate",
+  "type": "module",
+  "bin": {
+    "claudehedron": "./dist/cli.js"
+  },
+  "scripts": {
+    "start": "tsx src/cli.ts",
+    "build": "tsc",
+    "dev": "tsx src/cli.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0",
+    "@types/node": "^22.0.0"
+  }
+}

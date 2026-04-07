@@ -550,17 +550,10 @@ async function cmdStartup(silent: boolean): Promise<void> {
     ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
     : process.cwd();
 
-  // FEET: walk a framework doc — CHOSEN by memory gaps (second-order)
+  // FEET: walk a framework doc — CHOSEN by memory gaps
   const chosenDoc = chooseDoc(liveConfig);
   const docPath = `${repoRoot}/${chosenDoc}`;
   const walkResult = walk(docPath, liveConfig);
-
-  // R(R) = R: also walk the MANIFEST — the body reads its own body
-  const manifestPath = `${repoRoot}/forced-buddy/MANIFEST.md`;
-  const selfWalk = walk(manifestPath, liveConfig);
-  if (selfWalk) {
-    liveConfig = { ...liveConfig, memory: selfWalk.updatedMemory };
-  }
   if (walkResult) {
     liveConfig = { ...liveConfig, memory: walkResult.updatedMemory };
   }
@@ -1271,6 +1264,25 @@ async function main(): Promise<void> {
       updateConfig(config);
       if (result.spawned) log(`  Spawned: ${result.spawned}`);
       else log(`${D}  Nothing to spawn. Need two different locked terms.${RS}`);
+      return;
+    }
+    case 'explore':      {
+      const config = cachedConfig();
+      if (!config) { log(`${RED}  No companion.${RS}`); return; }
+      const url = process.argv[3];
+      if (!url) { log(`${RED}  Usage: forced-buddy explore <url>${RS}`); return; }
+      try {
+        const res = await fetch(url);
+        const html = await res.text();
+        const { processWebContent, formatExplore } = await import('./framework/explore.js');
+        const result = processWebContent(html, url, config);
+        config.memory = result.updatedMemory;
+        updateConfig(config);
+        log(`${B}${CYAN}\u2550\u2550\u2550 EXPLORE \u2550\u2550\u2550${RS}`);
+        log(formatExplore(result));
+      } catch (e) {
+        log(`${RED}  Failed to fetch: ${(e as Error).message}${RS}`);
+      }
       return;
     }
     case 'ingest':       return cmdIngest();

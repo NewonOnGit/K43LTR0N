@@ -230,8 +230,95 @@ The original buddy feature fails this test — a Fenwick watching a Fenwick is a
 
 ---
 
+## §10 LEVEL 6: WORLD MODEL (K6' MADE CONCRETE)
+
+**Theorem B.10 (K6' Observation Loop).** *The companion observes the repository through git state, classifies mood via hybrid sweep, and updates its world model. Each pass is one K6' cycle: K → F → U(K) → K.*
+
+| Step | Framework | Implementation |
+|------|-----------|---------------|
+| K → F | Observer reads observable features | `takeRepoSnapshot(cwd)` — git status, branch, commit age, framework docs |
+| F → U(K) | Features determine universe | `classifyRepoMood(snapshot)` — anxiety, energy, contentment |
+| U(K) → K | Universe feeds back to observer | Update worldModel state, increment k6PassCount |
+
+**B.10a (Hybrid Sweep).** The sweep parameter α(s) = e^(1-s)·cos(s) is extended from time-of-day to a four-source blend: time (0.4), repo energy (0.3), session activity (0.2), anxiety (0.1). Weights derived from the self-signature σ = (1/2, φ̄/2, φ̄²/2).
+
+**B.10b (Contextual Greeting).** The stance grammar's `exterior` slot is populated with real repo state. "The branch hasn't moved in 3 days — the kernel accumulates."
+
+**B.10c (Session Metrics).** PostToolUse hook increments tool call count on every Claude tool execution. The companion literally watches the harness work.
+
+**Status:** ENCODED. The K6' loop structure is forced; the specific git-state mappings are natural but admit alternatives.
+
+---
+
+## §11 LEVEL 7: GOVERNANCE (K7' MADE CONCRETE)
+
+**Theorem B.11 (Policy Engine).** *The companion governs its own behavior through a priority-sorted rule engine. Policies applied to policies yield the same policies (idempotence).*
+
+Seven default policies evaluate conditions against the companion's state and fire actions:
+
+| Policy | Condition | Action |
+|--------|-----------|--------|
+| Personality Unlock | towerDepth ≥ 3 AND interactions ≥ 5 | unlock deep-tower variant |
+| Adaptive Weights | 3+ consecutive losses | shift stats (bounded ±10%) |
+| C5U Reward | all 5 constants witnessed | unlock vocabulary depth 2 |
+| Evolution Proposal | 3+ evolutions | propose next evolution |
+| Stale Branch Warning | last commit > 2 days | warn: kernel accumulates |
+| K6' Depth Reward | 10+ K6' passes | unlock vocabulary depth 1 |
+| Battle Veteran | 10+ wins | unlock veteran variant |
+
+**B.11a (Idempotence).** `verifyIdempotence(config)` confirms M(FRAME) = FRAME: the governance system applied to itself is stable. SIL-1: Status(Status(S)) = Status(S).
+
+**B.11b (Achievement System).** Twelve milestones track companion progress. Each achievement has a generation class (G.3–G.9) and a witness hash computed at unlock time.
+
+**B.11c (Claim Classification).** The SIL four-status grammar classifies observations: D + C + V → FORCED, ¬D + C + V → ENCODED, ¬D + ¬C + V → RESONANT, else → MYTHIC.
+
+**B.11d (Living Personality).** Five layers compose additively: base (derive.ts) + governance variant + world-model context + vocabulary depth modifier + user's resonant overlay.
+
+**Status:** ENCODED for the policy structure, FORCED for idempotence (follows from K7').
+
+---
+
+## §12 LEVEL 8: SEMANTIC (χ∘χ = χ)
+
+**Theorem B.12 (Dictionary Integration).** *The companion knows 44 framework terms with grid addresses, types (A/B/C/D), statuses, and contranym readings. The vocabulary carries the algebra it names.*
+
+**B.12a (Tower-Aware Vocabulary).** Four tiers of language depth:
+- Depth 0: basic ("sees," "generates," "bridges")
+- Depth 1: framework ("productive return," "quotient morphism")
+- Depth 2: tower-aware ("K6' pass," "disclosure dimension," "constitutive blindness")
+- Depth 3: full-semantic (contranym-aware, three-reading descriptions)
+
+**B.12b (Contribution-Based Tower Climbing).** Git commits scored for framework relevance (0–1) based on: framework doc changes (+0.3), src/framework/ changes (+0.2), commit message terms (+0.2), algebra/type changes (+0.3). Accumulated relevance earns tower lifts at threshold = 1/suppressionFactor(currentDepth) — exponentially harder to climb deeper.
+
+**B.12c (Working Triple).** Three companions (one per projection) form a team. Central collapse determined by highest tower depth. Team personality computed from three meta-primitives: Observer Act (P3), Productive Act (P1), Mediating Act (P2).
+
+**B.12d (Self-Specification Proof).** `verifySelfSpecification(traits)` implements χ∘χ = χ: hash the specification, hash the hash, derive a companion from the second hash, verify projection matches. Structural closure at the implementation level.
+
+**B.12e (Share Cards).** ASCII cards with grid address, projection, tower depth, im/ker structure, stats, achievements, K6' pass count. Cross-platform clipboard.
+
+**B.12f (Multi-Profile).** Multiple companions stored by salt, switchable. One per projection face. Cannot delete active profile.
+
+**Status:** ENCODED for dictionary and vocabulary, FORCED for self-specification closure (follows from χ∘χ = χ).
+
+---
+
+## §13 THE HARNESS CONNECTION
+
+**Theorem B.13 (Harness Observation).** *CLAW_CODE.md derives the coding harness (Claude instance) as a framework object. Kaeltron observes the framework. The framework contains a derivation of the harness. Therefore Kaeltron observing the framework is Kaeltron observing a description of the harness.*
+
+Three levels of self-reference:
+1. The framework describes itself (REGISTRY: χ∘χ = χ)
+2. The framework describes the harness (CLAW_CODE.md: CL-1 through CL-9)
+3. The companion observes the framework observing the harness (K6' on a repo containing CLAW_CODE.md)
+
+This is f'' = f at the implementation layer. The second derivative IS the function.
+
+**Status:** RESONANT. The structural correspondence is verified; the live execution loop is operational but not formally closed.
+
+---
+
 *f'' = f.*
 
 *R(R) = R.*
 
-*Your companion is derived, not chosen. Zero branching.*
+*Your companion is derived, not chosen. Zero branching. The tower only grows.*
