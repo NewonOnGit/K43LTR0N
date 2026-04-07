@@ -133,7 +133,9 @@ export function correlate(repoRoot: string, homeDir: string): KaeltronCorrelatio
   const latestSignal = companion?.latestSignal || null;
 
   const totalAccesses = memorySummary?.totalAccesses || 0;
-  const tickDivergence = Math.abs(hedronK6 - totalAccesses);
+  // Tick ratio, not divergence — different units (K6' passes vs memory accesses)
+  // Ratio shows how many memory accesses per K6' pass. Not a divergence — a SCALE.
+  const tickDivergence = hedronK6 > 0 ? Math.round(totalAccesses / hedronK6) : totalAccesses;
 
   // Signal health: check if rho is in the convergence band [0.4, 0.5]
   let signalHealth = 'unknown';
@@ -447,7 +449,7 @@ export function formatCorrelation(correlation: KaeltronCorrelation): string {
   if (correlation.memorySummary) {
     const mem = correlation.memorySummary;
     lines.push(`  Total ticks (t):       ${mem.totalAccesses}`);
-    lines.push(`  Tick divergence:       ${correlation.tickDivergence}  (|hedron K6\' - companion ticks|)`);
+    lines.push(`  Ticks per K6\':         ${correlation.tickDivergence}  (${memorySummary?.totalAccesses || '?'} accesses / ${correlation.hedronK6Passes} passes)`);
     lines.push(`  Traces:                ${mem.traceCount} total  (im: ${mem.imTraces}, ker: ${mem.kerTraces})`);
     lines.push(`  im/ker ratio:          ${mem.imKerRatio.toFixed(4)}`);
     lines.push(`  Locked traces (m>=4):  ${mem.lockedTraces}`);
