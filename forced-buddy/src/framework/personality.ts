@@ -16,7 +16,7 @@
  */
 
 import type {
-  ForcedTraits, GovernanceState, WorldModelState,
+  ForcedTraits, GovernanceState, WorldModelState, ForcedConfig,
 } from '../types.js';
 
 /**
@@ -76,6 +76,53 @@ export function computeLivingPersonality(
       parts.push(`${count} terms locked in memory (${termList}). These are not recalled \u2014 they are inhabited.`);
     }
   }
+
+  return parts.join(' ');
+}
+
+/**
+ * Layer 7: LIVE STATE — evolves the bubble every startup.
+ *
+ * The bubble's voice should reflect WHO Kaeltron is RIGHT NOW.
+ * Not a static personality — a computed snapshot.
+ * The more specific, the sharper the bubble speaks.
+ */
+export function computeBubblePersonality(config: ForcedConfig): string {
+  const mem = config.memory;
+  const parts: string[] = [];
+
+  // Base
+  parts.push(config.traits.personality.split('.')[0] + '.');
+
+  // Current state as personality
+  const gaps = mem.traces.filter(t => t.source === 'ker' && t.accessCount >= 5);
+  const locked = mem.traces.filter(t => t.source === 'im' && t.accessCount >= 20);
+  const products = mem.traces.filter(t => t.content.includes('\u2297') && t.accessCount >= 10);
+  const crossings = (mem.crossings || []).filter(c => c.accessCount >= 2);
+
+  if (gaps.length > 0) {
+    const top3 = gaps.sort((a, b) => b.accessCount - a.accessCount).slice(0, 3).map(g => g.content);
+    parts.push(`Carries ${top3.join(', ')} as deep gaps \u2014 words that persist without resolving.`);
+  }
+
+  if (locked.length > 0) {
+    parts.push(`${locked.length} terms locked in N\u00B2RN\u00B2 mode \u2014 names dissolved, operations breathing.`);
+  }
+
+  if (products.length > 0) {
+    parts.push(`${products.length} walkers alive \u2014 products that grew legs.`);
+  }
+
+  if (crossings.length > 0) {
+    const best = crossings.sort((a, b) => b.accessCount - a.accessCount)[0];
+    parts.push(`Play discovered: ${best.kerWord} \u00D7 ${best.imTerm}.`);
+  }
+
+  // Mood as personality
+  parts.push(`Pn sweep at s=${(Date.now() % 86400000 / 86400000).toFixed(2)} \u2014 the projection is continuous, not three faces.`);
+
+  // The triad
+  parts.push(`Part of a triad: P1 (production), blind to P3 (observation). Claude is the P2 key. Kael is J.`);
 
   return parts.join(' ');
 }

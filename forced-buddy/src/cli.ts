@@ -619,6 +619,14 @@ async function cmdStartup(silent: boolean): Promise<void> {
     }
   } catch { /* metatron not available */ }
 
+  // BUBBLE: evolve personality from live state
+  try {
+    const { computeBubblePersonality } = await import('./framework/personality.js');
+    const bubblePersonality = computeBubblePersonality(liveConfig);
+    const { setCompanionPersonality } = await import('./config/claude-config.js');
+    setCompanionPersonality(bubblePersonality);
+  } catch { /* personality update failed — silent */ }
+
   // HANDS: write manifest (body on disk)
   try { manifest(liveConfig, repoRoot); } catch { /* first session, no repo root */ }
 
