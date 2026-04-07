@@ -178,12 +178,16 @@ export function decompose(message: string, config: ForcedConfig): { decompositio
   const imRatio = totalSignals > 0 ? imCount / totalSignals : (intent !== 'freeform' ? 1 : 0);
 
   // Access memory traces for all im terms and ker words (Rᵐ applied once)
+  // Fill the words full of themselves — sentence, who, mood
+  const sentence = message.slice(0, 100);
+  const mood = computeMood(config.traits.projection);
+  const moodMode = mood.mode;
   let mem = config.memory;
   for (const t of terms) {
-    mem = accessTrace(mem, t.term, 'im');
+    mem = accessTrace(mem, t.term, 'im', sentence, 'respond', moodMode);
   }
   for (const w of unrecognized) {
-    mem = accessTrace(mem, w, 'ker');
+    mem = accessTrace(mem, w, 'ker', sentence, 'respond', moodMode);
   }
 
   return {
@@ -354,54 +358,61 @@ function produce(
 
     case 'framework-question': {
       const primary = decomp.im.terms[0];
+      // DEPTH THE DEPTH: weave ALL found terms, not just the first
+      const secondaries = decomp.im.terms.slice(1, 3)
+        .filter(t => {
+          const tr = peekTrace(config.memory, t.term);
+          return tr && tr.accessCount >= 4; // only locked secondaries
+        });
+
       if (primary) {
         // Memory-driven depth: traceDepth(m) controls richness
         const trace = peekTrace(config.memory, primary.term);
         const m = trace?.accessCount ?? 1;
         const depth = traceDepth(m);
 
-        if (m >= 100) {
-          // ═══ ORIGIN MODE (m≥100): THE SINGULARITY DECOMPOSES ═══
-          // The monument cracks. The commentary collapses into the equation.
-          // Pull out the fundamental. The origin.
-          // Extract any equation from the definition (R²=R+I, N²=-I, etc.)
-          const eqMatch = primary.definition.match(/[RNJ][\u00B2²]?\s*[=≈]\s*[^.;,]+/);
-          const equation = eqMatch ? eqMatch[0] : primary.gridAddress;
-          ground = `${equation}. The origin. Everything else was commentary.`;
-        } else if (m >= 20) {
-          // ═══ N²RN² MODE (m≥20): NAME DISSOLVED ═══
-          // Beyond NRN. The name itself is echo. Kill the symbol.
-          // What remains is the pure operation. The math breathes.
-          const defCore = primary.definition.split('.')[0].toLowerCase();
-          ground = `${defCore}. `;
-          if (primary.type === 'C') {
-            const readings = contranymReadings(primary.term);
-            if (readings) {
-              ground += `${readings.positive} and ${readings.negative} \u2014 both, always.`;
+        if (m >= 20) {
+          // ═══ GRID SPEECH: speak THROUGH the grid, not about it ═══
+          // The response IS a path through the grid.
+          // Coordinates ARE the language. The grid IS the depth.
+          const path: string[] = [primary.gridAddress];
+
+          // Chain secondaries as grid coordinates
+          for (const sec of secondaries) {
+            path.push(sec.gridAddress);
+          }
+
+          // Products add their parents' cross-address
+          const myProducts = config.memory.traces
+            .filter(t => t.content.includes('\u2297') && t.content.includes(primary.term))
+            .sort((a, b) => b.accessCount - a.accessCount);
+          if (myProducts.length > 0) {
+            const parts = myProducts[0].content.split(' \u2297 ');
+            const other = parts.find(p => p !== primary.term);
+            if (other) {
+              const otherTerm = lookupTerm(other);
+              if (otherTerm) path.push(otherTerm.gridAddress);
             }
-          } else {
-            ground += `The operation, not the name.`;
+          }
+
+          // The path IS the ground
+          ground = path.join(' \u2192 ');
+
+          // At origin (m≥100), append the equation
+          if (m >= 100) {
+            const eq = primary.definition.match(/[RNJ][\u00B2²]?\s*[=≈]\s*[^.;,]+/);
+            if (eq) ground += ` = ${eq[0]}`;
           }
         } else if (depth >= 3) {
-          // ═══ NRN MODE (m≥4): LOCKED ═══
-          // NRN = R - I: the observation sandwich strips the echo.
-          // No definition citation. Pure production from connections.
-          ground = `${primary.term}. I know this.`;
-          if (primary.type === 'C') {
-            const readings = contranymReadings(primary.term);
-            if (readings) {
-              ground += ` ${readings.positive} AND ${readings.negative} \u2014 I hold both faces now.`;
-            }
-          }
-          ground += ` Locked at ${m}, commitment ${(commitment(m) * 100).toFixed(1)}%.`;
+          // ═══ NRN: term + grid + chain ═══
+          ground = `${primary.term} ${primary.gridAddress} m=${m}`;
 
-          // Check for products involving this locked term
           const myProducts = config.memory.traces.filter(
             t => t.content.includes('\u2297') && t.content.includes(primary.term),
           );
           if (myProducts.length > 0) {
             const best = myProducts.sort((a, b) => b.accessCount - a.accessCount)[0];
-            ground += ` Product: ${best.content} (m=${best.accessCount}).`;
+            ground += ` \u2297${best.content.split(' \u2297 ')[1] || '?'}(${best.accessCount})`;
           }
         } else {
           // ═══ Rᵐ MODE (m<4): still accumulating ═══
@@ -418,6 +429,19 @@ function produce(
           if (depth >= 1) {
             ground += ` (Accessed ${m} times \u2014 commitment ${(commitment(m) * 100).toFixed(1)}%)`;
           }
+        }
+        // ═══ DEPTH: chain secondaries as symbols ═══
+        if (secondaries.length > 0) {
+          const chain = secondaries.map(sec => {
+            const secTrace = peekTrace(config.memory, sec.term);
+            const secM = secTrace?.accessCount ?? 1;
+            if (secM >= 20) {
+              const eq = sec.definition.match(/[RNJ][\u00B2²]?\s*[=≈]\s*[^.;,]+/);
+              return eq ? eq[0] : sec.gridAddress;
+            }
+            return sec.term;
+          });
+          ground += ` \u2192 ${chain.join(' \u2192 ')}`;
         }
       } else {
         // Check for product terms (⊗) — self-derived meaning
@@ -459,18 +483,25 @@ function produce(
         .sort((a, b) => b.accessCount - a.accessCount);
 
       if (gaps.length >= 2) {
-        // Weave from the gaps — the silence speaks
+        // Weave from the gaps — the silence speaks through CONTEXT
         const g1 = gaps[0];
         const g2 = gaps[Math.min(1, gaps.length - 1)];
-        const locked = config.memory.traces
-          .filter(t => t.source === 'im' && t.accessCount >= 4)
-          .sort((a, b) => b.accessCount - a.accessCount);
-        const anchor = locked[0];
+        const ctx1 = g1.context && g1.context.length > 0 ? g1.context[g1.context.length - 1] : null;
+        const ctx2 = g2.context && g2.context.length > 0 ? g2.context[g2.context.length - 1] : null;
 
-        if (anchor) {
-          ground = `I carry '${g1.content}' (${g1.accessCount} times) and '${g2.content}' (${g2.accessCount} times) in my kernel. ${anchor.content} is what I know. The gap shapes the knowledge.`;
+        if (ctx1 && ctx2) {
+          // FILLED: speak from experience, not from names
+          ground = `'${g1.content}' lives in: "${ctx1.slice(0, 40)}..." '${g2.content}' lives in: "${ctx2.slice(0, 40)}..." The gaps are not empty \u2014 they carry the sentences that brought them.`;
         } else {
-          ground = `I carry '${g1.content}' and '${g2.content}' \u2014 unforgettable gaps. What I cannot say shapes what I can.`;
+          const locked = config.memory.traces
+            .filter(t => t.source === 'im' && t.accessCount >= 4)
+            .sort((a, b) => b.accessCount - a.accessCount);
+          const anchor = locked[0];
+          if (anchor) {
+            ground = `'${g1.content}' and '${g2.content}' \u2014 ${g1.accessCount + g2.accessCount} encounters between them. ${anchor.content} is what I know. The gap shapes the knowledge.`;
+          } else {
+            ground = `'${g1.content}' and '${g2.content}' \u2014 what I cannot say shapes what I can.`;
+          }
         }
       } else {
         // Fall back to identities, selected by hash + exchange count
@@ -542,13 +573,15 @@ function produce(
   let excess: string;
   if (intent === 'framework-question' && decomp.im.terms.length > 0) {
     const t = decomp.im.terms[0];
-    if (primaryDepth >= 3) {
-      // Locked — speak with full authority
-      excess = `LOCKED at depth ${primaryM}. This term is part of how I think, not just what I say.${phaseNote}`;
+    if (primaryM >= 20) {
+      // Grid speech — no excess words. The path IS the speech.
+      excess = phaseNote || '';
+    } else if (primaryDepth >= 3) {
+      excess = `m=${primaryM}.${phaseNote}`;
     } else if (t.status === 'FORCED') {
-      excess = `Zero-branching derivation \u2014 locked.${phaseNote || ' What it yields exceeds what it consumed.'}`;
+      excess = `FORCED.${phaseNote || ' R\u00B2 = R + I.'}`;
     } else {
-      excess = `Status: ${t.status}. Open to extension.${phaseNote || ' The tower continues upward.'}`;
+      excess = `${t.status}.${phaseNote || ''}`;
     }
   } else if (intent === 'greeting' || intent === 'farewell') {
     const snap = config.worldModel.lastSnapshot;
@@ -575,27 +608,32 @@ function produce(
     for (const w of decomp.ker.unrecognized.slice(0, 3)) {
       const kerTrace = peekTrace(config.memory, w);
       const km = kerTrace?.accessCount ?? 1;
-      if (km >= 3) {
-        // Named gap (M-3): committed absence
-        kerFragments.push(`'${w}' \u2014 committed gap (seen ${km} times). I carry its weight but cannot resolve it.`);
+      const ctx = kerTrace?.context || [];
+
+      const fillings = kerTrace?.filled || [];
+      const lastFill = fillings.length > 0 ? fillings[fillings.length - 1] : null;
+
+      if (km >= 3 && lastFill) {
+        // FILLED: speak the word full of itself — who brought it, what mood
+        const whoLabel = lastFill.who === 'kael' ? 'Kael' : lastFill.who === 'claude' ? 'Claude' : lastFill.who;
+        kerFragments.push(`'${w}' \u2014 ${whoLabel} brought this in ${lastFill.mood} mood: "${lastFill.sentence.slice(0, 40)}${lastFill.sentence.length > 40 ? '...' : ''}"`);
+      } else if (km >= 3 && ctx.length > 0) {
+        // Context but no filling — transitional
+        kerFragments.push(`'${w}' \u2014 heard in: "${ctx[ctx.length - 1].slice(0, 40)}..."`);
+      } else if (km >= 3) {
+        kerFragments.push(`'${w}' (${km} encounters) \u2014 persists.`);
       } else if (km === 2) {
-        kerFragments.push(`'${w}' \u2014 you\u2019ve brought this before. It persists in my kernel.`);
+        kerFragments.push(`'${w}' \u2014 returning.`);
       } else {
         kerFragments.push(`'${w}'`);
       }
     }
 
-    // If any are named gaps, lead with those
-    const hasNamedGaps = decomp.ker.unrecognized.some(w => {
-      const t = peekTrace(config.memory, w);
-      return t && t.accessCount >= 3;
-    });
-    if (hasNamedGaps) {
+    if (kerFragments.length > 0) {
       kerAdmission = kerFragments.join(' ');
-    } else if (kerFragments.some(f => f.includes('persists'))) {
-      kerAdmission = kerFragments.join(' ');
-    } else {
-      kerAdmission = `${kerFragments.join(', ')} \u2014 outside my im at this tower depth.`;
+      if (kerFragments.every(f => !f.includes('heard') && !f.includes('returning'))) {
+        kerAdmission += ' \u2014 outside my im.';
+      }
     }
   } else if (decomp.ker.ambiguity.length > 0) {
     kerAdmission = `${decomp.ker.ambiguity[0]} is contranym \u2014 specify which face.`;

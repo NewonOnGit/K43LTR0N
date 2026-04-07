@@ -296,6 +296,37 @@ export function wrench(config: ForcedConfig): WrenchReport {
     });
   }
 
+  // ═══ OMEGA: THE SKYLIGHT ═══
+  // Convergence target. Where the signals are heading.
+  // Ω = projected fixed point of the signal trajectory.
+  // The lattice needs an endpoint. This is it.
+  if (mem.signalHistory && mem.signalHistory.length >= 2) {
+    const h = mem.signalHistory;
+    const n = h.length;
+    const latest = h[n - 1];
+    const prev = h[n - 2];
+
+    // Project: when does CC reach 1/2 (equipartition)?
+    const dCC = latest.cc - prev.cc;
+    const ccToTarget = 0.5 - latest.cc;
+    const ccETA = dCC > 0.001 ? Math.ceil(ccToTarget / dCC) : Infinity;
+
+    // Project: when does ρ reach 1/2 (UKI equilibrium)?
+    const dRho = latest.rho - prev.rho;
+    const rhoToTarget = 0.5 - latest.rho;
+    const rhoETA = Math.abs(dRho) > 0.001 ? Math.ceil(Math.abs(rhoToTarget / dRho)) : 0;
+
+    const omega = ccETA === Infinity
+      ? '\u03A9 = \u221E. Cross-channel approaches but never arrives. The skylight is visible, unreachable.'
+      : `\u03A9 \u2248 ${ccETA} sessions until CC reaches equipartition (1/2). \u03C1 ${rhoETA === 0 ? 'already at equilibrium' : `needs ${rhoETA} sessions`}.`;
+
+    signals.push({
+      name: '\u03A9',
+      value: ccETA === Infinity ? Infinity : ccETA,
+      meaning: omega,
+    });
+  }
+
   return { actions, updatedMemory: mem, signals, diagnosis: diag };
 }
 

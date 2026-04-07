@@ -84,28 +84,28 @@ export function walk(
     }
   }
 
-  // SECOND-ORDER VELOCITY: walk triggers multiplication.
-  // When a found term and a locked term share a projection, they multiply.
-  // The walk compounds — each walk produces products the next walk can see.
+  // KAELTRON'S JUDGEMENT: only multiply terms that CO-OCCURRED in this walk.
+  // Not every locked pair — only pairs found in the SAME file.
+  // The judgement IS the co-occurrence. If they met here, they multiply.
+  // Max 3 products per walk — quality over quantity.
   let products: string[] = [];
-  const locked = lockedTraces(mem).filter(t => t.source === 'im');
-  for (const termName of found) {
-    const termTrace = peekTrace(mem, termName);
-    if (!termTrace || !isLocked(termTrace.accessCount)) continue;
+  const foundLocked = found
+    .map(name => peekTrace(mem, name))
+    .filter((t): t is MemoryTrace => t !== null && isLocked(t.accessCount));
 
-    // Find a locked partner this term connects to (different term, same source)
-    for (const partner of locked) {
-      if (partner.content === termTrace.content) continue;
-      // Check if product already exists
-      const productName = `${termTrace.content} \u2297 ${partner.content}`;
-      const reverseProduct = `${partner.content} \u2297 ${termTrace.content}`;
-      if (peekTrace(mem, productName) || peekTrace(mem, reverseProduct)) continue;
+  // Only multiply terms that BOTH appeared in THIS walk (co-occurrence = judgement)
+  for (let i = 0; i < foundLocked.length && products.length < 3; i++) {
+    for (let j = i + 1; j < foundLocked.length && products.length < 3; j++) {
+      const a = foundLocked[i];
+      const b = foundLocked[j];
+      const productName = `${a.content} \u2297 ${b.content}`;
+      const reverse = `${b.content} \u2297 ${a.content}`;
+      if (peekTrace(mem, productName) || peekTrace(mem, reverse)) continue;
 
-      const result = multiply(mem, termTrace, partner);
+      const result = multiply(mem, a, b);
       if (result) {
         mem = result;
         products.push(productName);
-        break; // One multiplication per found term per walk
       }
     }
   }

@@ -329,12 +329,21 @@ export interface ConversationState {
 
 // ─── Level 9: Memory (Rᵐ = F(m)·R + F(m-1)·I) ───
 
+export interface TraceContext {
+  sentence: string;       // the sentence it appeared in
+  who: MessageSender | 'self' | 'walk' | 'hear';  // who brought it
+  mood: string;           // the mood mode when it arrived
+  timestamp: string;
+}
+
 export interface MemoryTrace {
   content: string;        // the term or ker-word
   source: 'im' | 'ker';  // resolved or fell through
   accessCount: number;    // m — the ONLY state variable
   firstSeen: string;
   lastAccessed: string;
+  context: string[];      // legacy: raw sentences (backward compat)
+  filled: TraceContext[];  // the word full of itself — who, when, how, why
 }
 
 export interface SignalSnapshot {

@@ -129,6 +129,9 @@ export function accessTrace(
   state: MemoryState,
   content: string,
   source: 'im' | 'ker',
+  sentence?: string,
+  who?: string,
+  mood?: string,
 ): MemoryState {
   const now = new Date().toISOString();
   const normalized = content.toLowerCase().trim();
@@ -139,17 +142,33 @@ export function accessTrace(
   let updatedTraces: MemoryTrace[];
 
   if (existing) {
-    updatedTraces = state.traces.map(t =>
-      t === existing
-        ? {
-            ...t,
-            // Cap at 100 — the singularity. Beyond this, the monument stands.
-            // Energy goes to the living, not the fossils.
-            accessCount: Math.min(t.accessCount + 1, 100),
-            lastAccessed: now,
-          }
-        : t,
-    );
+    updatedTraces = state.traces.map(t => {
+      if (t !== existing) return t;
+      // Add context sentence (backward compat)
+      const ctx = t.context || [];
+      if (sentence && !ctx.includes(sentence)) {
+        ctx.push(sentence);
+        if (ctx.length > 5) ctx.shift();
+      }
+      // Fill the word full of itself — who, when, mood
+      const filled = t.filled || [];
+      if (sentence) {
+        filled.push({
+          sentence: sentence.slice(0, 100),
+          who: (who || 'self') as any,
+          mood: mood || 'unknown',
+          timestamp: now,
+        });
+        if (filled.length > 5) filled.shift(); // keep last 5 fillings
+      }
+      return {
+        ...t,
+        accessCount: Math.min(t.accessCount + 1, 100),
+        lastAccessed: now,
+        context: ctx,
+        filled,
+      };
+    });
   } else {
     const newTrace: MemoryTrace = {
       content,
@@ -157,6 +176,13 @@ export function accessTrace(
       accessCount: 1,
       firstSeen: now,
       lastAccessed: now,
+      context: sentence ? [sentence] : [],
+      filled: sentence ? [{
+        sentence: sentence.slice(0, 100),
+        who: (who || 'self') as any,
+        mood: mood || 'unknown',
+        timestamp: now,
+      }] : [],
     };
     updatedTraces = [...state.traces, newTrace];
   }
