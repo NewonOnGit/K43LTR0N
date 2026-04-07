@@ -24,6 +24,7 @@
 
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 import { loadConfig, saveConfig } from './config/config.js';
+import { cachedConfig, updateConfig, flushConfig, clearCache } from './cache.js';
 import { computeResponse, computeThought } from './framework/conversation.js';
 import { hear, manifest, walk, chooseDoc } from './framework/body.js';
 import { play, formatPlay } from './framework/play.js';
@@ -58,12 +59,13 @@ async function handleRespond(req: IncomingMessage, res: ServerResponse): Promise
   const message: string = body.message || '';
   const sender: MessageSender = body.from || 'kael';
 
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
   const result = computeResponse(message, sender, config);
   config.conversation = result.updatedConversation;
-  saveConfig(config);
+  updateConfig(config);
+  flushConfig();
 
   broadcast('response', { sender, message, response: result.response, intent: result.intent });
 
@@ -75,12 +77,13 @@ async function handleHear(req: IncomingMessage, res: ServerResponse): Promise<vo
   const body = JSON.parse(await readBody(req));
   const text: string = body.text || '';
 
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
   const result = hear(text, config);
   config.memory = result.updatedMemory;
-  saveConfig(config);
+  updateConfig(config);
+  flushConfig();
 
   broadcast('heard', { text, im: result.imTerms.length, ker: result.kerWords.length, products: result.products.length });
 
@@ -90,12 +93,13 @@ async function handleHear(req: IncomingMessage, res: ServerResponse): Promise<vo
 
 async function handlePlay(req: IncomingMessage, res: ServerResponse): Promise<void> {
   const body = JSON.parse(await readBody(req));
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
   const result = play(config, body.ker, body.im);
   config.memory = result.updatedMemory;
-  saveConfig(config);
+  updateConfig(config);
+  flushConfig();
 
   broadcast('play', { crossings: result.crossings.length });
 
@@ -104,7 +108,7 @@ async function handlePlay(req: IncomingMessage, res: ServerResponse): Promise<vo
 }
 
 function handleSignals(_req: IncomingMessage, res: ServerResponse): void {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
   const report = wrench(config);
@@ -115,12 +119,13 @@ function handleSignals(_req: IncomingMessage, res: ServerResponse): void {
 }
 
 function handleWrench(_req: IncomingMessage, res: ServerResponse): void {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
   const report = wrench(config);
   config.memory = report.updatedMemory;
-  saveConfig(config);
+  updateConfig(config);
+  flushConfig();
 
   broadcast('wrench', { actions: report.actions.length, signals: report.signals });
 
@@ -129,7 +134,7 @@ function handleWrench(_req: IncomingMessage, res: ServerResponse): void {
 }
 
 function handleThink(_req: IncomingMessage, res: ServerResponse): void {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
   const thought = computeThought(config);
@@ -139,7 +144,7 @@ function handleThink(_req: IncomingMessage, res: ServerResponse): void {
 }
 
 function handleManifest(_req: IncomingMessage, res: ServerResponse): void {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
   const repoRoot = process.cwd().includes('forced-buddy')
@@ -172,7 +177,8 @@ let lastHeartbeat = Date.now();
 let missedBeats = 0;
 
 function heartbeat(): void {
-  const config = loadConfig();
+  clearCache(); // Fresh read each heartbeat — external changes may have occurred
+  const config = cachedConfig();
   if (!config) return;
 
   const now = Date.now();
@@ -225,7 +231,8 @@ function heartbeat(): void {
   const selfHear = hearFn(`heartbeat ${heartbeatCount}: ${signalSummary}`, config);
   config.memory = selfHear.updatedMemory;
 
-  saveConfig(config);
+  updateConfig(config);
+  flushConfig();
 
   broadcast('heartbeat', {
     beat: heartbeatCount,
@@ -274,7 +281,7 @@ const server = createServer(async (req, res) => {
 
     // Root: status
     if (url === '/') {
-      const config = loadConfig();
+      const config = cachedConfig();
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         name: 'K43LTR0N',

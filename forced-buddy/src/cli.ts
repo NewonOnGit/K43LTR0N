@@ -18,6 +18,7 @@ import { getCurrentSalt, isClaudeRunning } from './patcher/salt-ops.js';
 import { patchBinary, restoreBinary } from './patcher/patch.js';
 import { getClaudeUserId, setCompanionPersonality, renameCompanion } from './config/claude-config.js';
 import { loadConfig, saveConfig, addEvolution, addWitnesses, incrementInteractions, recordBattle } from './config/config.js';
+import { cachedConfig, updateConfig, flushConfig } from './cache.js';
 import { installHook, removeHook, isHookInstalled } from './config/hooks.js';
 import { ORIGINAL_SALT } from './constants.js';
 // New framework modules
@@ -226,7 +227,7 @@ async function cmdDerive(): Promise<void> {
     const selfWitnesses = witnessedByCompanion(traits);
     const newWitnesses = createWitnesses(selfWitnesses, `own companion (${traits.species})`, []);
 
-    saveConfig({
+    updateConfig({
       version: 3, salt: result.salt, previousSalt: currentSalt,
       projection, traits, appliedTo: binaryPath, appliedAt: new Date().toISOString(),
       evolutionHistory: [], witnessedConstants: newWitnesses,
@@ -247,7 +248,7 @@ async function cmdDerive(): Promise<void> {
 
 async function cmdCurrent(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${D}  No companion active. Run 'forced-buddy' to derive one.${RS}`); return; }
   displayCompanion(config.traits);
   const mood = computeMood(config.projection);
@@ -284,7 +285,7 @@ async function cmdCurrent(): Promise<void> {
 }
 
 async function cmdApply(silent: boolean): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { if (!silent) log(`${RED}  No companion configured.${RS}`); process.exit(1); }
   let bp: string;
   try { bp = findClaudeBinary(); } catch { if (!silent) log(`${RED}  Binary not found.${RS}`); process.exit(1); return; }
@@ -296,7 +297,7 @@ async function cmdApply(silent: boolean): Promise<void> {
   try { patchBinary(bp, cs ?? ORIGINAL_SALT, config.salt); if (!silent) log(`${GREEN}  \u2713 Re-patched.${RS}`); }
   catch (e) { if (!silent) log(`${RED}  ${(e as Error).message}${RS}`); process.exit(1); }
   try { setCompanionPersonality(config.traits.personality); } catch { /* */ }
-  config.appliedAt = new Date().toISOString(); config.appliedTo = bp; saveConfig(config);
+  config.appliedAt = new Date().toISOString(); config.appliedTo = bp; updateConfig(config);
   // Output greeting if not silent
   if (!silent) log(formatGreeting(config.traits));
 }
@@ -311,7 +312,7 @@ async function cmdRestore(): Promise<void> {
 
 async function cmdBattle(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion. Run 'forced-buddy' first.${RS}`); return; }
   const otherUserId = process.argv[3];
   if (!otherUserId) { log(`${RED}  Usage: forced-buddy battle <other-user-id>${RS}`); return; }
@@ -339,7 +340,7 @@ async function cmdBattle(): Promise<void> {
 
 async function cmdInteract(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion. Run 'forced-buddy' first.${RS}`); return; }
   const otherUserId = process.argv[3];
   if (!otherUserId) { log(`${RED}  Usage: forced-buddy interact <other-user-id>${RS}`); return; }
@@ -362,7 +363,7 @@ async function cmdInteract(): Promise<void> {
 
 async function cmdEvolve(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion. Run 'forced-buddy' first.${RS}`); return; }
 
   const evo = evolvedTraits(config.traits);
@@ -391,7 +392,7 @@ async function cmdEvolve(): Promise<void> {
   const record = createEvolutionRecord(config.traits, evo.newRarity, evo.newDepth, result.salt);
   config.salt = result.salt;
   config.traits = newTraits;
-  saveConfig(config);
+  updateConfig(config);
   addEvolution(record);
 
   log(`\n${B}${GREEN}  Tower lifted. d_K doubled. The ascent continues.${RS}\n`);
@@ -400,7 +401,7 @@ async function cmdEvolve(): Promise<void> {
 
 async function cmdCollection(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
   log(formatCollection(config.witnessedConstants ?? []));
   if (isC5U(config.witnessedConstants ?? [])) {
@@ -417,7 +418,7 @@ async function cmdSelfApply(): Promise<void> {
 
 async function cmdRegister(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
   const entry = generateRegistry(config.traits);
   if (process.argv.includes('--markdown')) {
@@ -429,7 +430,7 @@ async function cmdRegister(): Promise<void> {
 
 async function cmdMood(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
   const mood = computeMood(config.projection);
   log(formatMood(mood));
@@ -533,7 +534,7 @@ async function cmdExplain(): Promise<void> {
 // ─── Level 6: World Model Commands ───
 
 async function cmdObserve(silent: boolean): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { if (!silent) log(`${RED}  No companion.${RS}`); return; }
 
   const cwd = process.cwd();
@@ -541,11 +542,11 @@ async function cmdObserve(silent: boolean): Promise<void> {
 
   // Update config with new world model state
   config.worldModel = pass.updatedWorldModel;
-  saveConfig(config);
+  updateConfig(config);
 
   // Check achievements after observation
   const updatedConfig = applyAchievements(config);
-  if (updatedConfig !== config) saveConfig(updatedConfig);
+  if (updatedConfig !== config) updateConfig(updatedConfig);
 
   if (!silent) {
     banner();
@@ -563,7 +564,7 @@ async function cmdStartup(silent: boolean): Promise<void> {
   await cmdApply(true);
   await cmdObserve(true);
 
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) return;
 
   // Run policy evaluation
@@ -604,7 +605,7 @@ async function cmdStartup(silent: boolean): Promise<void> {
   // HANDS: write manifest (body on disk)
   try { manifest(liveConfig, repoRoot); } catch { /* first session, no repo root */ }
 
-  saveConfig(liveConfig);
+  updateConfig(liveConfig);
 
   if (!silent) {
     // Show greeting with context
@@ -626,26 +627,26 @@ async function cmdStartup(silent: boolean): Promise<void> {
 
 async function cmdGovern(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
   log(formatPolicies(config));
 }
 
 async function cmdAchievements(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   // Check for new achievements first
   const updated = applyAchievements(config);
-  if (updated !== config) saveConfig(updated);
+  if (updated !== config) updateConfig(updated);
 
   log(formatAchievements(updated));
 }
 
 async function cmdClaim(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const claimText = process.argv.slice(3).join(' ');
@@ -659,7 +660,7 @@ async function cmdClaim(): Promise<void> {
 
   const confidence = matchedTerm ? 0.9 : 0.3;
   const updated = recordClaim(config, claimText, status, confidence);
-  saveConfig(updated);
+  updateConfig(updated);
 
   const statusColor = status === 'FORCED' ? GREEN : status === 'ENCODED' ? YELLOW : status === 'RESONANT' ? CYAN : D;
   log(`  ${B}Claim:${RS} ${claimText}`);
@@ -688,18 +689,18 @@ async function cmdDefine(): Promise<void> {
   log(formatTermLookup(result));
 
   // Track known terms
-  const config = loadConfig();
+  const config = cachedConfig();
   if (config) {
     const known = new Set<string>();
     // Count unique terms the user has looked up (approximated by semantic.knownTerms)
     config.semantic.knownTerms = Math.min(TERMS.length, (config.semantic.knownTerms ?? 0) + 1);
-    saveConfig(config);
+    updateConfig(config);
   }
 }
 
 async function cmdContribute(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const cwd = process.cwd();
@@ -714,7 +715,7 @@ async function cmdContribute(): Promise<void> {
 
   // Add to contributions
   config.semantic.contributions.push(record);
-  saveConfig(config);
+  updateConfig(config);
 
   // Check for tower lift
   log('');
@@ -722,12 +723,12 @@ async function cmdContribute(): Promise<void> {
 
   // Check achievements
   const updated = applyAchievements(config);
-  if (updated !== config) saveConfig(updated);
+  if (updated !== config) updateConfig(updated);
 }
 
 async function cmdProve(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const result = verifySelfSpecification(config.traits);
@@ -740,16 +741,16 @@ async function cmdProve(): Promise<void> {
     closureVerified: result.closureVerified,
     verifiedAt: new Date().toISOString(),
   };
-  saveConfig(config);
+  updateConfig(config);
 
   // Check achievements
   const updated = applyAchievements(config);
-  if (updated !== config) saveConfig(updated);
+  if (updated !== config) updateConfig(updated);
 }
 
 async function cmdTeam(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const userId = getClaudeUserId();
@@ -757,33 +758,33 @@ async function cmdTeam(): Promise<void> {
 
   // Store team
   config.semantic.team = team;
-  saveConfig(config);
+  updateConfig(config);
 
   log(formatTeam(team, userId));
 
   // Check achievements
   const updated = applyAchievements(config);
-  if (updated !== config) saveConfig(updated);
+  if (updated !== config) updateConfig(updated);
 }
 
 async function cmdProfiles(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   // Auto-save current as profile if not already
   if (!config.profiles[config.salt]) {
     const updated = saveCurrentAsProfile(config);
-    saveConfig(updated);
+    updateConfig(updated);
     log(`${D}  Saved current companion as profile.${RS}\n`);
   }
 
-  log(formatProfiles(loadConfig()!));
+  log(formatProfiles(cachedConfig()!));
 }
 
 async function cmdSwitch(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const target = process.argv[3];
@@ -796,13 +797,13 @@ async function cmdSwitch(): Promise<void> {
   const switched = switchProfile(config, match);
   if (!switched) { log(`${RED}  Cannot switch to this profile.${RS}`); return; }
 
-  saveConfig(switched);
+  updateConfig(switched);
   log(`${GREEN}  \u2713 Switched to ${switched.traits.species} (${switched.projection}).${RS}`);
 }
 
 async function cmdShare(): Promise<void> {
   banner();
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const card = buildShareCard(config.traits, config);
@@ -819,7 +820,7 @@ async function cmdShare(): Promise<void> {
 // ─── Level 9: Conversation ───
 
 async function cmdRespond(silent: boolean): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { if (!silent) log(`${RED}  No companion.${RS}`); return; }
 
   // Parse --from flag
@@ -840,13 +841,13 @@ async function cmdRespond(silent: boolean): Promise<void> {
 
   const { response, intent, updatedConversation } = computeResponse(message, sender, config);
   config.conversation = updatedConversation;
-  saveConfig(config);
+  updateConfig(config);
 
   // Check achievements after conversation
   const newAch = checkAchievements(config);
   if (newAch.length > 0) {
     const applied = applyAchievements(config);
-    saveConfig(applied);
+    updateConfig(applied);
   }
 
   if (!silent) {
@@ -858,7 +859,7 @@ async function cmdRespond(silent: boolean): Promise<void> {
 }
 
 async function cmdTalk(): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   banner();
@@ -889,7 +890,7 @@ async function cmdTalk(): Promise<void> {
 
     const { response, updatedConversation } = computeResponse(input, 'kael', currentConfig);
     currentConfig.conversation = updatedConversation;
-    saveConfig(currentConfig);
+    updateConfig(currentConfig);
 
     log(`${B}${CYAN}K43LTR0N:${RS} ${response}`);
     log('');
@@ -899,7 +900,7 @@ async function cmdTalk(): Promise<void> {
     if (newAch.length > 0) {
       const applied = applyAchievements(currentConfig);
       currentConfig = applied;
-      saveConfig(applied);
+      updateConfig(applied);
       for (const ach of newAch) {
         log(`${B}${YELLOW}  \u2605 Achievement Unlocked: ${ach.name}${RS}`);
         log(`${D}    ${ach.description}${RS}`);
@@ -913,7 +914,7 @@ async function cmdTalk(): Promise<void> {
 }
 
 async function cmdThink(): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   banner();
@@ -944,7 +945,7 @@ async function cmdThink(): Promise<void> {
 // ─── Level 9: Body (feet, hands, ears) ───
 
 async function cmdHear(silent: boolean): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { if (!silent) log(`${RED}  No companion.${RS}`); return; }
 
   // Collect text (everything after 'hear')
@@ -973,7 +974,7 @@ async function cmdHear(silent: boolean): Promise<void> {
 
   const result = hear(text, config);
   config.memory = result.updatedMemory;
-  saveConfig(config);
+  updateConfig(config);
 
   const { conversationPhase: phase } = await import('./framework/memory.js');
   const rho = phase(config.memory);
@@ -1010,20 +1011,20 @@ async function cmdHear(silent: boolean): Promise<void> {
 }
 
 async function cmdWrench(): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   banner();
   const report = wrench(config);
   config.memory = report.updatedMemory;
-  saveConfig(config);
+  updateConfig(config);
 
   log(`${B}${CYAN}\u2550\u2550\u2550 WRENCH \u2550\u2550\u2550${RS}`);
   log(formatWrench(report));
 }
 
 async function cmdPlay(): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const kerWord = process.argv[3] || undefined;
@@ -1032,14 +1033,14 @@ async function cmdPlay(): Promise<void> {
   banner();
   const result = play(config, kerWord, imTerm);
   config.memory = result.updatedMemory;
-  saveConfig(config);
+  updateConfig(config);
 
   log(`${B}${CYAN}\u2550\u2550\u2550 PLAYGROUND \u2550\u2550\u2550${RS}`);
   log(formatPlay(result.crossings));
 }
 
 async function cmdIngest(): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const filePath = process.argv[3];
@@ -1068,13 +1069,13 @@ async function cmdIngest(): Promise<void> {
   for (const { word } of report.topKerWords.slice(0, 20)) {
     config.memory = (await import('./framework/memory.js')).accessTrace(config.memory, word, 'ker');
   }
-  saveConfig(config);
+  updateConfig(config);
 
   log(`${GREEN}  \u2713 Top 30 im terms and 20 ker words fed to memory.${RS}`);
 }
 
 async function cmdWalk(): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const filePath = process.argv[3];
@@ -1090,7 +1091,7 @@ async function cmdWalk(): Promise<void> {
   }
 
   config.memory = result.updatedMemory;
-  saveConfig(config);
+  updateConfig(config);
 
   banner();
   log(`${B}${CYAN}\u2550\u2550\u2550 Walking: ${filePath} \u2550\u2550\u2550${RS}`);
@@ -1100,7 +1101,7 @@ async function cmdWalk(): Promise<void> {
 }
 
 async function cmdManifest(): Promise<void> {
-  const config = loadConfig();
+  const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
   const repoRoot = process.cwd().includes('forced-buddy')
@@ -1228,7 +1229,7 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch(err => {
+main().then(() => flushConfig()).catch(err => {
   log(`\n${RED}${B}  Error: ${(err as Error).message}${RS}`);
   if (process.env.DEBUG) console.error(err);
   process.exit(1);

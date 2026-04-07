@@ -9,7 +9,10 @@
  * The cache IS the efficiency. R applied once, result reused.
  */
 
-import type { ForcedConfig, MoodState, DictionaryTerm, MemoryTrace } from './types.js';
+import type { ForcedConfig, MoodState, DictionaryTerm, MemoryTrace, Projection } from './types.js';
+import { loadConfig as _loadConfig, saveConfig as _saveConfig } from './config/config.js';
+import { computeMood as _computeMood } from './framework/sweep.js';
+import { lookupTerm as _lookupTerm } from './framework/dictionary.js';
 
 let _config: ForcedConfig | null = null;
 let _configDirty = false;
@@ -23,8 +26,7 @@ let _termCache: Map<string, DictionaryTerm | null> = new Map();
  */
 export function cachedConfig(): ForcedConfig | null {
   if (!_config) {
-    const { loadConfig } = require('./config/config.js');
-    _config = loadConfig();
+    _config = _loadConfig();
   }
   return _config;
 }
@@ -46,8 +48,7 @@ export function updateConfig(config: ForcedConfig): void {
  */
 export function flushConfig(): void {
   if (_config && _configDirty) {
-    const { saveConfig } = require('./config/config.js');
-    saveConfig(_config);
+    _saveConfig(_config);
     _configDirty = false;
   }
 }
@@ -55,10 +56,9 @@ export function flushConfig(): void {
 /**
  * Cached mood. 11 calls → 1 compute per process.
  */
-export function cachedMood(projection: import('./types.js').Projection): MoodState {
+export function cachedMood(projection: Projection): MoodState {
   if (!_mood) {
-    const { computeMood } = require('./framework/sweep.js');
-    _mood = computeMood(projection) as MoodState;
+    _mood = _computeMood(projection);
   }
   return _mood!;
 }
@@ -97,8 +97,7 @@ export function cachedGaps(): MemoryTrace[] {
 export function cachedLookup(query: string): DictionaryTerm | null {
   const key = query.toLowerCase();
   if (_termCache.has(key)) return _termCache.get(key)!;
-  const { lookupTerm } = require('./framework/dictionary.js');
-  const result = lookupTerm(query);
+  const result = _lookupTerm(query);
   _termCache.set(key, result);
   return result;
 }
