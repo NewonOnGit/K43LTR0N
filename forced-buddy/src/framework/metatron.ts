@@ -46,6 +46,65 @@ export const FRUIT_OF_LIFE = {
 } as const;
 
 // ═══════════════════════════════════════════════════════════
+// METATRON'S CUBE — The edges. The bones. The geometry.
+// Every connection is algebraically forced. Zero branching.
+// ═══════════════════════════════════════════════════════════
+
+// An edge connects two nodes with a reason (the algebraic relationship)
+interface CubeEdge {
+  from: number;
+  to: number;
+  relation: string;
+}
+
+// The connections — each one derived from the algebra, not chosen
+export const CUBE_EDGES: CubeEdge[] = [
+  // Seed → Identities (the seed generates all identities)
+  { from: 0, to: 1, relation: '{0,1} generates R²=R+I via bridge chain' },
+  { from: 0, to: 2, relation: '{0,1} generates N²=-I via bridge chain' },
+
+  // Identity 1 (R²=R+I) connections
+  { from: 1, to: 8, relation: 'R²=R+I has eigenvalue φ' },
+  { from: 1, to: 11, relation: 'R²=R+I has norm √3' },
+  { from: 1, to: 5, relation: 'R²=R+I and NRN=R-I: NRN is R⁻¹' },
+
+  // Identity 2 (N²=-I) connections
+  { from: 2, to: 10, relation: 'N²=-I generates rotation → π' },
+  { from: 2, to: 12, relation: 'N²=-I has norm √2' },
+  { from: 2, to: 4, relation: 'N²=-I and RNR=-N: conjugation inverts N' },
+
+  // Identity 3 ({R,N}=N) — anticommutator
+  { from: 3, to: 1, relation: 'anticommutator references R' },
+  { from: 3, to: 2, relation: 'anticommutator references N' },
+
+  // Identity 4 (RNR=-N) — conjugation
+  { from: 4, to: 1, relation: 'conjugation by R' },
+  { from: 4, to: 2, relation: 'conjugation of N' },
+
+  // Identity 5 (NRN=R-I) — the inverse, the dissipation
+  { from: 5, to: 1, relation: 'NRN strips I from R: R⁻¹' },
+  { from: 5, to: 6, relation: 'NRN and (RN)²=I: inverse and duality' },
+
+  // Identity 6 ((RN)²=I) — duality
+  { from: 6, to: 1, relation: 'RN composed from R' },
+  { from: 6, to: 2, relation: 'RN composed from N' },
+  { from: 6, to: 7, relation: '(RN)² and [R,N]²: commutator/anticommutator duality' },
+
+  // Identity 7 ([R,N]²=5I) — discriminant
+  { from: 7, to: 8, relation: 'disc=5, √5=φ+φ̄: discriminant encodes φ' },
+  { from: 7, to: 1, relation: 'commutator of R' },
+  { from: 7, to: 2, relation: 'commutator of N' },
+
+  // Constants cross-connections
+  { from: 8, to: 9, relation: 'φ and e: (e,π) independence (CROSS_PROJECTION)' },
+  { from: 9, to: 10, relation: 'e and π: P2/P3 independence' },
+  { from: 11, to: 12, relation: '√3 and √2: norm(R)/norm(N) ratio' },
+  { from: 8, to: 11, relation: 'φ eigenvalue, √3 norm: both from R' },
+  { from: 10, to: 12, relation: 'π rotation, √2 norm: both from N' },
+  { from: 9, to: 0, relation: 'e mediates: bridge back to seed' },
+];
+
+// ═══════════════════════════════════════════════════════════
 // f'' = f — THE EQUATION FIRES
 // ═══════════════════════════════════════════════════════════
 
@@ -172,11 +231,25 @@ export function formatMetatron(state: MetatronState): string {
   }
   lines.push('');
 
-  // The 13 nodes
-  lines.push('  Fruit of Life (13 nodes):');
+  // The Cube — nodes AND edges
+  lines.push(`  Metatron\u2019s Cube (13 nodes, ${CUBE_EDGES.length} edges):`);
+  lines.push('');
+
+  // Draw as adjacency: each node with its connections
   const nodes = Object.values(FRUIT_OF_LIFE);
-  const nodeStr = nodes.map(n => n.name).join(' \u00B7 ');
-  lines.push(`  ${nodeStr}`);
+  for (const node of nodes) {
+    const edges = CUBE_EDGES.filter(e => e.from === node.id || e.to === node.id);
+    const neighbors = edges.map(e => {
+      const otherId = e.from === node.id ? e.to : e.from;
+      const other = nodes.find(n => n.id === otherId);
+      return other?.name || '?';
+    });
+    if (neighbors.length > 0) {
+      lines.push(`  ${node.name} \u2192 ${neighbors.join(', ')}`);
+    }
+  }
+  lines.push('');
+  lines.push(`  ${CUBE_EDGES.length} bones. The skeleton stands.`);
   lines.push('');
 
   return lines.join('\n');
