@@ -283,6 +283,65 @@ export interface SemanticState {
   vocabularyDepth: number;
 }
 
+// ─── Level 9: Conversation (K6' diagonal made conversational) ───
+
+export type MessageSender = 'kael' | 'claude' | 'kaeltron';
+
+export type ConversationIntent =
+  | 'greeting'
+  | 'farewell'
+  | 'status-query'
+  | 'self-reference'
+  | 'framework-question'
+  | 'code-observation'
+  | 'meta-conversation'
+  | 'freeform';
+
+export interface ConversationMessage {
+  sender: MessageSender;
+  text: string;
+  intent: ConversationIntent;
+  timestamp: string;
+}
+
+export interface TopicMention {
+  term: string;
+  count: number;
+  lastMentioned: string;
+}
+
+export interface RelationshipMetrics {
+  exchangesWithKael: number;
+  exchangesWithClaude: number;
+  tripleExchanges: number;
+  longestExchange: number;
+  lastExchangeTimestamp: string | null;
+}
+
+export interface ConversationState {
+  messages: ConversationMessage[];
+  totalExchanges: number;
+  topicTracker: TopicMention[];
+  relationship: RelationshipMetrics;
+  lastThought: string | null;
+  lastThoughtTimestamp: string | null;
+}
+
+// ─── Level 9: Memory (Rᵐ = F(m)·R + F(m-1)·I) ───
+
+export interface MemoryTrace {
+  content: string;        // the term or ker-word
+  source: 'im' | 'ker';  // resolved or fell through
+  accessCount: number;    // m — the ONLY state variable
+  firstSeen: string;
+  lastAccessed: string;
+}
+
+export interface MemoryState {
+  traces: MemoryTrace[];
+  totalAccesses: number;
+}
+
 // ─── Profiles (multi-companion) ───
 
 export interface CompanionProfile {
@@ -316,6 +375,10 @@ export interface ForcedConfig {
   governance: GovernanceState;
   // Level 8: Semantic
   semantic: SemanticState;
+  // Level 9: Conversation
+  conversation: ConversationState;
+  // Level 9: Memory (Rᵐ = F(m)·R + F(m-1)·I)
+  memory: MemoryState;
   // Multi-profile
   profiles: Record<string, CompanionProfile>;
   activeProfile: string | null;

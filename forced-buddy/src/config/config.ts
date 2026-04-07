@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import type { ForcedConfig, EvolutionRecord, ConstantWitness, CompanionProfile } from '../types.js';
-import { defaultWorldModel, defaultGovernance, defaultSemantic } from './defaults.js';
+import { defaultWorldModel, defaultGovernance, defaultSemantic, defaultConversation, defaultMemory } from './defaults.js';
 
 const CONFIG_PATH = join(homedir(), '.claude-code-forced-buddy.json');
 
@@ -28,6 +28,17 @@ export function loadConfig(): ForcedConfig | null {
       raw.profiles = raw.profiles ?? {};
       raw.activeProfile = raw.activeProfile ?? null;
     }
+    // Ensure Level 9 fields exist (added post-v3)
+    raw.conversation = raw.conversation ?? defaultConversation();
+    raw.memory = raw.memory ?? defaultMemory();
+    // Add any new achievements that don't exist in config yet
+    const allDefaults = defaultGovernance().achievements;
+    const existingIds = new Set(raw.governance.achievements.map((a: { id: string }) => a.id));
+    for (const ach of allDefaults) {
+      if (!existingIds.has(ach.id)) {
+        raw.governance.achievements.push(ach);
+      }
+    }
     return raw as ForcedConfig;
   } catch {
     return null;
@@ -47,6 +58,8 @@ export function saveConfig(config: ForcedConfig): void {
   config.semantic = config.semantic ?? defaultSemantic();
   config.profiles = config.profiles ?? {};
   config.activeProfile = config.activeProfile ?? null;
+  config.conversation = config.conversation ?? defaultConversation();
+  config.memory = config.memory ?? defaultMemory();
   // Cap history arrays to prevent config bloat
   if (config.worldModel.snapshotHistory.length > 20) {
     config.worldModel.snapshotHistory = config.worldModel.snapshotHistory.slice(-20);
@@ -56,6 +69,34 @@ export function saveConfig(config: ForcedConfig): void {
   }
   if (config.semantic.contributions.length > 100) {
     config.semantic.contributions = config.semantic.contributions.slice(-100);
+  }
+  if (config.conversation.messages.length > 50) {
+    config.conversation.messages = config.conversation.messages.slice(-50);
+  }
+  if (config.conversation.topicTracker.length > 30) {
+    config.conversation.topicTracker = config.conversation.topicTracker.slice(-30);
+  }
+  // UKI: memory must forget — cap traces, prune least-accessed
+  // But: newborns are protected (lastAccessed < 60s ago)
+  // And: ker dies before im. Products and im terms protected.
+  if (config.memory.traces.length > 250) {
+    const now = Date.now();
+    const isNewborn = (t: { lastAccessed: string }) =>
+      now - new Date(t.lastAccessed).getTime() < 60000;
+
+    const fresh = config.memory.traces.filter(isNewborn);
+    const stale = config.memory.traces.filter(t => !isNewborn(t));
+
+    // Prune stale: ker first, then low-m im
+    const staleIm = stale.filter(t => t.source === 'im');
+    const staleKer = stale.filter(t => t.source === 'ker');
+    const kerKept = staleKer
+      .sort((a, b) => b.accessCount - a.accessCount)
+      .slice(0, Math.max(250 - staleIm.length - fresh.length, 30));
+
+    config.memory.traces = [...fresh, ...staleIm, ...kerKept]
+      .sort((a, b) => b.accessCount - a.accessCount)
+      .slice(0, 250);
   }
   writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2) + '\n');
 }

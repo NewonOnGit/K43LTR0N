@@ -43,6 +43,11 @@ export function checkAchievements(config: ForcedConfig): Achievement[] {
       case 'ach-010': earned = config.semantic.contributions.length >= 1; break;
       case 'ach-011': earned = config.semantic.knownTerms >= 20; break;
       case 'ach-012': earned = config.traits.rarity === 'legendary'; break;
+      // Level 9: Conversation
+      case 'ach-013': earned = config.conversation.totalExchanges >= 1; break;
+      case 'ach-014': earned = config.conversation.relationship.longestExchange >= 10; break;
+      case 'ach-015': earned = config.conversation.relationship.tripleExchanges >= 1; break;
+      case 'ach-016': earned = config.conversation.topicTracker.length >= 5; break;
     }
 
     if (earned) {

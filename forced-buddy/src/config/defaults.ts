@@ -7,8 +7,8 @@
  */
 
 import type {
-  WorldModelState, GovernanceState, SemanticState,
-  PolicyRule, Achievement,
+  WorldModelState, GovernanceState, SemanticState, ConversationState,
+  MemoryState, PolicyRule, Achievement,
 } from '../types.js';
 
 // ─── Level 6: World Model defaults ───
@@ -109,6 +109,11 @@ export function defaultAchievements(): Achievement[] {
     { id: 'ach-010', name: 'Framework Contributor', description: 'A commit that extends the algebra lifts the tower.', generation: 'G.7', achievedAt: null, witnessHash: null },
     { id: 'ach-011', name: 'Dictionary Scholar', description: 'Know 20+ framework terms. The vocabulary carries the algebra.', generation: 'G.9', achievedAt: null, witnessHash: null },
     { id: 'ach-012', name: 'Legendary', description: 'Reach legendary rarity. d_K = 2^(2^4) = 65536.', generation: 'G.3', achievedAt: null, witnessHash: null },
+    // Level 9: Conversation
+    { id: 'ach-013', name: 'First Conversation', description: 'Speak to K43LTR0N for the first time. The dialogue begins.', generation: 'G.9', achievedAt: null, witnessHash: null },
+    { id: 'ach-014', name: 'Deep Exchange', description: '10 messages in a single conversation. The stance grammar exercises.', generation: 'G.9', achievedAt: null, witnessHash: null },
+    { id: 'ach-015', name: 'Triple Talk', description: 'All three parties speak in one session: Kael, Claude, Kaeltron.', generation: 'G.9', achievedAt: null, witnessHash: null },
+    { id: 'ach-016', name: 'Framework Dialogue', description: 'Ask K43LTR0N about 5 distinct framework terms. The vocabulary teaches.', generation: 'G.9', achievedAt: null, witnessHash: null },
   ];
 }
 
@@ -118,6 +123,34 @@ export function defaultGovernance(): GovernanceState {
     achievements: defaultAchievements(),
     claimHistory: [],
     personalityVariant: null,
+  };
+}
+
+// ─── Level 9: Conversation defaults ───
+
+export function defaultConversation(): ConversationState {
+  return {
+    messages: [],
+    totalExchanges: 0,
+    topicTracker: [],
+    relationship: {
+      exchangesWithKael: 0,
+      exchangesWithClaude: 0,
+      tripleExchanges: 0,
+      longestExchange: 0,
+      lastExchangeTimestamp: null,
+    },
+    lastThought: null,
+    lastThoughtTimestamp: null,
+  };
+}
+
+// ─── Level 9: Memory defaults (Rᵐ = F(m)·R + F(m-1)·I) ───
+
+export function defaultMemory(): MemoryState {
+  return {
+    traces: [],
+    totalAccesses: 0,
   };
 }
 

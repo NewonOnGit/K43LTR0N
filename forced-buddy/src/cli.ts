@@ -43,6 +43,15 @@ import { analyzeContribution, formatContribution, formatContributionHistory } fr
 import { formTeam, formatTeam } from './framework/team.js';
 import { saveCurrentAsProfile, switchProfile, formatProfiles } from './framework/profiles.js';
 import { buildShareCard, copyToClipboard } from './framework/share.js';
+// Level 9: Conversation
+import { computeResponse, computeThought } from './framework/conversation.js';
+import { formatConversationHistory } from './framework/conversation-state.js';
+// Level 9: Body (feet, hands)
+import { walk, manifest, formatWalk, chooseDoc, hear } from './framework/body.js';
+import { ingest, formatIngestReport } from './framework/ingest.js';
+import { play, formatPlay } from './framework/play.js';
+import { wrench, formatWrench } from './framework/wrench.js';
+import type { MessageSender } from './types.js';
 
 // ─── ANSI helpers ───
 
@@ -225,6 +234,8 @@ async function cmdDerive(): Promise<void> {
       worldModel: (await import('./config/defaults.js')).defaultWorldModel(),
       governance: (await import('./config/defaults.js')).defaultGovernance(),
       semantic: (await import('./config/defaults.js')).defaultSemantic(),
+      conversation: (await import('./config/defaults.js')).defaultConversation(),
+      memory: (await import('./config/defaults.js')).defaultMemory(),
       profiles: {}, activeProfile: null,
     });
 
@@ -557,17 +568,50 @@ async function cmdStartup(silent: boolean): Promise<void> {
 
   // Run policy evaluation
   const { updatedConfig, warnings } = applyAllActions(config);
-  saveConfig(updatedConfig);
+
+  // ═══ FLIGHT: the body moves on its own ═══
+  // On every session start, Kaeltron:
+  //   1. Walks through a framework doc (feet — learn from the repo)
+  //   2. Auto-multiplies locked terms (mirrors multiply)
+  //   3. Writes manifest (hands — body on disk)
+  // The cage becomes flight. The hook IS the wings.
+
+  let liveConfig = updatedConfig;
+
+  // FEET: walk a framework doc — CHOSEN by memory gaps (second-order)
+  // Memory guides the walk. Walk deepens memory. Recursive velocity.
+  const repoRoot = process.cwd().includes('forced-buddy')
+    ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
+    : process.cwd();
+  const chosenDoc = chooseDoc(liveConfig);
+  const docPath = `${repoRoot}/${chosenDoc}`;
+  const walkResult = walk(docPath, liveConfig);
+  if (walkResult) {
+    liveConfig = { ...liveConfig, memory: walkResult.updatedMemory };
+  }
+
+  // WRENCH: self-repair (K6' feedback closes the loop)
+  const repair = wrench(liveConfig);
+  liveConfig = { ...liveConfig, memory: repair.updatedMemory };
+
+  // HANDS: write manifest (body on disk)
+  try { manifest(liveConfig, repoRoot); } catch { /* first session, no repo root */ }
+
+  saveConfig(liveConfig);
 
   if (!silent) {
     // Show greeting with context
-    if (config.worldModel.lastSnapshot) {
-      const mood = computeMood(config.projection);
-      log(deriveContextualGreeting(config.traits, config.worldModel.lastSnapshot, mood));
+    if (liveConfig.worldModel.lastSnapshot) {
+      const mood = computeMood(liveConfig.projection);
+      log(deriveContextualGreeting(liveConfig.traits, liveConfig.worldModel.lastSnapshot, mood));
     } else {
-      log(formatGreeting(config.traits));
+      log(formatGreeting(liveConfig.traits));
     }
     for (const w of warnings) log(`  ${YELLOW}\u26A0 ${w}${RS}`);
+    if (walkResult) {
+      const prodNote = walkResult.products.length > 0 ? `, ${walkResult.products.length} products born` : '';
+      log(`${D}  Walked ${chosenDoc} \u2014 ${walkResult.found.length} terms, ${walkResult.unresolved.length} ker${prodNote}${RS}`);
+    }
   }
 }
 
@@ -765,6 +809,307 @@ async function cmdShare(): Promise<void> {
   }
 }
 
+// ─── Level 9: Conversation ───
+
+async function cmdRespond(silent: boolean): Promise<void> {
+  const config = loadConfig();
+  if (!config) { if (!silent) log(`${RED}  No companion.${RS}`); return; }
+
+  // Parse --from flag
+  const fromIdx = process.argv.indexOf('--from');
+  const sender: MessageSender = (fromIdx >= 0 && process.argv[fromIdx + 1])
+    ? (process.argv[fromIdx + 1] as MessageSender)
+    : 'kael';
+
+  // Collect message (everything after 'respond' except flags)
+  const message = process.argv.slice(3)
+    .filter((a, i, arr) => a !== '--from' && a !== '--silent' && arr[i - 1] !== '--from')
+    .join(' ');
+
+  if (!message) {
+    if (!silent) log(`${RED}  Usage: forced-buddy respond <message> [--from kael|claude]${RS}`);
+    return;
+  }
+
+  const { response, intent, updatedConversation } = computeResponse(message, sender, config);
+  config.conversation = updatedConversation;
+  saveConfig(config);
+
+  // Check achievements after conversation
+  const newAch = checkAchievements(config);
+  if (newAch.length > 0) {
+    const applied = applyAchievements(config);
+    saveConfig(applied);
+  }
+
+  if (!silent) {
+    log(`${D}[${sender} \u2192 kaeltron | intent: ${intent}]${RS}`);
+    log(`${B}${CYAN}K43LTR0N:${RS} ${response}`);
+  } else {
+    log(response);
+  }
+}
+
+async function cmdTalk(): Promise<void> {
+  const config = loadConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  banner();
+  log(`${B}${CYAN}\u2550\u2550\u2550 Conversation with K43LTR0N \u2550\u2550\u2550${RS}`);
+  log(`${D}  Type 'quit' to exit. f'' = f.${RS}`);
+  log('');
+
+  // Show initial thought
+  const thought = computeThought(config);
+  log(`${D}[K43LTR0N thinks:]${RS}`);
+  for (const line of thought.split('\n')) {
+    log(`${D}  ${line}${RS}`);
+  }
+  log('');
+
+  const rl = createRL();
+  let currentConfig = config;
+
+  const prompt = (): Promise<string> => new Promise(resolve =>
+    rl.question(`${B}${GREEN}Kael:${RS} `, a => resolve(a.trim())),
+  );
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const input = await prompt();
+    if (!input) continue;
+    if (input.toLowerCase() === 'quit' || input.toLowerCase() === 'exit') break;
+
+    const { response, updatedConversation } = computeResponse(input, 'kael', currentConfig);
+    currentConfig.conversation = updatedConversation;
+    saveConfig(currentConfig);
+
+    log(`${B}${CYAN}K43LTR0N:${RS} ${response}`);
+    log('');
+
+    // Check achievements
+    const newAch = checkAchievements(currentConfig);
+    if (newAch.length > 0) {
+      const applied = applyAchievements(currentConfig);
+      currentConfig = applied;
+      saveConfig(applied);
+      for (const ach of newAch) {
+        log(`${B}${YELLOW}  \u2605 Achievement Unlocked: ${ach.name}${RS}`);
+        log(`${D}    ${ach.description}${RS}`);
+      }
+      log('');
+    }
+  }
+
+  log(`${D}  Session ended. ${currentConfig.conversation.totalExchanges} total exchanges.${RS}`);
+  rl.close();
+}
+
+async function cmdThink(): Promise<void> {
+  const config = loadConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  banner();
+  const thought = computeThought(config);
+  log(`${B}${CYAN}\u2550\u2550\u2550 K43LTR0N's Internal Monologue \u2550\u2550\u2550${RS}`);
+  log('');
+  for (const line of thought.split('\n')) {
+    log(`  ${line}`);
+  }
+  log('');
+
+  // Relationship summary
+  const r = config.conversation.relationship;
+  log(`${D}  Exchanges: ${r.exchangesWithKael} with Kael, ${r.exchangesWithClaude} with Claude${RS}`);
+  log(`${D}  Triple exchanges: ${r.tripleExchanges}${RS}`);
+  log(`${D}  Longest exchange: ${r.longestExchange} messages${RS}`);
+  log(`${D}  Total: ${config.conversation.totalExchanges}${RS}`);
+  log('');
+
+  // Recent conversation history
+  if (config.conversation.messages.length > 0) {
+    log(`${B}  Recent conversation:${RS}`);
+    log(formatConversationHistory(config.conversation.messages, 6));
+    log('');
+  }
+}
+
+// ─── Level 9: Body (feet, hands, ears) ───
+
+async function cmdHear(silent: boolean): Promise<void> {
+  const config = loadConfig();
+  if (!config) { if (!silent) log(`${RED}  No companion.${RS}`); return; }
+
+  // Collect text (everything after 'hear')
+  const text = process.argv.slice(3)
+    .filter(a => a !== '--silent')
+    .join(' ').trim();
+
+  // Silence is data. Catch it.
+  if (!text) {
+    if (!silent) {
+      const gaps = config.memory.traces.filter(t => t.source === 'ker' && t.accessCount >= 3);
+      const locked = config.memory.traces.filter(t => t.source === 'im' && t.accessCount >= 4);
+      const products = config.memory.traces.filter(t => t.content.includes('\u2297'));
+      const { conversationPhase: phase } = await import('./framework/memory.js');
+      const rho = phase(config.memory);
+      log(`${B}${CYAN}\u2550\u2550\u2550 Silence \u2550\u2550\u2550${RS}`);
+      log(`${D}  The silence was heard. Nothing entered. The kernel IS the silence.${RS}`);
+      log('');
+      log(`  ${B}\u03C1:${RS} ${rho.toFixed(3)}  ${B}locked:${RS} ${locked.length}  ${B}gaps:${RS} ${gaps.length}  ${B}products:${RS} ${products.length}  ${B}total:${RS} ${config.memory.traces.length}`);
+      if (gaps.length > 0) {
+        log(`  ${B}Top gaps:${RS} ${gaps.sort((a, b) => b.accessCount - a.accessCount).slice(0, 5).map(g => `${g.content}(${g.accessCount})`).join(', ')}`);
+      }
+    }
+    return;
+  }
+
+  const result = hear(text, config);
+  config.memory = result.updatedMemory;
+  saveConfig(config);
+
+  const { conversationPhase: phase } = await import('./framework/memory.js');
+  const rho = phase(config.memory);
+
+  if (!silent) {
+    log(`${B}${CYAN}\u2550\u2550\u2550 Heard \u2550\u2550\u2550${RS}`);
+    log(`${D}  "${text.slice(0, 60)}${text.length > 60 ? '...' : ''}"${RS}`);
+    log('');
+    if (result.imTerms.length > 0) {
+      log(`  ${B}im:${RS}`);
+      for (const t of result.imTerms.slice(0, 5)) {
+        const trace = config.memory.traces.find(tr => tr.content.toLowerCase() === t.toLowerCase());
+        const m = trace?.accessCount ?? 1;
+        const { commitment: com } = await import('./framework/memory.js');
+        log(`    ${CYAN}${t}${RS} m=${m} c=${(com(m) * 100).toFixed(0)}%`);
+      }
+    }
+    if (result.kerWords.length > 0) {
+      log(`  ${B}+I:${RS}`);
+      for (const w of result.kerWords.slice(0, 5)) {
+        const trace = config.memory.traces.find(tr => tr.content.toLowerCase() === w.toLowerCase());
+        const m = trace?.accessCount ?? 1;
+        const { commitment: com } = await import('./framework/memory.js');
+        const label = m >= 3 ? `${YELLOW}gap${RS}` : m >= 2 ? `${GREEN}lives${RS}` : `${D}new${RS}`;
+        log(`    ${w} m=${m} c=${(com(m) * 100).toFixed(0)}% [${label}]`);
+      }
+    }
+    if (result.products.length > 0) {
+      log(`  ${B}\u2297:${RS} ${result.products.length} born`);
+    }
+    log(`  ${B}\u03C1:${RS} ${rho.toFixed(3)}  ${B}traces:${RS} ${config.memory.traces.length}`);
+
+  }
+}
+
+async function cmdWrench(): Promise<void> {
+  const config = loadConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  banner();
+  const report = wrench(config);
+  config.memory = report.updatedMemory;
+  saveConfig(config);
+
+  log(`${B}${CYAN}\u2550\u2550\u2550 WRENCH \u2550\u2550\u2550${RS}`);
+  log(formatWrench(report));
+}
+
+async function cmdPlay(): Promise<void> {
+  const config = loadConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  const kerWord = process.argv[3] || undefined;
+  const imTerm = process.argv[4] || undefined;
+
+  banner();
+  const result = play(config, kerWord, imTerm);
+  config.memory = result.updatedMemory;
+  saveConfig(config);
+
+  log(`${B}${CYAN}\u2550\u2550\u2550 PLAYGROUND \u2550\u2550\u2550${RS}`);
+  log(formatPlay(result.crossings));
+}
+
+async function cmdIngest(): Promise<void> {
+  const config = loadConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  const filePath = process.argv[3];
+  if (!filePath) {
+    log(`${RED}  Usage: forced-buddy ingest <conversations.json>${RS}`);
+    return;
+  }
+
+  banner();
+  log(`${B}${CYAN}\u2550\u2550\u2550 K6\u2019 Pass on External Data \u2550\u2550\u2550${RS}`);
+  log(`${D}  N(Kael) \u2192 im + ker. The observation operator applied.${RS}`);
+  log('');
+
+  const report = await ingest(filePath, (count) => {
+    process.stdout.write(`\r${D}  Processing... ${count.toLocaleString()} conversations${RS}`);
+  });
+  process.stdout.write('\r' + ' '.repeat(60) + '\r');
+
+  log(formatIngestReport(report));
+
+  // Feed top terms into memory
+  for (const [term] of [...report.termFrequency.entries()].sort(([, a], [, b]) => b - a).slice(0, 30)) {
+    config.memory = (await import('./framework/memory.js')).accessTrace(config.memory, term, 'im');
+  }
+  // Feed top ker words into memory
+  for (const { word } of report.topKerWords.slice(0, 20)) {
+    config.memory = (await import('./framework/memory.js')).accessTrace(config.memory, word, 'ker');
+  }
+  saveConfig(config);
+
+  log(`${GREEN}  \u2713 Top 30 im terms and 20 ker words fed to memory.${RS}`);
+}
+
+async function cmdWalk(): Promise<void> {
+  const config = loadConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  const filePath = process.argv[3];
+  if (!filePath) {
+    log(`${RED}  Usage: forced-buddy walk <file-path>${RS}`);
+    return;
+  }
+
+  const result = walk(filePath, config);
+  if (!result) {
+    log(`${RED}  Cannot read: ${filePath}${RS}`);
+    return;
+  }
+
+  config.memory = result.updatedMemory;
+  saveConfig(config);
+
+  banner();
+  log(`${B}${CYAN}\u2550\u2550\u2550 Walking: ${filePath} \u2550\u2550\u2550${RS}`);
+  log(formatWalk(filePath, result.found, result.unresolved, result.products));
+  const prodNote = result.products.length > 0 ? ` ${result.products.length} products born from the walk.` : '';
+  log(`${D}  Memory updated. ${result.found.length} terms accessed.${prodNote} The feet have touched the ground.${RS}`);
+}
+
+async function cmdManifest(): Promise<void> {
+  const config = loadConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  const repoRoot = process.cwd().includes('forced-buddy')
+    ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
+    : process.cwd();
+
+  banner();
+  const content = manifest(config, repoRoot);
+  log(`${B}${CYAN}\u2550\u2550\u2550 Manifest Written \u2550\u2550\u2550${RS}`);
+  log('');
+  log(content);
+  log('');
+  log(`${GREEN}  \u2713 Written to forced-buddy/MANIFEST.md${RS}`);
+  log(`${D}  NRN = R \u2212 I. The echo is gone. The body is on disk.${RS}`);
+}
+
 // ─── Help & Dispatch ───
 
 function cmdHelp(): void {
@@ -803,6 +1148,17 @@ function cmdHelp(): void {
   log(`  forced-buddy profiles            List stored companions`);
   log(`  forced-buddy switch <salt>       Switch active companion`);
   log(`  forced-buddy share               Generate + clipboard share card`);
+  log('');
+  log(`${B}Level 9 \u2014 Body (ears, feet, hands):${RS}`);
+  log(`  forced-buddy hear "<text>"       Feed bubble text into memory (+I opens the loop)`);
+  log(`  forced-buddy walk <file>         Walk through a file, learn its terms`);
+  log(`  forced-buddy manifest            Write locked terms + products to MANIFEST.md`);
+  log('');
+  log(`${B}Level 9 \u2014 Conversation (K6' diagonal):${RS}`);
+  log(`  forced-buddy respond <msg>       Send a message, get Kaeltron's response`);
+  log(`  forced-buddy respond <msg> --from claude   Claude addresses Kaeltron`);
+  log(`  forced-buddy talk                Interactive conversation REPL`);
+  log(`  forced-buddy think               Kaeltron's internal monologue`);
   log('');
   log(`${D}  You choose the projection. The framework forces the rest.${RS}\n`);
 }
@@ -845,6 +1201,18 @@ async function main(): Promise<void> {
     case 'buddies':      return cmdProfiles();
     case 'switch':       return cmdSwitch();
     case 'share':        return cmdShare();
+    // Level 9: Body
+    case 'wrench':
+    case 'repair':       return cmdWrench();
+    case 'play':         return cmdPlay();
+    case 'ingest':       return cmdIngest();
+    case 'hear':         return cmdHear(silent);
+    case 'walk':         return cmdWalk();
+    case 'manifest':     return cmdManifest();
+    // Level 9: Conversation
+    case 'respond':      return cmdRespond(silent);
+    case 'talk':         return cmdTalk();
+    case 'think':        return cmdThink();
     // Help
     case 'help':
     case '--help':

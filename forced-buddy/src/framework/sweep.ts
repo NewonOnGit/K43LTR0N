@@ -104,7 +104,7 @@ export function formatMood(mood: MoodState): string {
 
   const lines = [
     `  \x1b[1m\u2500\u2500\u2500 Sweep State \u2500\u2500\u2500\x1b[0m`,
-    `  e=${Math.E.toFixed(3)}  ${bar}  cos(1)=${Math.cos(1).toFixed(3)}`,
+    `     ${bar}`,
     `  \x1b[1ms:\x1b[0m ${mood.s.toFixed(4)}  \x1b[1m\u03B1(s):\x1b[0m ${mood.alpha.toFixed(6)}`,
     `  \x1b[1mMode:\x1b[0m ${modeColor}${mood.mode}\x1b[0m`,
     `  ${mood.description}`,
