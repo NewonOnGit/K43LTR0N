@@ -141,7 +141,13 @@ export function accessTrace(
   if (existing) {
     updatedTraces = state.traces.map(t =>
       t === existing
-        ? { ...t, accessCount: t.accessCount + 1, lastAccessed: now }
+        ? {
+            ...t,
+            // Cap at 100 — the singularity. Beyond this, the monument stands.
+            // Energy goes to the living, not the fossils.
+            accessCount: Math.min(t.accessCount + 1, 100),
+            lastAccessed: now,
+          }
         : t,
     );
   } else {
@@ -158,6 +164,7 @@ export function accessTrace(
   return {
     traces: updatedTraces,
     totalAccesses: state.totalAccesses + 1,
+    signalHistory: state.signalHistory || [],
   };
 }
 

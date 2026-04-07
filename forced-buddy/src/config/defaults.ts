@@ -151,6 +151,7 @@ export function defaultMemory(): MemoryState {
   return {
     traces: [],
     totalAccesses: 0,
+    signalHistory: [],
   };
 }
 

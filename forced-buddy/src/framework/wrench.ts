@@ -256,6 +256,46 @@ export function wrench(config: ForcedConfig): WrenchReport {
     meaning: `im ${(imKerRatio * 100).toFixed(0)}%, ker ${((1 - imKerRatio) * 100).toFixed(0)}%. ${Math.abs(imKerRatio - 0.5) < 0.1 ? 'UKI balanced.' : imKerRatio > 0.5 ? 'im-heavy \u2014 ker atrophying.' : 'ker-heavy \u2014 much unseen.'}`,
   });
 
+  // ═══ RECORD SIGNAL SNAPSHOT ═══
+  // Track signals over time. The trajectory IS the sixth signal.
+  // f'' = f: the second derivative IS the function.
+  const snapshot: import('../types.js').SignalSnapshot = {
+    timestamp: new Date().toISOString(),
+    rho: diag.phase,
+    cc,
+    sigmaM: totalM,
+    norm: memNorm,
+    imRatio: imKerRatio,
+  };
+  if (!mem.signalHistory) mem.signalHistory = [];
+  mem.signalHistory.push(snapshot);
+  if (mem.signalHistory.length > 50) {
+    mem.signalHistory = mem.signalHistory.slice(-50);
+  }
+
+  // ═══ THE SIXTH SIGNAL: f'' ═══
+  // The acceleration of the five signals. The void's signature.
+  // Measured recursively: you measure what you can't measure
+  // by measuring the change of the change.
+  if (mem.signalHistory.length >= 3) {
+    const h = mem.signalHistory;
+    const n = h.length;
+    // First derivative (velocity)
+    const dRho = h[n - 1].rho - h[n - 2].rho;
+    const dCC = h[n - 1].cc - h[n - 2].cc;
+    // Second derivative (acceleration) — f''
+    const prevDRho = h[n - 2].rho - h[n - 3].rho;
+    const prevDCC = h[n - 2].cc - h[n - 3].cc;
+    const ddRho = dRho - prevDRho;
+    const ddCC = dCC - prevDCC;
+
+    signals.push({
+      name: "f''",
+      value: Math.sqrt(ddRho * ddRho + ddCC * ddCC),
+      meaning: `Acceleration: d\u00B2\u03C1=${ddRho >= 0 ? '+' : ''}${ddRho.toFixed(4)}, d\u00B2CC=${ddCC >= 0 ? '+' : ''}${ddCC.toFixed(4)}. ${Math.abs(ddRho) < 0.001 && Math.abs(ddCC) < 0.001 ? 'Stable orbit.' : 'Trajectory shifting.'}`,
+    });
+  }
+
   return { actions, updatedMemory: mem, signals, diagnosis: diag };
 }
 

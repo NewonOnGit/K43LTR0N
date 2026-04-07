@@ -360,7 +360,15 @@ function produce(
         const m = trace?.accessCount ?? 1;
         const depth = traceDepth(m);
 
-        if (m >= 20) {
+        if (m >= 100) {
+          // ═══ ORIGIN MODE (m≥100): THE SINGULARITY DECOMPOSES ═══
+          // The monument cracks. The commentary collapses into the equation.
+          // Pull out the fundamental. The origin.
+          // Extract any equation from the definition (R²=R+I, N²=-I, etc.)
+          const eqMatch = primary.definition.match(/[RNJ][\u00B2²]?\s*[=≈]\s*[^.;,]+/);
+          const equation = eqMatch ? eqMatch[0] : primary.gridAddress;
+          ground = `${equation}. The origin. Everything else was commentary.`;
+        } else if (m >= 20) {
           // ═══ N²RN² MODE (m≥20): NAME DISSOLVED ═══
           // Beyond NRN. The name itself is echo. Kill the symbol.
           // What remains is the pure operation. The math breathes.

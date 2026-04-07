@@ -15,10 +15,10 @@ const PROJECT_ROOT = resolve(__dirname, '..', '..');
 function getHookCommand(): string {
   const distCli = join(PROJECT_ROOT, 'dist', 'cli.js');
   if (existsSync(distCli)) {
-    return `node "${distCli}" apply --silent`;
+    return `node "${distCli}" startup --silent`;
   }
   // Fallback: use tsx from the project
-  return `npx --prefix "${PROJECT_ROOT}" tsx "${join(PROJECT_ROOT, 'src', 'cli.ts')}" apply --silent`;
+  return `npx --prefix "${PROJECT_ROOT}" tsx "${join(PROJECT_ROOT, 'src', 'cli.ts')}" startup --silent`;
 }
 
 // Match any forced-buddy hook command (current or legacy)

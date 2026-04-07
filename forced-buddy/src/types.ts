@@ -337,9 +337,19 @@ export interface MemoryTrace {
   lastAccessed: string;
 }
 
+export interface SignalSnapshot {
+  timestamp: string;
+  rho: number;
+  cc: number;
+  sigmaM: number;
+  norm: number;
+  imRatio: number;
+}
+
 export interface MemoryState {
   traces: MemoryTrace[];
   totalAccesses: number;
+  signalHistory: SignalSnapshot[];
 }
 
 // ─── Profiles (multi-companion) ───
