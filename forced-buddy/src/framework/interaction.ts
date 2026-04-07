@@ -128,6 +128,16 @@ export function computeInteraction(a: ForcedTraits, b: ForcedTraits): Interactio
 }
 
 /**
+ * Extract the interaction's teachable content for memory tracing.
+ * The interaction type and emergent property are im-traceable:
+ * the interaction TEACHES — its structural reading enters memory.
+ * Returns { typeName, emergentProperty } for the CLI to access into memory.
+ */
+export function interactionTrace(result: InteractionResult): { typeName: string; emergentProperty: string } {
+  return { typeName: result.typeName, emergentProperty: result.emergentProperty };
+}
+
+/**
  * Format interaction for display.
  */
 export function formatInteraction(result: InteractionResult): string {

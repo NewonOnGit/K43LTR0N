@@ -15,11 +15,25 @@
  *   5. Eigenstate: yes → natural mode. No → off-key.
  *
  * The generating equation, derived. Not quoted. Computed.
+ *
+ * Harvested into this module:
+ *   - verify() from self-apply.ts — R(R)=R source hash verification
+ *   - witnessNode() from collection.ts — Fruit of Life node witnessing
+ *   - suppressionFactor() from cosmological.ts — tower depth suppression
+ *   - witnessedByCompanion/createWitnesses from collection.ts — constant witnessing
  */
 
-import type { ForcedConfig, SignalSnapshot } from '../types.js';
+import { readFileSync, readdirSync, statSync } from 'fs';
+import { join, extname } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import type { ForcedConfig, ForcedTraits, ForcedConstant, ConstantWitness, Projection, SignalSnapshot } from '../types.js';
 import { conversationPhase } from './memory.js';
-import { PHI_BAR } from './algebra.js';
+import { PHI_BAR, PHI, SQRT3, SQRT2, projectionWeights } from './algebra.js';
+import { fnv1a } from '../generation/hash.js';
+import { deriveCompanion } from './derive.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // ═══════════════════════════════════════════════════════════
 // THE 13 NODES OF THE FRUIT OF LIFE
@@ -252,5 +266,222 @@ export function formatMetatron(state: MetatronState): string {
   lines.push(`  ${CUBE_EDGES.length} bones. The skeleton stands.`);
   lines.push('');
 
+  // Verification section (if available)
+  if ((state as MetatronState & { verification?: VerifyResult }).verification) {
+    const v = (state as MetatronState & { verification?: VerifyResult }).verification!;
+    lines.push(`  R(R) = R: ${v.verified ? 'VERIFIED' : 'UNVERIFIED'}`);
+    lines.push(`  Source hash: 0x${v.sourceHash.toString(16).padStart(8, '0')}`);
+    lines.push(`  Derived projection: ${v.derivedProjection}`);
+    lines.push('');
+  }
+
+  // Witnessed nodes section (if available)
+  if ((state as MetatronState & { witnessedNodes?: Set<number> }).witnessedNodes) {
+    const w = (state as MetatronState & { witnessedNodes?: Set<number> }).witnessedNodes!;
+    const total = Object.keys(FRUIT_OF_LIFE).length;
+    lines.push(`  Witnessed nodes: ${w.size}/${total}`);
+    const nodes = Object.values(FRUIT_OF_LIFE);
+    for (const node of nodes) {
+      const icon = w.has(node.id) ? '\u2713' : '\u2717';
+      lines.push(`    ${icon} ${node.name}`);
+    }
+    lines.push('');
+  }
+
   return lines.join('\n');
+}
+
+// ═══════════════════════════════════════════════════════════
+// HARVESTED: verify() from self-apply.ts — R(R)=R
+// Source hashing, projection derivation, closure check.
+// ═══════════════════════════════════════════════════════════
+
+export interface VerifyResult {
+  verified: boolean;
+  sourceHash: number;
+  derivedProjection: string;
+  fileCount: number;
+  totalBytes: number;
+  weights: [number, number, number];
+}
+
+/**
+ * Hash all source files in the forced-buddy src directory.
+ * The hash IS the tool's identity — change the source, change the companion.
+ */
+function hashSourceCode(): { hash: number; fileCount: number; totalBytes: number } {
+  const srcDir = join(__dirname, '..');
+  let combined = '';
+  let fileCount = 0;
+  let totalBytes = 0;
+
+  function walkDir(dir: string): void {
+    const entries = readdirSync(dir);
+    for (const entry of entries.sort()) {
+      const fullPath = join(dir, entry);
+      const stat = statSync(fullPath);
+      if (stat.isDirectory()) {
+        walkDir(fullPath);
+      } else if (['.ts', '.mjs', '.js'].includes(extname(entry))) {
+        const content = readFileSync(fullPath, 'utf-8');
+        combined += content;
+        fileCount++;
+        totalBytes += stat.size;
+      }
+    }
+  }
+
+  walkDir(srcDir);
+  return { hash: fnv1a(combined), fileCount, totalBytes };
+}
+
+/**
+ * Determine dominant projection from a hash.
+ */
+function dominantProjection(hash: number): Projection {
+  const weights = projectionWeights(hash);
+  if (weights[0] >= weights[1] && weights[0] >= weights[2]) return 'P1';
+  if (weights[1] >= weights[0] && weights[1] >= weights[2]) return 'P2';
+  return 'P3';
+}
+
+/**
+ * Verify R(R)=R: hash the source, derive projection, check closure.
+ *
+ * Theorem B.18: the tool derives its own companion from its source code.
+ * The specification applied to itself recovers itself.
+ */
+export function verify(repoRoot: string): VerifyResult {
+  const { hash, fileCount, totalBytes } = hashSourceCode();
+  const derivedProjection = dominantProjection(hash);
+  const weights = projectionWeights(hash);
+
+  // Closure check: derive companion from hash, re-derive from its spec.
+  // If the derived projection is stable under re-derivation, verified.
+  const traits = deriveCompanion(derivedProjection, `self:${hash.toString(16)}`);
+  const specString = JSON.stringify({
+    projection: traits.projection,
+    species: traits.species,
+    rarity: traits.rarity,
+    eye: traits.eye,
+    towerDepth: traits.towerDepth,
+  });
+  const specHash = fnv1a(specString);
+  const reProjection = dominantProjection(specHash);
+  const verified = reProjection === derivedProjection;
+
+  return { verified, sourceHash: hash, derivedProjection, fileCount, totalBytes, weights };
+}
+
+// ═══════════════════════════════════════════════════════════
+// HARVESTED: witnessNode() from collection.ts
+// Fruit of Life node witnessing — marks nodes as seen.
+// ═══════════════════════════════════════════════════════════
+
+const _witnessedNodes = new Set<number>();
+
+/**
+ * Mark a Fruit of Life node as witnessed.
+ * Returns true if newly witnessed, false if already seen.
+ */
+export function witnessNode(nodeId: number, via: string): boolean {
+  const nodes = Object.values(FRUIT_OF_LIFE);
+  if (!nodes.some(n => n.id === nodeId)) return false; // invalid node
+  if (_witnessedNodes.has(nodeId)) return false;
+  _witnessedNodes.add(nodeId);
+  return true;
+}
+
+/**
+ * Get the current set of witnessed node IDs.
+ */
+export function getWitnessedNodes(): Set<number> {
+  return new Set(_witnessedNodes);
+}
+
+// ═══════════════════════════════════════════════════════════
+// HARVESTED: suppressionFactor() from cosmological.ts
+// K1' suppression factor at tower depth n.
+// ═══════════════════════════════════════════════════════════
+
+/**
+ * Compute K1' suppression factor: φ̄^(2^(n+1)).
+ * OBSERVER §6 Thm 8.4: Δ_max(n) = d_K² · φ̄^(2^(n+1)).
+ */
+export function suppressionFactor(towerDepth: number): number {
+  const exponent = Math.pow(2, towerDepth + 1);
+  return Math.pow(PHI_BAR, exponent);
+}
+
+// ═══════════════════════════════════════════════════════════
+// HARVESTED: collection utilities from collection.ts
+// Five-constant witnessing for companions.
+// ═══════════════════════════════════════════════════════════
+
+/**
+ * The five forced constants with their framework attributions.
+ */
+export const CONSTANTS: Record<ForcedConstant, {
+  symbol: string;
+  value: number;
+  source: string;
+  projection: Projection;
+  deepTower: boolean;
+}> = {
+  phi:   { symbol: '\u03C6',  value: PHI,    source: 'Eigenvalue of R',     projection: 'P1', deepTower: false },
+  e:     { symbol: 'e',      value: Math.E,  source: 'P2 exponential',      projection: 'P2', deepTower: false },
+  pi:    { symbol: '\u03C0',  value: Math.PI, source: 'P3 rotation',         projection: 'P3', deepTower: false },
+  sqrt3: { symbol: '\u221A3', value: SQRT3,   source: 'Norm of R',           projection: 'P1', deepTower: true },
+  sqrt2: { symbol: '\u221A2', value: SQRT2,   source: 'Norm of N',           projection: 'P3', deepTower: true },
+};
+
+/**
+ * Determine which constants a companion witnesses by existing.
+ */
+export function witnessedByCompanion(traits: ForcedTraits): ForcedConstant[] {
+  const witnessed: ForcedConstant[] = [];
+  switch (traits.projection) {
+    case 'P1': witnessed.push('phi'); break;
+    case 'P2': witnessed.push('e'); break;
+    case 'P3': witnessed.push('pi'); break;
+  }
+  if (traits.towerDepth >= 3) {
+    if (traits.projection === 'P1') witnessed.push('sqrt3');
+    if (traits.projection === 'P3') witnessed.push('sqrt2');
+  }
+  return witnessed;
+}
+
+/**
+ * Determine which constants an interaction witnesses.
+ */
+export function witnessedByInteraction(other: ForcedTraits): ForcedConstant[] {
+  return witnessedByCompanion(other);
+}
+
+/**
+ * Check if collection is complete (C5U achieved).
+ */
+export function isC5U(witnessed: ConstantWitness[]): boolean {
+  const all: ForcedConstant[] = ['phi', 'e', 'pi', 'sqrt3', 'sqrt2'];
+  const seen = new Set(witnessed.map(w => w.constant));
+  return all.every(c => seen.has(c));
+}
+
+/**
+ * Create witness records for newly witnessed constants.
+ */
+export function createWitnesses(
+  constants: ForcedConstant[],
+  via: string,
+  existing: ConstantWitness[],
+): ConstantWitness[] {
+  const seen = new Set(existing.map(w => w.constant));
+  return constants
+    .filter(c => !seen.has(c))
+    .map(c => ({
+      constant: c,
+      witnessedVia: via,
+      timestamp: new Date().toISOString(),
+    }));
 }

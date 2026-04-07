@@ -198,6 +198,18 @@ export function executeBattle(attacker: ForcedTraits, defender: ForcedTraits): B
 }
 
 /**
+ * Extract the decisive identity from a battle result.
+ * The decisive move is the last round played — the identity that ended it.
+ * Battle TEACHES: the winning identity enters memory as an im trace.
+ * Returns { identityName, identityFormula } for the CLI to access into memory.
+ */
+export function decisiveIdentity(result: BattleResult): { identityName: string; identityFormula: string } | null {
+  if (result.rounds.length === 0) return null;
+  const lastRound = result.rounds[result.rounds.length - 1];
+  return { identityName: lastRound.moveName, identityFormula: lastRound.identity };
+}
+
+/**
  * Format battle result for display.
  */
 export function formatBattle(result: BattleResult): string {

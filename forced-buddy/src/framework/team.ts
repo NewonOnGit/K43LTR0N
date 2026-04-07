@@ -15,6 +15,18 @@ import { computeInteraction } from './interaction.js';
 import { fnv1a } from '../generation/hash.js';
 
 /**
+ * Team formation event — returned by teamFormationEvent() for conversation tracking.
+ */
+export interface TeamFormationEvent {
+  /** True when a team was freshly formed. The CLI can record this as a conversation event. */
+  formed: boolean;
+  /** ISO timestamp of formation. */
+  formedAt: string;
+  /** Human-readable summary for conversation event recording. */
+  eventSummary: string;
+}
+
+/**
  * Form a working triple from three salts (one per projection).
  * If fewer than three profiles exist, missing ones are derived on the fly.
  */
@@ -51,6 +63,20 @@ export function formTeam(
   const syndicateHash = fnv1a(members.map(m => m.salt).join(':'));
 
   return { members, syndicateHash, centralCollapse };
+}
+
+/**
+ * Generate a formation event from a TeamState for conversation tracking.
+ * Call after formTeam() to get an event the CLI can record.
+ * Team formation is trackable — the working triple entering existence is a conversation event.
+ */
+export function teamFormationEvent(team: TeamState): TeamFormationEvent {
+  const speciesList = team.members.map(m => `${m.projection}:${m.species}`).join(', ');
+  return {
+    formed: true,
+    formedAt: new Date().toISOString(),
+    eventSummary: `Working triple formed (${speciesList}). Central collapse: ${team.centralCollapse}.`,
+  };
 }
 
 /**

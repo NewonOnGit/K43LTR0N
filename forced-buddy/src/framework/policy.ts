@@ -19,6 +19,19 @@ import type {
 } from '../types.js';
 
 /**
+ * Signal values that policies can reference.
+ * These come from the memory/wrench system and are not stored on config directly.
+ * Policies that reference 'signals.*' fields resolve against this object.
+ */
+export interface PolicySignals {
+  rho: number;       // conversation phase ρ = committed/total
+  cc?: number;       // Cassini chirality
+  sigmaM?: number;   // total mass
+  norm?: number;     // memory norm
+  imRatio?: number;  // im/ker ratio
+}
+
+/**
  * Resolve a dot-path field from the config.
  * e.g. 'worldModel.k6PassCount' → config.worldModel.k6PassCount
  * e.g. 'witnessedConstants.length' → config.witnessedConstants.length
@@ -40,10 +53,18 @@ function resolveField(config: ForcedConfig, field: string): unknown {
 }
 
 /**
- * Evaluate a single policy condition against the config.
+ * Evaluate a single policy condition against the config and optional signals.
+ * Conditions with field paths starting with 'signals.' resolve against the signals object.
  */
-export function evaluateCondition(condition: PolicyCondition, config: ForcedConfig): boolean {
-  const fieldValue = resolveField(config, condition.field);
+export function evaluateCondition(condition: PolicyCondition, config: ForcedConfig, signals?: PolicySignals): boolean {
+  // Resolve 'signals.*' fields from the signals object instead of config
+  let fieldValue: unknown;
+  if (condition.field.startsWith('signals.') && signals) {
+    const signalField = condition.field.slice('signals.'.length);
+    fieldValue = (signals as unknown as Record<string, unknown>)[signalField];
+  } else {
+    fieldValue = resolveField(config, condition.field);
+  }
 
   if (condition.operator === 'exists') {
     return fieldValue !== undefined && fieldValue !== null;
@@ -66,19 +87,20 @@ export function evaluateCondition(condition: PolicyCondition, config: ForcedConf
  * Evaluate a policy rule against the config.
  * All conditions must pass (conjunction).
  */
-export function evaluatePolicy(policy: PolicyRule, config: ForcedConfig): {
+export function evaluatePolicy(policy: PolicyRule, config: ForcedConfig, signals?: PolicySignals): {
   fires: boolean;
   action: PolicyAction | null;
 } {
-  const fires = policy.conditions.every(c => evaluateCondition(c, config));
+  const fires = policy.conditions.every(c => evaluateCondition(c, config, signals));
   return { fires, action: fires ? policy.action : null };
 }
 
 /**
  * Evaluate all policies in the governance state.
  * Returns which policies fired and their actions.
+ * Accepts optional signals for policies that reference signal-derived values.
  */
-export function evaluateAllPolicies(config: ForcedConfig): {
+export function evaluateAllPolicies(config: ForcedConfig, signals?: PolicySignals): {
   fired: PolicyRule[];
   actions: PolicyAction[];
   warnings: string[];
@@ -88,7 +110,7 @@ export function evaluateAllPolicies(config: ForcedConfig): {
   const warnings: string[] = [];
 
   for (const policy of config.governance.policies) {
-    const result = evaluatePolicy(policy, config);
+    const result = evaluatePolicy(policy, config, signals);
     if (result.fires && result.action) {
       fired.push(policy);
       if (result.action.type === 'warn') {
@@ -160,12 +182,12 @@ export function applyAction(action: PolicyAction, config: ForcedConfig): ForcedC
  * Apply all fired actions to the config.
  * Updates firedCount and activatedAt on policies that fire.
  */
-export function applyAllActions(config: ForcedConfig): {
+export function applyAllActions(config: ForcedConfig, signals?: PolicySignals): {
   updatedConfig: ForcedConfig;
   fired: PolicyRule[];
   warnings: string[];
 } {
-  const { fired, actions, warnings } = evaluateAllPolicies(config);
+  const { fired, actions, warnings } = evaluateAllPolicies(config, signals);
 
   let result = { ...config };
 
@@ -226,7 +248,7 @@ export function verifyIdempotence(config: ForcedConfig): boolean {
 /**
  * Format policy evaluation for display.
  */
-export function formatPolicies(config: ForcedConfig): string {
+export function formatPolicies(config: ForcedConfig, signals?: PolicySignals): string {
   const B = '\x1b[1m';
   const D = '\x1b[2m';
   const RS = '\x1b[0m';
@@ -235,7 +257,7 @@ export function formatPolicies(config: ForcedConfig): string {
   const R = '\x1b[31m';
   const C = '\x1b[36m';
 
-  const { fired, warnings } = evaluateAllPolicies(config);
+  const { fired, warnings } = evaluateAllPolicies(config, signals);
   const firedIds = new Set(fired.map(p => p.id));
 
   const lines = [

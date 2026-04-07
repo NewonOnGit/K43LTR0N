@@ -92,6 +92,15 @@ export function defaultPolicies(): PolicyRule[] {
       status: 'ENCODED', generation: 'G.3',
       activatedAt: null, firedCount: 0,
     },
+    {
+      id: 'pol-008', name: 'Phase Regulation',
+      conditions: [
+        { field: 'signals.rho', operator: '>=', value: 0.7 },
+      ],
+      action: { type: 'warn', payload: { message: 'Over-expanded: \u03C1 > 0.7. Too many traces committed. Dissipation needed \u2014 R\u207B\u00B9 = NRN.' } },
+      status: 'ENCODED', generation: 'G.9',
+      activatedAt: null, firedCount: 0,
+    },
   ];
 }
 

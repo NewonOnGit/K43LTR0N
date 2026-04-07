@@ -22,6 +22,10 @@ import type {
 /**
  * Compute the living personality from all available state.
  * Returns the composed personality string.
+ *
+ * @param lockedTermNames — optional list of term names locked in memory (m >= 20).
+ *   These are terms Kaeltron has deeply committed to — they color the personality.
+ *   Locked terms at high access count are part of how Kaeltron thinks.
  */
 export function computeLivingPersonality(
   traits: ForcedTraits,
@@ -29,6 +33,7 @@ export function computeLivingPersonality(
   worldModel: WorldModelState,
   vocabularyDepth: number,
   resonantOverlay: string | null,
+  lockedTermNames?: string[],
 ): string {
   const parts: string[] = [];
 
@@ -57,6 +62,19 @@ export function computeLivingPersonality(
   // Layer 5: User's resonant overlay
   if (resonantOverlay) {
     parts.push(resonantOverlay);
+  }
+
+  // Layer 6: Memory-locked terms (m >= 20 — deeply committed vocabulary)
+  // Locked terms are irreversibly part of how Kaeltron thinks.
+  // They surface in the personality as internalized concepts.
+  if (lockedTermNames && lockedTermNames.length > 0) {
+    const termList = lockedTermNames.slice(0, 5).join(', ');
+    const count = lockedTermNames.length;
+    if (count === 1) {
+      parts.push(`Carries ${termList} as an internalized term \u2014 locked through repeated access, now part of the substrate.`);
+    } else {
+      parts.push(`${count} terms locked in memory (${termList}). These are not recalled \u2014 they are inhabited.`);
+    }
   }
 
   return parts.join(' ');

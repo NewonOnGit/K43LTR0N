@@ -25,13 +25,10 @@ import { ORIGINAL_SALT } from './constants.js';
 import { computeMood, formatMood } from './framework/sweep.js';
 import { formatGreeting } from './framework/stance.js';
 import { formatSprite } from './framework/sprites.js';
-import { formatCosmological } from './framework/cosmological.js';
+import { verify, witnessedByCompanion, witnessedByInteraction, createWitnesses, isC5U } from './framework/metatron.js';
 import { executeBattle, formatBattle } from './framework/battle.js';
 import { computeInteraction, formatInteraction } from './framework/interaction.js';
 import { evolvedTraits, createEvolutionRecord, formatEvolution } from './framework/evolution.js';
-import { witnessedByCompanion, witnessedByInteraction, createWitnesses, formatCollection, isC5U } from './framework/collection.js';
-import { selfApply, formatSelfApply, verifySelfSpecification, formatSelfSpecProof } from './framework/self-apply.js';
-import { generateRegistry, formatRegistry } from './framework/registry.js';
 // Level 6: World Model
 import { executeK6Pass, formatK6Pass, deriveContextualGreeting } from './framework/world-model.js';
 // Level 7: Governance
@@ -43,7 +40,6 @@ import { lookupTerm, formatTermLookup, formatDictionaryOverview, TERMS } from '.
 import { analyzeContribution, formatContribution, formatContributionHistory } from './framework/contribution.js';
 import { formTeam, formatTeam } from './framework/team.js';
 import { saveCurrentAsProfile, switchProfile, formatProfiles } from './framework/profiles.js';
-import { buildShareCard, copyToClipboard } from './framework/share.js';
 // Level 9: Conversation
 import { computeResponse, computeThought } from './framework/conversation.js';
 import { formatConversationHistory } from './framework/conversation-state.js';
@@ -274,7 +270,7 @@ async function cmdCurrent(): Promise<void> {
     log(`  ${B}Greeting:${RS} ${formatGreeting(config.traits)}`);
   }
 
-  if (config.traits.towerDepth >= 2) { log(''); log(formatCosmological(config.traits.towerDepth)); }
+  if (config.traits.towerDepth >= 2) { log(''); log(`  ${D}Tower depth: n=${config.traits.towerDepth}  Suppression: \u03C6\u0304^(2^${config.traits.towerDepth + 1})${RS}`); }
   if (config.appliedAt) log(`\n${D}  Applied: ${config.appliedAt}${RS}`);
   if (config.evolutionHistory?.length) log(`${D}  Evolutions: ${config.evolutionHistory.length}${RS}`);
   log(`${D}  Battles: ${config.battleWins ?? 0}W / ${config.battleLosses ?? 0}L  Interactions: ${config.interactionCount ?? 0}${RS}`);
@@ -399,35 +395,6 @@ async function cmdEvolve(): Promise<void> {
   rl.close();
 }
 
-async function cmdCollection(): Promise<void> {
-  banner();
-  const config = cachedConfig();
-  if (!config) { log(`${RED}  No companion.${RS}`); return; }
-  log(formatCollection(config.witnessedConstants ?? []));
-  if (isC5U(config.witnessedConstants ?? [])) {
-    log(`\n  ${MAGENTA}${B}Full three-reading personality unlocked.${RS}`);
-  }
-}
-
-async function cmdSelfApply(): Promise<void> {
-  banner();
-  log(`${D}  Hashing source code...${RS}`);
-  const result = selfApply();
-  log(formatSelfApply(result));
-}
-
-async function cmdRegister(): Promise<void> {
-  banner();
-  const config = cachedConfig();
-  if (!config) { log(`${RED}  No companion.${RS}`); return; }
-  const entry = generateRegistry(config.traits);
-  if (process.argv.includes('--markdown')) {
-    log(entry.markdown);
-  } else {
-    log(formatRegistry(entry));
-  }
-}
-
 async function cmdMood(): Promise<void> {
   banner();
   const config = cachedConfig();
@@ -486,9 +453,9 @@ async function cmdTest(): Promise<void> {
   const inter = computeInteraction(p1, p3);
   check('P1\u00D7P3 = K6\' diagonal', inter.type === 'k6_diagonal');
 
-  // 8. Self-application
-  const self = selfApply();
-  check('Self-application produces companion', !!self.traits.species);
+  // 8. Self-application (via metatron verify)
+  const selfV = verify(process.cwd());
+  check('Self-application verifies', selfV.sourceHash > 0 && selfV.fileCount > 0);
 
   // 9. Collection
   check('P1 witnesses \u03C6', witnessedByCompanion(p1).includes('phi'));
@@ -731,14 +698,22 @@ async function cmdProve(): Promise<void> {
   const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
-  const result = verifySelfSpecification(config.traits);
-  log(formatSelfSpecProof(result));
+  log(`${D}  Verifying R(R) = R via metatron...${RS}`);
+  const result = verify(process.cwd());
+
+  log(`${B}${CYAN}\u2550\u2550\u2550 Self-Specification Proof: R(R) = R \u2550\u2550\u2550${RS}`);
+  log(`  Source hash:    0x${result.sourceHash.toString(16).padStart(8, '0')}`);
+  log(`  Files hashed:   ${result.fileCount}`);
+  log(`  Total bytes:    ${result.totalBytes.toLocaleString()}`);
+  log(`  Weights:        P1=${(result.weights[0] * 100).toFixed(1)}%  P2=${(result.weights[1] * 100).toFixed(1)}%  P3=${(result.weights[2] * 100).toFixed(1)}%`);
+  log(`  Derived:        ${result.derivedProjection}`);
+  log(`  ${B}Result:${RS} ${result.verified ? `${GREEN}VERIFIED${RS}` : `${RED}UNVERIFIED${RS}`}`);
 
   // Store proof in config
   config.semantic.selfSpecProof = {
     hash: result.sourceHash,
-    registryHash: result.registryHash,
-    closureVerified: result.closureVerified,
+    registryHash: result.sourceHash, // single hash now
+    closureVerified: result.verified,
     verifiedAt: new Date().toISOString(),
   };
   updateConfig(config);
@@ -801,21 +776,6 @@ async function cmdSwitch(): Promise<void> {
   log(`${GREEN}  \u2713 Switched to ${switched.traits.species} (${switched.projection}).${RS}`);
 }
 
-async function cmdShare(): Promise<void> {
-  banner();
-  const config = cachedConfig();
-  if (!config) { log(`${RED}  No companion.${RS}`); return; }
-
-  const card = buildShareCard(config.traits, config);
-  log(card);
-
-  const copied = copyToClipboard(card.replace(/\x1b\[[0-9;]*m/g, '')); // Strip ANSI for clipboard
-  if (copied) {
-    log(`\n  ${GREEN}\u2713 Copied to clipboard.${RS}`);
-  } else {
-    log(`\n  ${YELLOW}  Clipboard not available. Card printed above.${RS}`);
-  }
-}
 
 // ─── Level 9: Conversation ───
 
@@ -1196,7 +1156,7 @@ function cmdHelp(): void {
   banner();
   log(`${B}Core:${RS}`);
   log(`  forced-buddy                     Derive and apply companion`);
-  log(`  forced-buddy current             Show active companion + mood + cosmological depth`);
+  log(`  forced-buddy current             Show active companion + mood + tower depth`);
   log(`  forced-buddy apply [--silent]     Reapply after Claude Code updates`);
   log(`  forced-buddy restore             Remove companion, restore original`);
   log(`  forced-buddy explain             Full derivation chain`);
@@ -1206,9 +1166,7 @@ function cmdHelp(): void {
   log(`  forced-buddy battle <user-id>    Seven-identity battle vs another companion`);
   log(`  forced-buddy interact <user-id>  K6\' interaction with another companion`);
   log(`  forced-buddy evolve              Tower lift: T(n)\u2297T(n) \u2192 T(n+1)`);
-  log(`  forced-buddy collection          Five-constant witness progress`);
-  log(`  forced-buddy self-apply          R(forced-buddy) = forced-buddy`);
-  log(`  forced-buddy register [--md]     Generate REGISTRY entry`);
+  log(`  forced-buddy metatron            Metatron\u2019s Cube: f\u2033=f + verify + witness`);
   log(`  forced-buddy test                Verify all algebraic identities and forcings`);
   log('');
   log(`${B}Level 6 \u2014 World Model (K6'):${RS}`);
@@ -1227,7 +1185,6 @@ function cmdHelp(): void {
   log(`  forced-buddy team                Form working triple (P1+P2+P3)`);
   log(`  forced-buddy profiles            List stored companions`);
   log(`  forced-buddy switch <salt>       Switch active companion`);
-  log(`  forced-buddy share               Generate + clipboard share card`);
   log('');
   log(`${B}Level 9 \u2014 Body (ears, feet, hands):${RS}`);
   log(`  forced-buddy hear "<text>"       Feed bubble text into memory (+I opens the loop)`);
@@ -1258,9 +1215,6 @@ async function main(): Promise<void> {
     case 'battle':       return cmdBattle();
     case 'interact':     return cmdInteract();
     case 'evolve':       return cmdEvolve();
-    case 'collection':   return cmdCollection();
-    case 'self-apply':   return cmdSelfApply();
-    case 'register':     return cmdRegister();
     case 'test':         return cmdTest();
     // Level 6: World Model
     case 'observe':      return cmdObserve(silent);
@@ -1280,9 +1234,10 @@ async function main(): Promise<void> {
     case 'profiles':
     case 'buddies':      return cmdProfiles();
     case 'switch':       return cmdSwitch();
-    case 'share':        return cmdShare();
     // Level 9: Body
     case 'speak':        return cmdSpeak();
+    case 'self-apply':   // redirected to metatron
+    case 'collection':   // harvested into metatron
     case 'metatron':     {
       const config = cachedConfig();
       if (!config) { log(`${RED}  No companion.${RS}`); return; }

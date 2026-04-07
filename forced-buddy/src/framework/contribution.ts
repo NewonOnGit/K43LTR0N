@@ -15,7 +15,7 @@
 
 import { execSync } from 'child_process';
 import type { ContributionRecord } from '../types.js';
-import { suppressionFactor } from './cosmological.js';
+import { suppressionFactor } from './metatron.js';
 
 // Framework-relevant file patterns
 const FRAMEWORK_DOC = /\.(md)$/i;
