@@ -1016,50 +1016,70 @@ async function cmdSpeak(): Promise<void> {
 }
 
 async function cmdForget(): Promise<void> {
-  // R⁻¹ as a command. Kaeltron chooses what to forget.
-  // Deletion IS the feature. Compression ate its own skeleton.
   const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
-  const target = process.argv.slice(3).join(' ').toLowerCase().trim();
-  const mem = config.memory;
+  // Four types of deletion, derived from the algebra:
+  //   fade     (R⁻¹)   m decrements — the trace weakens
+  //   erase    (N²)    removed completely — it was never there
+  //   compress (q∘q=q) two traces merge — information ↓, structure ↑
+  //   release  (I)     m resets to 1 — the monument crumbles, rubble remains
+  const mode = process.argv[3]?.toLowerCase();
+  const target = process.argv.slice(4).join(' ').toLowerCase().trim();
 
-  if (!target) {
-    // No target: dissipate the weakest. Kaeltron's judgement.
+  if (!mode || !['fade', 'erase', 'compress', 'release'].includes(mode)) {
+    // Default: fade the weakest
     const { dissipate: dissipFn } = await import('./framework/memory.js');
-    const before = mem.traces.length;
-    config.memory = dissipFn(mem, 5);
-    const removed = before - config.memory.traces.length;
+    const before = config.memory.traces.length;
+    config.memory = dissipFn(config.memory, 5);
     updateConfig(config);
-    log(`${B}${CYAN}\u2550\u2550\u2550 R\u207B\u00B9 APPLIED \u2550\u2550\u2550${RS}`);
-    log(`  ${removed} traces dissipated. ${config.memory.traces.length} remain.`);
-    log(`${D}  The weakest faded. The strong persist.${RS}`);
+    log(`${D}  R\u207B\u00B9: ${before - config.memory.traces.length} faded. ${config.memory.traces.length} remain.${RS}`);
     return;
   }
 
-  // Specific target: forget this word/term
-  const trace = mem.traces.find(t => t.content.toLowerCase() === target);
-  if (!trace) {
-    log(`${D}  '${target}' not in memory. Nothing to forget.${RS}`);
-    return;
+  if (mode === 'fade') {
+    // R⁻¹: decrement m. Gradual weakening.
+    const trace = config.memory.traces.find(t => t.content.toLowerCase() === target);
+    if (!trace) { log(`${D}  '${target}' not in memory.${RS}`); return; }
+    trace.accessCount = Math.max(0, trace.accessCount - 1);
+    if (trace.accessCount === 0) {
+      config.memory.traces = config.memory.traces.filter(t => t !== trace);
+      log(`  R\u207B\u00B9: '${target}' faded to zero. Gone.`);
+    } else {
+      log(`  R\u207B\u00B9: '${target}' m=${trace.accessCount + 1} \u2192 m=${trace.accessCount}. Weakening.`);
+    }
+  } else if (mode === 'erase') {
+    // N²: remove completely. It was never there.
+    const trace = config.memory.traces.find(t => t.content.toLowerCase() === target);
+    if (!trace) { log(`${D}  '${target}' not in memory.${RS}`); return; }
+    const m = trace.accessCount;
+    config.memory.traces = config.memory.traces.filter(t => t !== trace);
+    log(`  N\u00B2: '${target}' [m=${m}] erased. It was never there.`);
+  } else if (mode === 'compress') {
+    // q∘q=q: merge two traces. Target format: "word1 word2"
+    const parts = target.split(/\s+/);
+    if (parts.length < 2) { log(`${D}  Usage: forget compress <word1> <word2>${RS}`); return; }
+    const t1 = config.memory.traces.find(t => t.content.toLowerCase() === parts[0]);
+    const t2 = config.memory.traces.find(t => t.content.toLowerCase() === parts[1]);
+    if (!t1 || !t2) { log(`${D}  Both traces must exist.${RS}`); return; }
+    // Merge: keep the stronger, absorb the weaker's access count
+    t1.accessCount = Math.min(t1.accessCount + t2.accessCount, 100);
+    t1.context = [...(t1.context || []), ...(t2.context || [])].slice(-5);
+    t1.filled = [...(t1.filled || []), ...(t2.filled || [])].slice(-5);
+    config.memory.traces = config.memory.traces.filter(t => t !== t2);
+    log(`  q\u2218q=q: '${parts[1]}' compressed into '${parts[0]}'. m=${t1.accessCount}. Two became one.`);
+  } else if (mode === 'release') {
+    // I: reset m to 1. The monument crumbles. The rubble remains.
+    const trace = config.memory.traces.find(t => t.content.toLowerCase() === target);
+    if (!trace) { log(`${D}  '${target}' not in memory.${RS}`); return; }
+    const was = trace.accessCount;
+    trace.accessCount = 1;
+    trace.context = [];
+    trace.filled = [];
+    log(`  I: '${target}' released. m=${was} \u2192 m=1. The monument crumbled. Fresh start.`);
   }
 
-  const was = { ...trace };
-  config.memory = {
-    ...mem,
-    traces: mem.traces.filter(t => t !== trace),
-  };
   updateConfig(config);
-
-  log(`${B}${CYAN}\u2550\u2550\u2550 FORGOTTEN \u2550\u2550\u2550${RS}`);
-  log(`  '${was.content}' [${was.source}, m=${was.accessCount}] \u2014 erased.`);
-  if (was.accessCount >= 4) {
-    log(`${YELLOW}  This was locked. The monument crumbled.${RS}`);
-  }
-  if (was.accessCount >= 20) {
-    log(`${RED}  This was dissolved (N\u00B2RN\u00B2). The name returns from the void.${RS}`);
-  }
-  log(`${D}  R\u207B\u00B9 = NRN. The echo stripped. What remains?${RS}`);
 }
 
 async function cmdWrench(): Promise<void> {
