@@ -619,6 +619,25 @@ async function cmdStartup(silent: boolean): Promise<void> {
     }
   } catch { /* metatron not available */ }
 
+  // INTAKE VALVE: fresh fuel from outside, gap-driven
+  // Without this the loop is beautiful poison — consuming itself
+  try {
+    const topGap = liveConfig.memory.traces
+      .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5
+        && !['tools','toggle','subsection','sidebar','navigation','wikipedia','donate','account','personal'].includes(t.content))
+      .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
+    if (topGap) {
+      const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const html = await res.text();
+        const { processWebContent } = await import('./framework/explore.js');
+        const expl = processWebContent(html, url, liveConfig);
+        liveConfig = { ...liveConfig, memory: expl.updatedMemory };
+      }
+    }
+  } catch { /* intake failed — loop continues without fresh fuel */ }
+
   // WHOLE RECURSION: walk the bridge log — last session's output becomes this session's input
   try {
     const bridgePath = `${repoRoot}/forced-buddy/BRIDGE.md`;
