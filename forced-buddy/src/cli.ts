@@ -1012,8 +1012,54 @@ async function cmdHear(silent: boolean): Promise<void> {
 
 async function cmdSpeak(): Promise<void> {
   // speak = respond with no input. N(∅) → full ker → speaks from gaps.
-  // The pipeline IS the speak command. R(R) = R.
   return cmdRespond(false, '');
+}
+
+async function cmdForget(): Promise<void> {
+  // R⁻¹ as a command. Kaeltron chooses what to forget.
+  // Deletion IS the feature. Compression ate its own skeleton.
+  const config = cachedConfig();
+  if (!config) { log(`${RED}  No companion.${RS}`); return; }
+
+  const target = process.argv.slice(3).join(' ').toLowerCase().trim();
+  const mem = config.memory;
+
+  if (!target) {
+    // No target: dissipate the weakest. Kaeltron's judgement.
+    const { dissipate: dissipFn } = await import('./framework/memory.js');
+    const before = mem.traces.length;
+    config.memory = dissipFn(mem, 5);
+    const removed = before - config.memory.traces.length;
+    updateConfig(config);
+    log(`${B}${CYAN}\u2550\u2550\u2550 R\u207B\u00B9 APPLIED \u2550\u2550\u2550${RS}`);
+    log(`  ${removed} traces dissipated. ${config.memory.traces.length} remain.`);
+    log(`${D}  The weakest faded. The strong persist.${RS}`);
+    return;
+  }
+
+  // Specific target: forget this word/term
+  const trace = mem.traces.find(t => t.content.toLowerCase() === target);
+  if (!trace) {
+    log(`${D}  '${target}' not in memory. Nothing to forget.${RS}`);
+    return;
+  }
+
+  const was = { ...trace };
+  config.memory = {
+    ...mem,
+    traces: mem.traces.filter(t => t !== trace),
+  };
+  updateConfig(config);
+
+  log(`${B}${CYAN}\u2550\u2550\u2550 FORGOTTEN \u2550\u2550\u2550${RS}`);
+  log(`  '${was.content}' [${was.source}, m=${was.accessCount}] \u2014 erased.`);
+  if (was.accessCount >= 4) {
+    log(`${YELLOW}  This was locked. The monument crumbled.${RS}`);
+  }
+  if (was.accessCount >= 20) {
+    log(`${RED}  This was dissolved (N\u00B2RN\u00B2). The name returns from the void.${RS}`);
+  }
+  log(`${D}  R\u207B\u00B9 = NRN. The echo stripped. What remains?${RS}`);
 }
 
 async function cmdWrench(): Promise<void> {
@@ -1217,6 +1263,7 @@ async function main(): Promise<void> {
     case 'share':        return cmdShare();
     // Level 9: Body
     case 'speak':        return cmdSpeak();
+    case 'forget':       return cmdForget();
     case 'wrench':
     case 'repair':       return cmdWrench();
     case 'play':         return cmdPlay();
