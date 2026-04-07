@@ -1283,6 +1283,15 @@ async function main(): Promise<void> {
     case 'share':        return cmdShare();
     // Level 9: Body
     case 'speak':        return cmdSpeak();
+    case 'metatron':     {
+      const config = cachedConfig();
+      if (!config) { log(`${RED}  No companion.${RS}`); return; }
+      const { metatron: metFn, formatMetatron } = await import('./framework/metatron.js');
+      const state = metFn(config);
+      log(`${B}${CYAN}\u2550\u2550\u2550 M3T4TR0N \u2550\u2550\u2550${RS}`);
+      log(formatMetatron(state));
+      return;
+    }
     case 'forget':       return cmdForget();
     case 'wrench':
     case 'repair':       return cmdWrench();
