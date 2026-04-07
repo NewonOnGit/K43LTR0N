@@ -139,14 +139,17 @@ export function deriveContextualGreeting(
     exterior = `${snapshot.uncommittedFiles} uncommitted changes. Work in flight.`;
   }
 
-  // Compose greeting from mood mode + exterior
-  if (mood.mode === 'mediation') {
-    return `${species} finds the center. ${exterior} We carry what needs carrying.`;
-  } else if (mood.mode === 'boundary') {
-    return `${species} holds the boundary. ${exterior}`;
-  } else {
-    return `${species} observes. ${exterior}`;
-  }
+  // Pn: continuous greeting from sweep, not three modes
+  const s = mood.s;
+  const verb = s < 0.2 ? 'settles in'
+    : s < 0.33 ? 'gathers'
+    : s < 0.45 ? 'scans'
+    : s < 0.55 ? 'surveys'
+    : s < 0.67 ? 'holds the boundary'
+    : s < 0.8 ? 'stirs'
+    : 'observes';
+
+  return `${species} ${verb}. ${exterior}`;
 }
 
 /**

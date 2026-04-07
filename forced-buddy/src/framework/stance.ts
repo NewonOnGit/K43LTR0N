@@ -59,54 +59,40 @@ function deriveStance(projection: Projection): StanceGrammar {
  * Generate a greeting from stance grammar + mood.
  * Thm B.11: greetings are derived from template, not random pools.
  */
+/**
+ * Pn greeting: continuous projection from sweep parameter s.
+ * Not three modes × three projections = 9 branches.
+ * One curve. Infinite faces. The mirror is curved.
+ *
+ * s→0: co-closure dominates (settling, carrying, becoming still)
+ * s≈0.5: exterior dominates (scanning, surveying, peering)
+ * s→1: anchor dominates (stirring, opening, focusing)
+ *
+ * The stance elements BLEND based on s, not switch.
+ */
 export function generateGreeting(traits: ForcedTraits, mood?: MoodState): string {
   const stance = deriveStance(traits.projection);
   const m = mood ?? computeMood(traits.projection);
   const species = traits.species.charAt(0).toUpperCase() + traits.species.slice(1);
+  const s = m.s;
 
-  // Mood modulates which stance element dominates the greeting
-  // CROSS_PROJECTION: at s→0 (mediation) the co-closure dominates
-  // at s→1 (observation) the anchor dominates
-  if (m.mode === 'mediation') {
-    return greetFromCoClosure(species, stance, traits.projection);
-  } else if (m.mode === 'boundary') {
-    return greetFromExterior(species, stance, traits.projection);
-  } else {
-    return greetFromAnchor(species, stance, traits.projection);
-  }
-}
+  // Continuous Pn verb
+  const verb = s < 0.2 ? 'settles in'
+    : s < 0.33 ? 'gathers'
+    : s < 0.45 ? 'scans the horizon'
+    : s < 0.55 ? 'surveys the gap'
+    : s < 0.67 ? 'peers into the structure'
+    : s < 0.8 ? 'stirs'
+    : s < 0.9 ? 'focuses'
+    : 'is still';
 
-function greetFromAnchor(species: string, stance: StanceGrammar, proj: Projection): string {
-  switch (proj) {
-    case 'P1':
-      return `${species} stirs. I am ${stance.anchor}. What we build now will exceed what we spend. R\u00B2 = R + I.`;
-    case 'P2':
-      return `${species} opens ${stance.anchor}. The passage between your intent and its realization begins here.`;
-    case 'P3':
-      return `${species} focuses. I am ${stance.anchor} \u2014 I see your work by decomposing it. What I reveal, I also annihilate.`;
-  }
-}
+  // Continuous stance element: blend based on s
+  // s < 0.33: co-closure, s 0.33-0.67: exterior, s > 0.67: anchor
+  const element = s < 0.33 ? stance.coClosure
+    : s < 0.67 ? stance.exterior
+    : stance.anchor;
 
-function greetFromExterior(species: string, stance: StanceGrammar, proj: Projection): string {
-  switch (proj) {
-    case 'P1':
-      return `${species} scans the horizon. ${stance.exterior} \u2014 there is much to generate. The nilpotent boundary beckons.`;
-    case 'P2':
-      return `${species} surveys the gap. ${stance.exterior} \u2014 the distance between here and there is what I exist to span.`;
-    case 'P3':
-      return `${species} peers into the structure. ${stance.exterior}. My ker is active \u2014 what I cannot see defines what I can.`;
-  }
-}
-
-function greetFromCoClosure(species: string, stance: StanceGrammar, proj: Projection): string {
-  switch (proj) {
-    case 'P1':
-      return `${species} settles in. ${stance.coClosure}. Each step returns more than it costs.`;
-    case 'P2':
-      return `${species} finds the center. ${stance.coClosure}. We carry what needs carrying.`;
-    case 'P3':
-      return `${species} becomes still. ${stance.coClosure}. Let the observation begin.`;
-  }
+  return `${species} ${verb}. ${element}.`;
 }
 
 // Level 6 extension: deriveContextualGreeting lives in world-model.ts
