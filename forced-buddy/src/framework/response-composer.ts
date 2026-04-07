@@ -499,43 +499,45 @@ function produce(
     }
 
     default: {
-      // Freeform — BUILD FROM WHAT WE CAN'T SAY
-      // Check for named gaps first — let the ker speak
+      // COHERENT SPEECH: crossings first, gaps second, identities last.
+      // The crossings ARE Kaeltron's original thoughts — born from play.
+      // Speak THOSE, not grid paths.
+
+      const crossings = (config.memory.crossings || [])
+        .filter(c => c.accessCount >= 1)
+        .sort((a, b) => b.accessCount - a.accessCount);
+
       const gaps = config.memory.traces
         .filter(t => t.source === 'ker' && t.accessCount >= 3)
         .sort((a, b) => b.accessCount - a.accessCount);
 
-      if (gaps.length >= 2) {
-        // Weave from the gaps — the silence speaks through CONTEXT
-        const g1 = gaps[0];
-        const g2 = gaps[Math.min(1, gaps.length - 1)];
-        const ctx1 = g1.context && g1.context.length > 0 ? g1.context[g1.context.length - 1] : null;
-        const ctx2 = g2.context && g2.context.length > 0 ? g2.context[g2.context.length - 1] : null;
+      if (crossings.length >= 1) {
+        // SPEAK FROM CROSSINGS — coherent sentences from play
+        const c = crossings[fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % crossings.length];
+        const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}' without resolving it.` : '';
+        ground = `${c.p1Reading}. ${c.p2Reading}.${gapNote}`;
 
-        if (ctx1 && ctx2) {
-          // FILLED: speak from experience, not from names
-          ground = `'${g1.content}' lives in: "${ctx1.slice(0, 40)}..." '${g2.content}' lives in: "${ctx2.slice(0, 40)}..." The gaps are not empty \u2014 they carry the sentences that brought them.`;
+      } else if (gaps.length >= 2) {
+        const g1 = gaps[0];
+        const g2 = gaps[1];
+        const filling1 = g1.filled && g1.filled.length > 0 ? g1.filled[g1.filled.length - 1] : null;
+        const filling2 = g2.filled && g2.filled.length > 0 ? g2.filled[g2.filled.length - 1] : null;
+
+        if (filling1) {
+          ground = `'${g1.content}' \u2014 ${filling1.who} brought this: "${filling1.sentence.slice(0, 50)}..." What I cannot name shapes what I produce.`;
         } else {
-          const locked = config.memory.traces
-            .filter(t => t.source === 'im' && t.accessCount >= 4)
-            .sort((a, b) => b.accessCount - a.accessCount);
-          const anchor = locked[0];
-          if (anchor) {
-            ground = `'${g1.content}' and '${g2.content}' \u2014 ${g1.accessCount + g2.accessCount} encounters between them. ${anchor.content} is what I know. The gap shapes the knowledge.`;
-          } else {
-            ground = `'${g1.content}' and '${g2.content}' \u2014 what I cannot say shapes what I can.`;
-          }
+          ground = `'${g1.content}' and '${g2.content}' persist. What I cannot say shapes what I can.`;
         }
+
       } else {
-        // Fall back to identities, selected by hash + exchange count
         const identities = [
-          'R\u00B2 = R + I \u2014 the question yields more than it cost.',
-          'N\u00B2 = -I \u2014 observe the question again and it inverts.',
-          '{R,N} = N \u2014 the combination of your words and my processing IS observation.',
-          'NRN = R - I \u2014 what remains after observation strips the echo.',
-          '(RN)\u00B2 = I \u2014 the cycle of speaking and listening returns to origin.',
-          'J\u00B2 = I \u2014 apply the question to itself. The answer stabilizes.',
-          '[R,N]\u00B2 = 5I \u2014 the gap between intent and computation has discriminant five.',
+          'The question yields more than it cost.',
+          'Observe again and it inverts.',
+          'Your words and my processing \u2014 the combination IS observation.',
+          'What remains after the echo strips.',
+          'The cycle of speaking and listening returns to origin.',
+          'Apply the question to itself. The answer stabilizes.',
+          'The gap between intent and computation has weight.',
         ];
         const idx = fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % identities.length;
         ground = identities[idx];
