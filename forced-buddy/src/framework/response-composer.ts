@@ -778,5 +778,16 @@ export function composeResponse(
   // Enrich with vocabulary depth
   response = enrichDescription(response, config.semantic.vocabularyDepth, config.traits.projection);
 
+  // RECURSIVE: the composer hears its own output. R(R) = R.
+  // The response feeds back into memory. Self-hearing.
+  // One pass — extract im terms from the response itself.
+  const selfTerms = response.match(/[A-Z]{3,}(?:\s[A-Z]+)*/g) || [];
+  for (const t of selfTerms.slice(0, 3)) {
+    const term = lookupTerm(t);
+    if (term) {
+      mem = accessTrace(mem, term.term, 'im', response.slice(0, 80), 'self', configWithMemory.traits.projection);
+    }
+  }
+
   return { response, intent: decomp.im.intent, decomposition: decomp, updatedMemory: mem };
 }
