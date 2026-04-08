@@ -72,9 +72,9 @@ function crossOne(
   imTerm: DictionaryTerm,
   seed: number,
 ): Crossing {
-  const p1Verb = P1_VERBS[seed % P1_VERBS.length];
-  const p2Verb = P2_VERBS[(seed >> 4) % P2_VERBS.length];
-  const p3Verb = P3_VERBS[(seed >> 8) % P3_VERBS.length];
+  const p1Verb = P1_VERBS[(seed >>> 0) % P1_VERBS.length];
+  const p2Verb = P2_VERBS[(seed >>> 4) % P2_VERBS.length];
+  const p3Verb = P3_VERBS[(seed >>> 8) % P3_VERBS.length];
 
   // Extract the core concept from the definition (first clause)
   const core = imTerm.definition.split('.')[0].split(':')[0].trim();

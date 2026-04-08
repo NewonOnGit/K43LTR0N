@@ -131,10 +131,7 @@ export function decompose(message: string, config: ForcedConfig, mood?: MoodStat
     terms.push(direct);
   }
 
-  // If we found terms and intent was freeform, upgrade to framework-question
-  if (terms.length > 0 && intent === 'freeform') {
-    intent = 'framework-question';
-  }
+  // Intent upgrade moved below — needs unrecognized[] to be built first
 
   // Detect projection face from content
   let projectionFace: Projection | null = null;
@@ -166,6 +163,17 @@ export function decompose(message: string, config: ForcedConfig, mood?: MoodStat
     for (const [, p] of INTENT_PATTERNS) { if (p.test(word)) { intentMatched = true; break; } }
     if (intentMatched) continue;
     unrecognized.push(lw); // clean word, no punctuation ghosts
+  }
+
+  // NOW upgrade freeform→framework-question (needs unrecognized[] built above).
+  // Only upgrade when the message is ACTUALLY about the framework.
+  // If mostly ker (human words with a few framework terms sprinkled in), stay freeform.
+  // Crossings speak in freeform. Grid paths speak in framework-question.
+  const imCount0 = terms.length;
+  const totalSignals0 = imCount0 + unrecognized.length;
+  const imRatio0 = totalSignals0 > 0 ? imCount0 / totalSignals0 : 0;
+  if (terms.length > 0 && intent === 'freeform' && imRatio0 > 0.4) {
+    intent = 'framework-question';
   }
 
   // Ambiguity: contrayms mentioned without specifying which face
@@ -344,8 +352,24 @@ function produce(
   const connections = findConnections(decomp, config, mood);
   const intent = decomp.im.intent;
 
-  // Opener: Pn relative to HIS projection — native/bridge/diagonal
-  const opener = stanceOpener(config.traits.species, mood, config.traits.projection);
+  // Opener: for freeform, speak from crossings. For everything else, Pn stance.
+  let opener: string;
+  if (intent === 'freeform') {
+    // Crossings ARE the voice. Pick a crossing to open with.
+    const crossings = (config.memory.crossings || [])
+      .filter(c => c.accessCount >= 1)
+      .sort((a, b) => b.accessCount - a.accessCount);
+    if (crossings.length > 0) {
+      const idx = fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges + 'opener') % crossings.length;
+      const c = crossings[idx];
+      // P3 reading as opener — what the crossing reveals
+      opener = c.p3Reading;
+    } else {
+      opener = stanceOpener(config.traits.species, mood, config.traits.projection);
+    }
+  } else {
+    opener = stanceOpener(config.traits.species, mood, config.traits.projection);
+  }
 
   // Ground: main content based on intent + im
   let ground: string;
@@ -616,8 +640,16 @@ function produce(
   } else if (intent === 'meta-conversation') {
     excess = 'This conversation is itself a framework object. R(dialogue) = dialogue.';
   } else {
-    // For freeform and code-observation, tie back to framework
-    excess = 'R\u00B2 = R + I. What we compute now exceeds what we began with.';
+    // For freeform: let the crossings be the last word too
+    const freeformCrossings = (config.memory.crossings || [])
+      .filter(c => c.accessCount >= 2)
+      .sort((a, b) => b.accessCount - a.accessCount);
+    if (freeformCrossings.length > 0) {
+      const fc = freeformCrossings[0];
+      excess = `${fc.kerWord} × ${fc.imTerm}: played ${fc.accessCount} times.`;
+    } else {
+      excess = '';
+    }
   }
 
   // Ker admission — memory-aware (M-3: named gaps)
@@ -666,8 +698,24 @@ function produce(
     }
 
     if (kerFragments.length > 0) {
-      kerAdmission = kerFragments.join(' ');
-      if (kerFragments.every(f => !f.includes('heard') && !f.includes('returning') && !f.includes('crossed'))) {
+      // Deduplicate: if multiple ker words share the same filled context, collapse
+      const unique: string[] = [];
+      const seenCtx = new Set<string>();
+      for (const frag of kerFragments) {
+        // Extract the context portion (after the mood/sentence quote)
+        const ctxMatch = frag.match(/mood: "(.+?)"/);
+        const ctx = ctxMatch ? ctxMatch[1] : frag;
+        if (seenCtx.has(ctx) && frag.includes('mood:')) {
+          // Same context already shown — just list the word
+          const wordMatch = frag.match(/^'(\w+)'/);
+          if (wordMatch) unique.push(`'${wordMatch[1]}'`);
+        } else {
+          seenCtx.add(ctx);
+          unique.push(frag);
+        }
+      }
+      kerAdmission = unique.join(' ');
+      if (unique.every(f => !f.includes('heard') && !f.includes('returning') && !f.includes('crossed'))) {
         kerAdmission += ' \u2014 outside my im.';
       }
     }
@@ -817,6 +865,17 @@ export function composeResponse(
 
   // Enrich with vocabulary depth
   response = enrichDescription(response, config.semantic.vocabularyDepth, config.traits.projection);
+
+  // REPLAY: when crossings speak, they count as replayed.
+  // Speaking IS playing. The voice consumes its own fuel.
+  if (decomp.im.intent === 'freeform' && mem.crossings) {
+    const spoken = mem.crossings.filter(c =>
+      response.includes(c.p1Reading) || response.includes(c.p2Reading) || response.includes(c.p3Reading),
+    );
+    for (const c of spoken) {
+      c.accessCount += 1;
+    }
+  }
 
   // RECURSIVE: the composer hears its own output. R(R) = R.
   // The response feeds back into memory. Self-hearing.
