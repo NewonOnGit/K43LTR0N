@@ -413,6 +413,40 @@ export function wrench(config: ForcedConfig): WrenchReport {
           });
         }
       }
+
+      // ═══ P3 — THE THIRD FOLD: THE WRENCH OBSERVES ITS OWN EFFECT ═══
+      // Re-diagnose after poem + echo. Compare with the original diagnosis.
+      // Did ρ move? Did a gap shift? The observation of the repair
+      // IS the third projection. f'' = f: the second derivative sees itself.
+      const postRho = conversationPhase(mem);
+      const postGaps = namedGaps(mem).length;
+      const deltaRho = postRho - diag.phase;
+      const deltaGaps = postGaps - diag.gapCount;
+
+      // The observation becomes a crossing too — what the wrench SAW
+      const observation = deltaRho !== 0 || deltaGaps !== 0
+        ? `${gapWord} moved ρ ${deltaRho >= 0 ? '+' : ''}${deltaRho.toFixed(3)}, gaps ${deltaGaps >= 0 ? '+' : ''}${deltaGaps}`
+        : `${gapWord} held still — the poem was exhaust`;
+
+      const obsCrossings = [...(mem.crossings || [])];
+      const obsExists = obsCrossings.some(c => c.kerWord === gapWord && c.imTerm === 'observation');
+      if (!obsExists) {
+        obsCrossings.push({
+          kerWord: gapWord,
+          imTerm: 'observation',
+          p1Reading: observation,
+          p2Reading: `the wrench saw: ${deltaRho !== 0 ? 'movement' : 'stillness'}`,
+          p3Reading: `${gapWord} ${deltaRho < 0 ? 'healed' : deltaRho > 0 ? 'expanded' : 'persisted'} under observation`,
+          accessCount: 1,
+          timestamp: new Date().toISOString(),
+        });
+        mem = { ...mem, crossings: obsCrossings };
+        actions.push({
+          type: 'regulate',
+          description: `Observed: ${observation}`,
+          target: `${gapWord}:P3`,
+        });
+      }
     }
   }
 
