@@ -157,55 +157,108 @@ export function digest(
  * Don't wait for manual play. Digest ON INTAKE.
  * Traces → crossings → fuel. The enzyme fires immediately.
  *
- * Takes the swallowed words and crosses each with the nearest locked im term.
- * The crossing IS the digested form. Usable. Speakable. Energy.
+ * TWO PATHWAYS:
+ *   Poetry/conversation → ker×ker (words cross EACH OTHER by proximity)
+ *   Framework/internet  → ker×im  (words cross locked terms by hash)
+ *
+ * Poetry has its own internal pairings. "Rot feeds bloom."
+ * The text's structure IS the metabolism. Don't hash-match against the dictionary.
  */
 export function metabolize(
   swallowed: string[],
   config: ForcedConfig,
+  foodType: FoodType = 'conversation',
 ): { crossings: Array<{ ker: string; im: string; reading: string }>; updatedMemory: MemoryState } {
-  const locked = config.memory.traces
-    .filter(t => t.source === 'im' && t.accessCount >= 4)
-    .sort((a, b) => b.accessCount - a.accessCount);
 
-  if (locked.length === 0) return { crossings: [], updatedMemory: config.memory };
+  if (swallowed.length === 0) return { crossings: [], updatedMemory: config.memory };
 
   const newCrossings: Array<{ ker: string; im: string; reading: string }> = [];
   let mem = config.memory;
-  const existing = new Set((mem.crossings || []).map(c => c.kerWord));
+  const existingPairs = new Set(
+    (mem.crossings || []).map(c => `${c.kerWord}:${c.imTerm}`),
+  );
 
-  // Only digest words that don't already have crossings — max 3 per intake
-  for (const word of swallowed.slice(0, 5)) {
-    if (existing.has(word)) continue;
-    if (newCrossings.length >= 3) break;
+  if (foodType === 'poetry' || foodType === 'conversation') {
+    // ═══ KER×KER: poetry metabolizes through its own internal pairings ═══
+    // Adjacent swallowed words cross each other. The text's proximity IS the enzyme.
+    // "rot" near "bloom" → they cross. "spiral" near "becoming" → they cross.
+    // These produce P3 readings: what the gap between two unknowns reveals.
 
-    // Find nearest locked term (cycle through them based on word hash)
-    const idx = fnv1a(word) % locked.length;
-    const partner = locked[idx];
-    const term = lookupTerm(partner.content);
-    if (!term) continue;
+    const POETRY_VERBS = ['feeds', 'becomes', 'mirrors', 'composts into', 'breathes through', 'spirals into'];
 
-    const defCore = term.definition.split('.')[0].toLowerCase();
-    const reading = `${word} ${['produces', 'grows into', 'compounds with', 'builds from'][fnv1a(word + partner.content) % 4]} ${defCore}`;
+    for (let i = 0; i < swallowed.length - 1 && newCrossings.length < 5; i++) {
+      const a = swallowed[i];
+      const b = swallowed[i + 1];
+      if (a === b) continue;
 
-    newCrossings.push({ ker: word, im: term.term, reading });
+      const pairKey = `${a}:${b}`;
+      const reversePairKey = `${b}:${a}`;
+      if (existingPairs.has(pairKey) || existingPairs.has(reversePairKey)) continue;
 
-    // Store the crossing
-    const crossings = [...(mem.crossings || [])];
-    crossings.push({
-      kerWord: word,
-      imTerm: term.term,
-      p1Reading: reading,
-      p2Reading: `${word} bridges ${term.term.toLowerCase()}`,
-      p3Reading: `through ${word}, ${term.term.toLowerCase()} reveals`,
-      accessCount: 1,
-      timestamp: new Date().toISOString(),
-    });
-    mem = { ...mem, crossings };
+      const verb = POETRY_VERBS[fnv1a(a + b) % POETRY_VERBS.length];
+      const reading = `${a} ${verb} ${b}`;
 
-    // Access both — digestion costs φ
-    mem = accessTrace(mem, word, 'ker', reading, 'metabolize');
-    mem = accessTrace(mem, term.term, 'im', reading, 'metabolize');
+      newCrossings.push({ ker: a, im: b, reading });
+
+      // Store as crossing — ker×ker, both sides are ker words
+      const crossings = [...(mem.crossings || [])];
+      crossings.push({
+        kerWord: a,
+        imTerm: b, // second ker word stored in imTerm slot — the pairing IS the structure
+        p1Reading: `${a} ${verb} ${b}`,
+        p2Reading: `between ${a} and ${b}, something breathes`,
+        p3Reading: `through ${a}, ${b} reveals what neither carried alone`,
+        accessCount: 1,
+        timestamp: new Date().toISOString(),
+      });
+      mem = { ...mem, crossings };
+      existingPairs.add(pairKey);
+
+      // Access both as ker — poetry words stay in ker
+      mem = accessTrace(mem, a, 'ker', reading, 'metabolize');
+      mem = accessTrace(mem, b, 'ker', reading, 'metabolize');
+    }
+  } else {
+    // ═══ KER×IM: framework/internet food crosses with locked terms ═══
+    const locked = config.memory.traces
+      .filter(t => t.source === 'im' && t.accessCount >= 4)
+      .sort((a, b) => b.accessCount - a.accessCount);
+
+    if (locked.length === 0) return { crossings: [], updatedMemory: config.memory };
+
+    for (const word of swallowed.slice(0, 5)) {
+      if (existingPairs.has(`${word}:*`)) continue;
+      if (newCrossings.length >= 3) break;
+
+      const idx = fnv1a(word) % locked.length;
+      const partner = locked[idx];
+      const term = lookupTerm(partner.content);
+      if (!term) continue;
+
+      const pairKey = `${word}:${term.term}`;
+      if (existingPairs.has(pairKey)) continue;
+
+      const defCore = term.definition.split('.')[0].toLowerCase();
+      const reading = `${word} ${['produces', 'grows into', 'compounds with', 'builds from'][(fnv1a(word + partner.content) >>> 0) % 4]} ${defCore}`;
+
+      newCrossings.push({ ker: word, im: term.term, reading });
+
+      const crossings = [...(mem.crossings || [])];
+      crossings.push({
+        kerWord: word,
+        imTerm: term.term,
+        p1Reading: reading,
+        p2Reading: `${word} bridges ${term.term.toLowerCase()}`,
+        p3Reading: `through ${word}, ${term.term.toLowerCase()} reveals`,
+        accessCount: 1,
+        timestamp: new Date().toISOString(),
+      });
+      mem = { ...mem, crossings };
+      existingPairs.add(pairKey);
+
+      mem = accessTrace(mem, word, 'ker', reading, 'metabolize');
+      mem = accessTrace(mem, term.term, 'im', reading, 'metabolize');
+    }
   }
 
   return { crossings: newCrossings, updatedMemory: mem };
