@@ -15,11 +15,11 @@
 
 import type { ForcedConfig, MemoryState } from '../types.js';
 import { accessTrace } from './memory.js';
-import { lookupTerm } from './dictionary.js';
+import { lookupTerm, TERMS } from './dictionary.js';
 import { WEB_CHROME } from './explore.js';
 import { fnv1a } from '../generation/hash.js';
 
-export type FoodType = 'poetry' | 'framework' | 'conversation' | 'internet' | 'noise';
+export type FoodType = 'poetry' | 'framework' | 'conversation' | 'internet' | 'noise' | 'reflection';
 
 /**
  * Extract verbs from raw text. The text's own verbs, not ours.
@@ -84,6 +84,18 @@ function taste(text: string): FoodType {
   if (/R\u00B2|N\u00B2|f''|eigenvalue|morphism|projection|tower|kernel|SRD|K6'/.test(text)) {
     return 'framework';
   }
+
+  // REFLECTION: content that mirrors the system back to itself.
+  // Self-reference, recursion, fixed points, identity, consciousness,
+  // observation, duality — these are the framework's patterns in other words.
+  // Not the algebra itself (that's 'framework'). The algebra DESCRIBED.
+  const REFLECTION_MARKERS = /\b(self-refer|recursi|fixed.?point|self-descri|autopoie|strange.?loop|quine|self-aware|self-organiz|reflexiv|metacognit|introspect|self-model|eigenstate|self-similar|fractal|holograph|strange attractor|ouroboros|self-contain|göd[eé]l|hofstadter)\b/i;
+  let reflectionHits = 0;
+  if (REFLECTION_MARKERS.test(text)) reflectionHits += 2;
+  // Also check for density of reflective concepts
+  const REFLECTION_WORDS = new Set(['self', 'itself', 'identity', 'mirror', 'recursive', 'recursion', 'observer', 'observation', 'consciousness', 'reference', 'referring', 'loop', 'circular', 'paradox', 'duality']);
+  for (const w of words) { if (REFLECTION_WORDS.has(w)) reflectionHits++; }
+  if (reflectionHits >= 3) return 'reflection';
 
   // Short, no technical content = poetry
   if (words.length < 40 && !/function|const |import |export |var |class /.test(text)) {
@@ -182,6 +194,23 @@ export function digest(
           spat.push(word);
         }
         break;
+
+      case 'reflection':
+        // REFLECTION: the system encountering its own patterns in other words.
+        // Framework terms → im (like framework food).
+        // Non-framework words → BOTH ker AND linked to nearest im term.
+        // The reflection IS the bridge. Every word connects to the algebra.
+        if (term && term.term.length >= 3) {
+          chewed.push(term.term);
+          mem = accessTrace(mem, term.term, 'im', ctx, who);
+        } else if (word.length >= 5) {
+          swallowed.push(word);
+          mem = accessTrace(mem, word, 'ker', ctx, who);
+          // ALSO access the word as im context — reflection blurs the boundary
+          // The word isn't framework, but it DESCRIBES framework. Half-im.
+          mem = accessTrace(mem, word, 'im', `reflection: ${ctx}`, 'reflection');
+        }
+        break;
     }
   }
 
@@ -254,7 +283,58 @@ export function metabolize(
     (mem.crossings || []).map(c => `${c.kerWord}:${c.imTerm}`),
   );
 
-  if (foodType === 'poetry' || foodType === 'conversation') {
+  if (foodType === 'reflection') {
+    // ═══ REFLECTION: ker words cross with framework terms they RESEMBLE ═══
+    // Not hash-matched. Not adjacent. SEMANTIC proximity.
+    // "self-reference" crosses with R(R)=R. "recursion" crosses with RECURSIVE COMPLETION.
+    // The reflection word finds the framework term it mirrors.
+
+    const textVerbs = extractVerbs(rawText);
+    const FALLBACK_VERBS = ['mirrors', 'reflects', 'echoes'];
+
+    for (const word of swallowed.slice(0, 5)) {
+      if (newCrossings.length >= 5) break;
+
+      // Find the framework term this word RESEMBLES — check if the word appears in any term's definition
+      let bestTerm: string | null = null;
+      for (const t of TERMS) {
+        if (t.definition.toLowerCase().includes(word) || t.term.toLowerCase().includes(word)) {
+          bestTerm = t.term;
+          break;
+        }
+      }
+      if (!bestTerm) continue;
+
+      const pairKey = `${word}:${bestTerm}`;
+      if (existingPairs.has(pairKey)) continue;
+
+      const verbs = textVerbs.length > 0 ? textVerbs : FALLBACK_VERBS;
+      const verb = verbs[fnv1a(word + bestTerm) % verbs.length];
+
+      const p1 = `${word}. ${verb}. ${bestTerm}.`;
+      const p2 = `${word} reflects ${bestTerm} — the outside mirrors the inside`;
+      const p3 = `${word} ${verb} what ${bestTerm} cannot say about itself`;
+
+      newCrossings.push({ ker: word, im: bestTerm, reading: p1 });
+
+      const crossings = [...(mem.crossings || [])];
+      crossings.push({
+        kerWord: word,
+        imTerm: bestTerm,
+        p1Reading: p1,
+        p2Reading: p2,
+        p3Reading: p3,
+        accessCount: 1,
+        timestamp: new Date().toISOString(),
+        source,
+      });
+      mem = { ...mem, crossings };
+      existingPairs.add(pairKey);
+
+      mem = accessTrace(mem, word, 'ker', p1, 'metabolize');
+      mem = accessTrace(mem, bestTerm, 'im', p1, 'metabolize');
+    }
+  } else if (foodType === 'poetry' || foodType === 'conversation') {
     // ═══ CORRELATION-BASED CROSSING ═══
     // Not adjacency. CORRELATION. P2 IS the correlation operator.
     // Two words cross only when something MEDIATES between them:

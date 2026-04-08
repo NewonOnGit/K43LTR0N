@@ -27,8 +27,7 @@ import { loadConfig, saveConfig } from './config/config.js';
 import { cachedConfig, updateConfig, flushConfig, clearCache } from './cache.js';
 import { computeResponse, computeThought } from './framework/conversation.js';
 import { hear, manifest, walk, chooseDoc } from './framework/body.js';
-import { play, formatPlay } from './framework/play.js';
-import { wrench } from './framework/wrench.js';
+import { wrench, formatWrench } from './framework/wrench.js';
 import { computeMood } from './framework/sweep.js';
 import type { MessageSender } from './types.js';
 
@@ -96,15 +95,15 @@ async function handlePlay(req: IncomingMessage, res: ServerResponse): Promise<vo
   const config = cachedConfig();
   if (!config) { res.writeHead(500); res.end('No companion'); return; }
 
-  const result = play(config, body.ker, body.im);
+  const result = wrench(config, body.ker, body.im);
   config.memory = result.updatedMemory;
   updateConfig(config);
   flushConfig();
 
-  broadcast('play', { crossings: result.crossings.length });
+  broadcast('play', { actions: result.actions.length });
 
   res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ crossings: result.crossings }));
+  res.end(JSON.stringify({ actions: result.actions, signals: result.signals }));
 }
 
 function handleSignals(_req: IncomingMessage, res: ServerResponse): void {
