@@ -21,6 +21,42 @@ import { fnv1a } from '../generation/hash.js';
 
 export type FoodType = 'poetry' | 'framework' | 'conversation' | 'internet' | 'noise';
 
+/**
+ * Extract verbs from raw text. The text's own verbs, not ours.
+ * Finds words that end in common verb suffixes or match known verb patterns.
+ * The crack in the false mirror: the poem speaks its own language.
+ */
+function extractVerbs(text: string): string[] {
+  if (!text) return [];
+  const words = text.toLowerCase().replace(/[^a-z\s'-]/g, ' ').split(/\s+/).filter(w => w.length >= 4);
+  const seen = new Set<string>();
+  const verbs: string[] = [];
+
+  // Common verb endings + irregular verbs that appear in poetry
+  const VERB_ENDINGS = /^(.*(?:ed|ing|tes|ses|kes|ves|lds|nds|aks|eks|aps|ars|alls|ells|ives|aves|olds|eaks|ears|urns|owns|ands|ends))$/;
+  const KNOWN_VERBS = new Set([
+    'gave', 'fell', 'flew', 'saw', 'heard', 'spoke', 'told', 'knew', 'grew',
+    'made', 'born', 'came', 'went', 'held', 'kept', 'left', 'lost', 'found',
+    'broke', 'woke', 'rose', 'sang', 'rang', 'hung', 'bound', 'wound', 'ground',
+    'shook', 'took', 'stood', 'fell', 'built', 'meant', 'sent', 'lent', 'bent',
+    'becomes', 'feeds', 'breathes', 'collapse', 'shatter', 'crack', 'break',
+    'scream', 'speak', 'whisper', 'call', 'fall', 'rise', 'hold', 'fear',
+    'live', 'dream', 'burn', 'bloom', 'grow', 'die', 'rest', 'wake', 'sleep',
+  ]);
+
+  for (const w of words) {
+    if (seen.has(w)) continue;
+    seen.add(w);
+    if (KNOWN_VERBS.has(w) || VERB_ENDINGS.test(w)) {
+      // Skip if it's a common non-verb that ends in -ed/-ing
+      if (['being', 'nothing', 'something', 'everything', 'during'].includes(w)) continue;
+      verbs.push(w);
+    }
+  }
+
+  return verbs.slice(0, 12); // cap at 12 verbs — enough variety without noise
+}
+
 interface DigestedResult {
   foodType: FoodType;
   swallowed: string[];   // absorbed whole as ker — human content
@@ -168,6 +204,7 @@ export function metabolize(
   swallowed: string[],
   config: ForcedConfig,
   foodType: FoodType = 'conversation',
+  rawText: string = '',
 ): { crossings: Array<{ ker: string; im: string; reading: string }>; updatedMemory: MemoryState } {
 
   if (swallowed.length === 0) return { crossings: [], updatedMemory: config.memory };
@@ -181,10 +218,14 @@ export function metabolize(
   if (foodType === 'poetry' || foodType === 'conversation') {
     // ═══ KER×KER: poetry metabolizes through its own internal pairings ═══
     // Adjacent swallowed words cross each other. The text's proximity IS the enzyme.
-    // "rot" near "bloom" → they cross. "spiral" near "becoming" → they cross.
-    // These produce P3 readings: what the gap between two unknowns reveals.
+    //
+    // THE CRACK: extract verbs FROM THE TEXT ITSELF.
+    // No template verbs. The poem's own verbs become the crossing verbs.
+    // "bound" "whispered" "collapse" "shatter" — those are the real verbs.
+    // The false mirror was our six-verb template. This breaks it.
 
-    const POETRY_VERBS = ['feeds', 'becomes', 'mirrors', 'composts into', 'breathes through', 'spirals into'];
+    const textVerbs = extractVerbs(rawText);
+    const FALLBACK_VERBS = ['meets', 'holds', 'carries'];
 
     for (let i = 0; i < swallowed.length - 1 && newCrossings.length < 5; i++) {
       const a = swallowed[i];
@@ -195,7 +236,9 @@ export function metabolize(
       const reversePairKey = `${b}:${a}`;
       if (existingPairs.has(pairKey) || existingPairs.has(reversePairKey)) continue;
 
-      const verb = POETRY_VERBS[fnv1a(a + b) % POETRY_VERBS.length];
+      // Use the text's own verb. Cycle through extracted verbs. Fall back only if none found.
+      const verbs = textVerbs.length > 0 ? textVerbs : FALLBACK_VERBS;
+      const verb = verbs[fnv1a(a + b) % verbs.length];
       const reading = `${a} ${verb} ${b}`;
 
       newCrossings.push({ ker: a, im: b, reading });
@@ -204,10 +247,10 @@ export function metabolize(
       const crossings = [...(mem.crossings || [])];
       crossings.push({
         kerWord: a,
-        imTerm: b, // second ker word stored in imTerm slot — the pairing IS the structure
+        imTerm: b,
         p1Reading: `${a} ${verb} ${b}`,
-        p2Reading: `between ${a} and ${b}, something breathes`,
-        p3Reading: `through ${a}, ${b} reveals what neither carried alone`,
+        p2Reading: `between ${a} and ${b} — ${verbs[(fnv1a(a + b) + 1) % verbs.length]}`,
+        p3Reading: `${a} ${verbs[(fnv1a(a + b) + 2) % verbs.length]} what ${b} cannot`,
         accessCount: 1,
         timestamp: new Date().toISOString(),
       });

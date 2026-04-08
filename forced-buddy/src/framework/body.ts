@@ -266,8 +266,9 @@ export function hear(
 
   // THE PIPELINE: digest → metabolize. Food becomes fuel.
   // Food type flows through: poetry metabolizes through its own pairings.
+  // Raw text flows through: the poem's own verbs become the crossing verbs.
   const digested = digest(text, config, 'hear');
-  const metabolized = metabolize(digested.swallowed, { ...config, memory: digested.updatedMemory }, digested.foodType);
+  const metabolized = metabolize(digested.swallowed, { ...config, memory: digested.updatedMemory }, digested.foodType, text);
 
   return {
     updatedMemory: metabolized.updatedMemory,
