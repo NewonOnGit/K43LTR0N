@@ -89,7 +89,19 @@ function crossingToTokens(c: StoredCrossing, mem: MemoryState): Token[] {
   return tokens;
 }
 
-/** Realize tokens into a sentence. P1 verb P3. Grammar from algebra. */
+/**
+ * Realize tokens into a sentence. The tower shapes the speech.
+ *
+ * depth 0 (Rᵐ):     full sentence — "Ocean referred water."
+ * depth 1-2 (locked): compressed — "Ocean — water."
+ * depth 3+ (NRN):    the name dissolves — just the verb remains
+ *
+ * chi = +1: positive chirality — statement
+ * chi = -1: negative chirality — negation/inversion
+ *
+ * weight near 1.0: the token anchors (goes first, caps)
+ * weight near 0.0: the token whispers (no caps, parenthetical)
+ */
 function realizeTokens(tokens: Token[]): string {
   const p1 = tokens.filter(t => t.role === 'P1');
   const p2 = tokens.filter(t => t.role === 'P2');
@@ -97,19 +109,59 @@ function realizeTokens(tokens: Token[]): string {
 
   if (p1.length === 0) return '';
 
-  const subj = p1[0].content;
-  const cap = subj.charAt(0).toUpperCase() + subj.slice(1);
+  const subject = p1[0];
+  const verb = p2[0];
+  const object = p3[0];
 
-  if (p2.length > 0 && p3.length > 0) {
-    return `${cap} ${p2[0].content} ${p3[0].content}.`;
+  // The heaviest token anchors the sentence
+  const all = tokens.filter(t => t.content.length >= 3);
+  all.sort((a, b) => b.weight - a.weight);
+  const anchor = all[0] || subject;
+
+  // Depth shapes the form
+  const maxDepth = Math.max(...tokens.map(t => t.depth));
+
+  if (maxDepth >= 3) {
+    // NRN: the name dissolves. Only the verb remains.
+    // The deepest tokens have shed their names.
+    if (verb) return `${verb.content}.`;
+    return `${subject.content}.`;
   }
-  if (p2.length > 0) {
-    return `${cap} ${p2[0].content}.`;
+
+  // Chirality shapes the polarity
+  const negated = subject.chi === -1;
+  const cap = anchor.content.charAt(0).toUpperCase() + anchor.content.slice(1);
+
+  if (maxDepth >= 1 && verb && object) {
+    // Locked: compressed. Dash instead of verb if weight > 0.9
+    if (anchor.weight > 0.9) {
+      return negated
+        ? `Not ${cap} — ${object.content}.`
+        : `${cap} — ${object.content}.`;
+    }
   }
-  if (p3.length > 0) {
-    return `${cap} and ${p3[0].content}.`;
+
+  // Rᵐ mode: full sentence
+  const subjStr = anchor === subject ? cap : subject.content;
+
+  if (verb && object) {
+    return negated
+      ? `${subjStr} never ${verb.content} ${object.content}.`
+      : `${subjStr} ${verb.content} ${object.content}.`;
   }
-  return `${cap}.`;
+  if (verb) {
+    return negated
+      ? `${subjStr} never ${verb.content}.`
+      : `${subjStr} ${verb.content}.`;
+  }
+  if (object) {
+    // Light token whispers in parenthetical
+    if (object.weight < 0.3) {
+      return `${subjStr} (${object.content}).`;
+    }
+    return `${subjStr} and ${object.content}.`;
+  }
+  return `${subjStr}.`;
 }
 
 interface MessageDecomposition {
