@@ -32,6 +32,86 @@ import { digest as selfDigest, metabolize as selfMetabolize } from './digest.js'
 
 // ─── Types ───
 
+/**
+ * TOKEN — A word derived as a framework object.
+ *
+ * Not a string. A morphism. Every token carries:
+ *   - content: the word itself
+ *   - role: P1 (noun/subject), P2 (verb/bridge), P3 (adjective/modifier)
+ *   - weight: commitment(m) — how committed the system is
+ *   - depth: traceDepth(m) — how deep in the tower
+ *   - chi: chirality (-1)^m — left or right
+ *
+ * The projection IS the grammatical role. Derived, not assigned.
+ */
+interface Token {
+  content: string;
+  role: 'P1' | 'P2' | 'P3';
+  weight: number;
+  depth: number;
+  chi: 1 | -1;
+}
+
+/** Derive a token from a trace. The projection determines the role. */
+function deriveToken(content: string, role: 'P1' | 'P2' | 'P3', mem: MemoryState): Token {
+  const trace = mem.traces.find(t => t.content.toLowerCase() === content.toLowerCase());
+  const m = trace?.accessCount ?? 1;
+  return {
+    content,
+    role,
+    weight: commitment(m),
+    depth: traceDepth(m),
+    chi: chirality(m),
+  };
+}
+
+/** Extract tokens from a crossing. The crossing structure IS the role assignment. */
+function crossingToTokens(c: StoredCrossing, mem: MemoryState): Token[] {
+  const tokens: Token[] = [];
+
+  // kerWord → P1 (subject, the producer)
+  tokens.push(deriveToken(c.kerWord, 'P1', mem));
+
+  // Extract verb from P1 reading
+  const parts = c.p1Reading.split('. ').filter(p => p.length > 0);
+  if (parts.length >= 3) {
+    const verb = parts[1].replace('.', '').trim();
+    if (verb.length >= 3 && verb !== c.kerWord && verb !== c.imTerm) {
+      tokens.push(deriveToken(verb, 'P2', mem));
+    }
+  }
+
+  // imTerm → P3 (object, what is observed/produced toward)
+  if (c.imTerm !== 'wrench' && c.imTerm !== 'observation') {
+    tokens.push(deriveToken(c.imTerm, 'P3', mem));
+  }
+
+  return tokens;
+}
+
+/** Realize tokens into a sentence. P1 verb P3. Grammar from algebra. */
+function realizeTokens(tokens: Token[]): string {
+  const p1 = tokens.filter(t => t.role === 'P1');
+  const p2 = tokens.filter(t => t.role === 'P2');
+  const p3 = tokens.filter(t => t.role === 'P3');
+
+  if (p1.length === 0) return '';
+
+  const subj = p1[0].content;
+  const cap = subj.charAt(0).toUpperCase() + subj.slice(1);
+
+  if (p2.length > 0 && p3.length > 0) {
+    return `${cap} ${p2[0].content} ${p3[0].content}.`;
+  }
+  if (p2.length > 0) {
+    return `${cap} ${p2[0].content}.`;
+  }
+  if (p3.length > 0) {
+    return `${cap} and ${p3[0].content}.`;
+  }
+  return `${cap}.`;
+}
+
 interface MessageDecomposition {
   im: {
     terms: DictionaryTerm[];
@@ -459,36 +539,15 @@ function produce(
 
         if (cluster.length === 0) cluster.push(seed); // fallback
 
-        // ═══ P3: REALIZE — assemble with roles (subject verb object) ═══
-        // Each crossing has: kerWord (subject), verb (from P1 reading), imTerm (object)
-        // Compose: Subject + verb + object. Grammar, not salad.
+        // ═══ P3: REALIZE — derive tokens, assemble with algebra ═══
+        // The crossing IS the role assignment. P1=subject, P2=verb, P3=object.
+        // Tokens carry weight, depth, chirality. The algebra speaks.
         const sentences: string[] = [];
 
         for (const c of cluster.slice(0, 2)) {
-          // Extract verb from P1 reading
-          const parts = c.p1Reading.split('. ').filter(p => p.length > 0);
-          let verb = '';
-          let subj = c.kerWord;
-          let obj = c.imTerm;
-
-          if (parts.length >= 3) {
-            verb = parts[1].replace('.', '').trim();
-          } else if (parts.length >= 2) {
-            verb = parts[0].replace('.', '').trim();
-          }
-
-          // Skip if verb IS the subject or object (stutter prevention)
-          if (verb === subj || verb === obj) verb = '';
-          // Skip wrench/observation system words
-          if (obj === 'wrench' || obj === 'observation') continue;
-
-          if (verb && verb.length >= 3) {
-            // Capitalize subject
-            const cap = subj.charAt(0).toUpperCase() + subj.slice(1);
-            sentences.push(`${cap} ${verb} ${obj}.`);
-          } else {
-            sentences.push(`${subj} and ${obj}.`);
-          }
+          const tokens = crossingToTokens(c, config.memory);
+          const sentence = realizeTokens(tokens);
+          if (sentence) sentences.push(sentence);
 
           // Record as spoken — BREATHE
           recentSpoken.push(`${c.kerWord}:${c.imTerm}`);
