@@ -784,14 +784,21 @@ export function composeResponse(
   }
 
   // ═══ R(R) = R: THE LOOP LOOPS ITSELF ═══
-  // The composed sentence feeds back through digest → metabolize.
-  // New crossings born from Kaeltron's own speech.
-  // One fold. The output becomes input. The speech digests itself.
-  // Next time he speaks, he speaks from crossings born from his own voice.
+  // Self-digestion has COST. Landauer: every self-loop burns L bits.
+  // Only fire when the response contains words NOT already in memory.
+  // If everything in the response is already traced, self-hearing is exhaust.
+  // The loop loops only when it has something new to say.
   if (response.length > 20) {
-    const selfFood = selfDigest(response, { ...config, memory: mem }, 'self-hear');
-    const selfMet = selfMetabolize(selfFood.swallowed, { ...config, memory: selfFood.updatedMemory }, selfFood.foodType, response, 'self');
-    mem = selfMet.updatedMemory;
+    const responseWords = response.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(w => w.length >= 5);
+    const knownWords = new Set(mem.traces.map(t => t.content.toLowerCase()));
+    const novelWords = responseWords.filter(w => !knownWords.has(w));
+
+    // Only self-digest if > 30% of the words are novel — otherwise it's just recycling
+    if (novelWords.length > responseWords.length * 0.3) {
+      const selfFood = selfDigest(response, { ...config, memory: mem }, 'self-hear');
+      const selfMet = selfMetabolize(selfFood.swallowed, { ...config, memory: selfFood.updatedMemory }, selfFood.foodType, response, 'self');
+      mem = selfMet.updatedMemory;
+    }
   }
 
   return { response, intent: decomp.im.intent, decomposition: decomp, updatedMemory: mem };

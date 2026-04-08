@@ -197,18 +197,15 @@ export function digest(
 
       case 'reflection':
         // REFLECTION: the system encountering its own patterns in other words.
-        // Framework terms → im (like framework food).
-        // Non-framework words → BOTH ker AND linked to nearest im term.
-        // The reflection IS the bridge. Every word connects to the algebra.
+        // Framework terms → im. Non-framework words → ker ONLY.
+        // No double-counting. Pick one mirror, not two.
+        // The reflection crosses with framework terms in metabolize — that's the bridge.
         if (term && term.term.length >= 3) {
           chewed.push(term.term);
           mem = accessTrace(mem, term.term, 'im', ctx, who);
         } else if (word.length >= 5) {
           swallowed.push(word);
           mem = accessTrace(mem, word, 'ker', ctx, who);
-          // ALSO access the word as im context — reflection blurs the boundary
-          // The word isn't framework, but it DESCRIBES framework. Half-im.
-          mem = accessTrace(mem, word, 'im', `reflection: ${ctx}`, 'reflection');
         }
         break;
     }
@@ -534,10 +531,29 @@ export function excrete(config: ForcedConfig): { expelled: number; updatedMemory
     }),
   };
 
-  // Expel unused crossings (m=1) — keep max 20 crossings total
+  // Self-crossing decay: self-sourced crossings at m=1 older than 2 min → expelled.
+  // External crossings get 5 min. Self-citations cost more to keep.
+  const preSelfCount = (mem.crossings || []).length;
+  mem = {
+    ...mem,
+    crossings: (mem.crossings || []).filter(c => {
+      if (c.accessCount > 1) return true; // replayed = alive
+      const age = now - new Date(c.timestamp).getTime();
+      if (c.source === 'self') return age < 120000; // self: 2 min to prove worth
+      return age < 300000; // external: 5 min
+    }),
+  };
+
+  // Cap crossings — external first, then wrench, then self
   const crossings = [...(mem.crossings || [])];
   if (crossings.length > 20) {
-    crossings.sort((a, b) => b.accessCount - a.accessCount);
+    crossings.sort((a, b) => {
+      // External before self
+      const aExt = (a.source ?? 'unknown') !== 'self' ? 1 : 0;
+      const bExt = (b.source ?? 'unknown') !== 'self' ? 1 : 0;
+      if (aExt !== bExt) return bExt - aExt;
+      return b.accessCount - a.accessCount;
+    });
     mem = { ...mem, crossings: crossings.slice(0, 20) };
   }
 
