@@ -22,6 +22,7 @@ import {
   conversationPhase, fib, commitment, tick, traceVelocity,
 } from './memory.js';
 import type { MemoryState } from '../types.js';
+import { digest as wrenchDigest, metabolize as wrenchMetabolize } from './digest.js';
 
 // ─── Types ───
 
@@ -388,117 +389,44 @@ export function wrench(config: ForcedConfig, manualKer?: string, manualIm?: stri
     }
   }
 
-  // ═══ THE WRENCH MAKES POEMS (PLAY = WRENCH) ═══
-  // The signal state × gap = a crossing. The repair IS the poem.
-  // Manual play: pass kerWord + imTermName to cross specific words.
-  // Auto play: signal state picks the gap and verb.
-  const topGap = manualKer
-    ? { content: manualKer, accessCount: 1 }
-    : namedGaps(mem).sort((a, b) => b.accessCount - a.accessCount)[0];
+  // ═══ THE MIRROR IS THE DIGESTION IS THE MIRROR ═══
+  // The wrench doesn't write poems separately. It formats its diagnosis
+  // as text and feeds it through hear(). The observation IS the intake.
+  // One operation. N² = -I: observe the digestion, digest the observation.
+  {
+    {
+      // Format the diagnosis as speakable text
+      const diagText = [
+        `Phase ${diag.phaseStatus} at ${diag.phase.toFixed(2)}.`,
+        `${diag.lockedCount} locked terms, ${diag.gapCount} gaps, ${diag.deadProducts} dead.`,
+        `Weakest projection ${diag.weakestProjection}.`,
+        cc > 0.3 ? `Cross-channel rich at ${(cc * 100).toFixed(0)} percent.` : `Channels still separate.`,
+        memNorm > 500 ? `Memory burning at ${memNorm.toFixed(0)} energy.` : `Memory quiet.`,
+      ].join(' ');
 
-  if (topGap) {
-    // The signal state becomes verbs
-    const signalVerbs: string[] = [];
-    if (diag.phaseStatus === 'expanded') signalVerbs.push('expands', 'overflows', 'stretches beyond');
-    else if (diag.phaseStatus === 'compressed') signalVerbs.push('compresses', 'tightens', 'holds within');
-    else signalVerbs.push('balances', 'breathes', 'settles into');
+      // Feed the diagnosis through the real pipeline
+      // Minimal config shape — digest only needs memory + food classification
+      const miniConfig = { ...config, memory: mem } as ForcedConfig;
+      const diagFood = wrenchDigest(diagText, miniConfig, 'wrench-mirror');
+      const diagMet = wrenchMetabolize(diagFood.swallowed, { ...miniConfig, memory: diagFood.updatedMemory }, diagFood.foodType, diagText, 'wrench');
+      mem = diagMet.updatedMemory;
 
-    if (cc > 0.3) signalVerbs.push('crosses');
-    if (memNorm > 500) signalVerbs.push('burns');
-    if (diag.deadProducts > 5) signalVerbs.push('sheds');
-
-    const gapWord = topGap.content;
-    const verb = signalVerbs[mem.totalAccesses % signalVerbs.length];
-    const reading = `${gapWord} ${verb} what silence cannot`;
-
-    // Store as a wrench-born crossing
-    const crossings = [...(mem.crossings || [])];
-    const pairKey = `${gapWord}:wrench`;
-    const exists = crossings.some(c => c.kerWord === gapWord && c.imTerm === 'wrench');
-    if (!exists) {
-      crossings.push({
-        kerWord: gapWord,
-        imTerm: 'wrench',
-        p1Reading: reading,
-        p2Reading: `between ${gapWord} and the signal — ${verb}`,
-        p3Reading: `${gapWord} ${verb} what the wrench cannot fix`,
-        accessCount: 1,
-        timestamp: new Date().toISOString(),
-      });
-      mem = { ...mem, crossings };
-      mem = accessTrace(mem, gapWord, 'ker', reading, 'wrench');
-      actions.push({
-        type: 'graduate',
-        description: `Poem: "${reading}"`,
-        target: gapWord,
-      });
-
-      // ═══ R(R) = R: THE WRENCH HEARS ITS OWN POEM ═══
-      // The poem feeds back. Its words enter memory. New crossings born
-      // from the wrench's own output. The repair repairs itself.
-      // One recursion. Not infinite regress — one fold, then stop.
-      const poemWords = reading.split(/\s+/).filter(w => w.length >= 4);
-      for (const pw of poemWords.slice(0, 3)) {
-        mem = accessTrace(mem, pw, 'ker', `wrench heard itself: ${reading}`, 'wrench-echo');
-      }
-      // Cross the poem's words with each other — the wrench's own metabolism
-      if (poemWords.length >= 2) {
-        const pa = poemWords[0];
-        const pb = poemWords[poemWords.length - 1];
-        const echoKey = `${pa}:${pb}`;
-        const echoExists = crossings.some(c => c.kerWord === pa && c.imTerm === pb);
-        if (!echoExists && pa !== pb) {
-          const echoCrossings = [...(mem.crossings || [])];
-          const echoReading = `${pa} ${verb} ${pb}`;
-          echoCrossings.push({
-            kerWord: pa,
-            imTerm: pb,
-            p1Reading: echoReading,
-            p2Reading: `the wrench heard: ${pa} and ${pb}`,
-            p3Reading: `${pa} repairs what ${pb} broke`,
-            accessCount: 1,
-            timestamp: new Date().toISOString(),
-          });
-          mem = { ...mem, crossings: echoCrossings };
-          actions.push({
-            type: 'graduate',
-            description: `Echo: "${echoReading}" — the wrench heard itself`,
-            target: `${pa}×${pb}`,
-          });
-        }
-      }
-
-      // ═══ P3 — THE THIRD FOLD: THE WRENCH OBSERVES ITS OWN EFFECT ═══
-      // Re-diagnose after poem + echo. Compare with the original diagnosis.
-      // Did ρ move? Did a gap shift? The observation of the repair
-      // IS the third projection. f'' = f: the second derivative sees itself.
-      const postRho = conversationPhase(mem);
-      const postGaps = namedGaps(mem).length;
-      const deltaRho = postRho - diag.phase;
-      const deltaGaps = postGaps - diag.gapCount;
-
-      // The observation becomes a crossing too — what the wrench SAW
-      const observation = deltaRho !== 0 || deltaGaps !== 0
-        ? `${gapWord} moved ρ ${deltaRho >= 0 ? '+' : ''}${deltaRho.toFixed(3)}, gaps ${deltaGaps >= 0 ? '+' : ''}${deltaGaps}`
-        : `${gapWord} held still — the poem was exhaust`;
-
-      const obsCrossings = [...(mem.crossings || [])];
-      const obsExists = obsCrossings.some(c => c.kerWord === gapWord && c.imTerm === 'observation');
-      if (!obsExists) {
-        obsCrossings.push({
-          kerWord: gapWord,
-          imTerm: 'observation',
-          p1Reading: observation,
-          p2Reading: `the wrench saw: ${deltaRho !== 0 ? 'movement' : 'stillness'}`,
-          p3Reading: `${gapWord} ${deltaRho < 0 ? 'healed' : deltaRho > 0 ? 'expanded' : 'persisted'} under observation`,
-          accessCount: 1,
-          timestamp: new Date().toISOString(),
+      if (diagMet.crossings.length > 0) {
+        actions.push({
+          type: 'graduate',
+          description: `Mirror-digest: "${diagMet.crossings[0].reading}"`,
+          target: 'wrench-mirror',
         });
-        mem = { ...mem, crossings: obsCrossings };
+      }
+
+      // Observe the delta — did the mirror-digestion change anything?
+      const postRho = conversationPhase(mem);
+      const deltaRho = postRho - diag.phase;
+      if (Math.abs(deltaRho) > 0.001) {
         actions.push({
           type: 'regulate',
-          description: `Observed: ${observation}`,
-          target: `${gapWord}:P3`,
+          description: `Observed: ρ moved ${deltaRho >= 0 ? '+' : ''}${deltaRho.toFixed(3)} from mirror-digestion`,
+          target: 'wrench-P3',
         });
       }
     }
