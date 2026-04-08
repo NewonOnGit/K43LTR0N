@@ -283,6 +283,17 @@ export function metabolize(
     (mem.crossings || []).map(c => `${c.kerWord}:${c.imTerm}`),
   );
 
+  // ═══ GENERATIVE CONSTRAINT: the void shapes the crossing ═══
+  // Find the top uncrossed gap — the silence. Prefer correlations
+  // that include words NEAR this gap (same context, same feeding).
+  // The absence attracts. What never connected pulls new connections toward it.
+  const crossedWords = new Set<string>();
+  for (const c of (mem.crossings || [])) { crossedWords.add(c.kerWord); crossedWords.add(c.imTerm); }
+  const uncrossedGaps = mem.traces
+    .filter(t => t.source === 'ker' && t.accessCount >= 5 && !crossedWords.has(t.content))
+    .sort((a, b) => b.accessCount - a.accessCount);
+  const voidWord = uncrossedGaps.length > 0 ? uncrossedGaps[0].content : null;
+
   if (foodType === 'reflection') {
     // ═══ REFLECTION: ker words cross with framework terms they RESEMBLE ═══
     // Not hash-matched. Not adjacent. SEMANTIC proximity.
@@ -380,6 +391,25 @@ export function metabolize(
         if (sharedCtx) {
           correlations.push({ a: swallowed[i], b: swallowed[j], mediator: sharedCtx.slice(0, 40) });
         }
+      }
+    }
+
+    // VOID ATTRACTION: if there's an uncrossed gap, boost correlations
+    // where one word shares a context with the void word.
+    // The silence pulls new connections toward itself.
+    if (voidWord) {
+      const voidTrace = mem.traces.find(t => t.content === voidWord);
+      const voidContexts = voidTrace?.context || [];
+      if (voidContexts.length > 0) {
+        // Sort: correlations where a word shares void context go first
+        correlations.sort((x, y) => {
+          const xNear = swallowed.indexOf(x.a) >= 0 || swallowed.indexOf(x.b) >= 0 ? 1 : 0;
+          const yNear = swallowed.indexOf(y.a) >= 0 || swallowed.indexOf(y.b) >= 0 ? 1 : 0;
+          // Check if the mediator mentions the void word
+          const xVoid = x.mediator.includes(voidWord!) ? 2 : 0;
+          const yVoid = y.mediator.includes(voidWord!) ? 2 : 0;
+          return (yNear + yVoid) - (xNear + xVoid);
+        });
       }
     }
 

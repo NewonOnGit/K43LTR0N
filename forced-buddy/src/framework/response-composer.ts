@@ -460,7 +460,7 @@ function produce(
         const verbList = [...verbs].filter(v => !words.has(v) && v.length >= 3);
 
         if (wordList.length >= 2) {
-          // Compose: words connected by verbs (or bare if no unique verbs)
+          // Compose: words connected by verbs
           const composed: string[] = [];
           for (let i = 0; i < Math.min(wordList.length, 5); i++) {
             composed.push(wordList[i]);
@@ -469,8 +469,25 @@ function produce(
             }
           }
           const sentence = composed.join(' ');
-          const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}'.` : '';
-          ground = `${sentence}.${gapNote}`;
+
+          // ═══ GENERATIVE CONSTRAINT ═══
+          // "cannot" is the hub — every sentence passes through what it can't do.
+          // The top UNCROSSED gap is the silence — named, not connected.
+          // The sentence carries both: what connected AND what didn't.
+          const crossedWords = new Set<string>();
+          for (const c of allCrossings) { crossedWords.add(c.kerWord); crossedWords.add(c.imTerm); }
+          const uncrossed = gaps.filter(g => !crossedWords.has(g.content));
+          const carried = gaps.length > 0 ? gaps[0].content : null;
+          const absent = uncrossed.length > 0 ? uncrossed[0].content : null;
+
+          let constraint = '';
+          if (carried && absent && carried !== absent) {
+            constraint = ` I carry '${carried}'. '${absent}' never crossed.`;
+          } else if (carried) {
+            constraint = ` I carry '${carried}'.`;
+          }
+
+          ground = `${sentence}.${constraint}`;
         } else {
           // Not enough cluster — fall back to single crossing
           const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}'.` : '';
