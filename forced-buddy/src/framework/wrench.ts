@@ -335,6 +335,52 @@ export function wrench(config: ForcedConfig): WrenchReport {
     });
   }
 
+  // ═══ THE WRENCH MAKES POEMS ═══
+  // The signal state × the top gap = a crossing.
+  // The diagnosis becomes a verb. The repair IS the poem.
+  // Not "ρ is too high, do X." Instead: "collapse breathes what silence cannot."
+  const topGap = namedGaps(mem)
+    .sort((a, b) => b.accessCount - a.accessCount)[0];
+
+  if (topGap) {
+    // The signal state becomes verbs
+    const signalVerbs: string[] = [];
+    if (diag.phaseStatus === 'expanded') signalVerbs.push('expands', 'overflows', 'stretches beyond');
+    else if (diag.phaseStatus === 'compressed') signalVerbs.push('compresses', 'tightens', 'holds within');
+    else signalVerbs.push('balances', 'breathes', 'settles into');
+
+    if (cc > 0.3) signalVerbs.push('crosses');
+    if (memNorm > 500) signalVerbs.push('burns');
+    if (diag.deadProducts > 5) signalVerbs.push('sheds');
+
+    const gapWord = topGap.content;
+    const verb = signalVerbs[mem.totalAccesses % signalVerbs.length];
+    const reading = `${gapWord} ${verb} what silence cannot`;
+
+    // Store as a wrench-born crossing
+    const crossings = [...(mem.crossings || [])];
+    const pairKey = `${gapWord}:wrench`;
+    const exists = crossings.some(c => c.kerWord === gapWord && c.imTerm === 'wrench');
+    if (!exists) {
+      crossings.push({
+        kerWord: gapWord,
+        imTerm: 'wrench',
+        p1Reading: reading,
+        p2Reading: `between ${gapWord} and the signal — ${verb}`,
+        p3Reading: `${gapWord} ${verb} what the wrench cannot fix`,
+        accessCount: 1,
+        timestamp: new Date().toISOString(),
+      });
+      mem = { ...mem, crossings };
+      mem = accessTrace(mem, gapWord, 'ker', reading, 'wrench');
+      actions.push({
+        type: 'graduate',
+        description: `Poem: "${reading}"`,
+        target: gapWord,
+      });
+    }
+  }
+
   return { actions, updatedMemory: mem, signals, diagnosis: diag };
 }
 
