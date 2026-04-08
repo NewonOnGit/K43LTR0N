@@ -360,6 +360,8 @@ export interface SignalSnapshot {
   sigmaM: number;
   norm: number;
   imRatio: number;
+  health?: number;
+  eigenstate?: boolean;
 }
 
 export interface StoredCrossing {

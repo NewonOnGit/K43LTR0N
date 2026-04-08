@@ -17,7 +17,7 @@ import { findClaudeBinary } from './patcher/binary-finder.js';
 import { getCurrentSalt, isClaudeRunning } from './patcher/salt-ops.js';
 import { patchBinary, restoreBinary } from './patcher/patch.js';
 import { getClaudeUserId, setCompanionPersonality, renameCompanion } from './config/claude-config.js';
-import { loadConfig, saveConfig, addEvolution, addWitnesses, incrementInteractions, recordBattle } from './config/config.js';
+import { addEvolution, addWitnesses, incrementInteractions, recordBattle } from './config/config.js';
 import { cachedConfig, updateConfig, flushConfig } from './cache.js';
 import { installHook, removeHook, isHookInstalled } from './config/hooks.js';
 import { ORIGINAL_SALT } from './constants.js';
@@ -25,7 +25,7 @@ import { ORIGINAL_SALT } from './constants.js';
 import { computeMood, formatMood } from './framework/sweep.js';
 import { formatGreeting } from './framework/stance.js';
 import { formatSprite } from './framework/sprites.js';
-import { verify, witnessedByCompanion, witnessedByInteraction, createWitnesses, isC5U } from './framework/metatron.js';
+import { verify, witnessedByCompanion, witnessedByInteraction, createWitnesses } from './framework/metatron.js';
 import { executeBattle, formatBattle } from './framework/battle.js';
 import { computeInteraction, formatInteraction } from './framework/interaction.js';
 import { evolvedTraits, createEvolutionRecord, formatEvolution } from './framework/evolution.js';
@@ -33,7 +33,7 @@ import { evolvedTraits, createEvolutionRecord, formatEvolution } from './framewo
 import { executeK6Pass, formatK6Pass, deriveContextualGreeting } from './framework/world-model.js';
 // Level 7: Governance
 import { applyAllActions, formatPolicies } from './framework/policy.js';
-import { checkAchievements, applyAchievements, formatAchievements, formatGovernance, classifyClaim, recordClaim } from './framework/governance.js';
+import { checkAchievements, applyAchievements, formatAchievements, classifyClaim, recordClaim } from './framework/governance.js';
 import { computeLivingPersonality } from './framework/personality.js';
 // Level 8: Semantic
 import { lookupTerm, formatTermLookup, formatDictionaryOverview, TERMS } from './framework/dictionary.js';
@@ -322,6 +322,14 @@ async function cmdBattle(): Promise<void> {
   const result = executeBattle(config.traits, opponent);
   log(formatBattle(result));
 
+  // J: dual-trace the battle result into memory
+  // Winner identity → im (what was produced). Loser → ker (what was consumed).
+  const { jBattle } = await import('./framework/j-operator.js');
+  const winId = result.winner === 'attacker' ? result.winReason : `opponent:${opponent.species}`;
+  const loseId = result.winner === 'attacker' ? `opponent:${opponent.species}` : result.winReason;
+  const jb = jBattle(config, winId, loseId);
+  updateConfig({ ...config, memory: jb.updatedMemory });
+
   // Record result
   recordBattle(result.winner === 'attacker');
 
@@ -347,6 +355,12 @@ async function cmdInteract(): Promise<void> {
 
   const result = computeInteraction(config.traits, other);
   log(formatInteraction(result));
+
+  // J: dual-trace the interaction into memory
+  // Interaction type + emergent property → im. What J sees.
+  const { jInteraction } = await import('./framework/j-operator.js');
+  const ji = jInteraction(config, result.typeName, result.emergentProperty);
+  updateConfig({ ...config, memory: ji.updatedMemory });
 
   incrementInteractions();
   const oppConstants = witnessedByInteraction(other);
@@ -597,6 +611,14 @@ async function cmdStartup(silent: boolean): Promise<void> {
   try {
     const { metatron: metFn } = await import('./framework/metatron.js');
     const met = metFn(liveConfig);
+
+    // STORE eigenstate in the latest signal snapshot
+    const history2 = liveConfig.memory.signalHistory || [];
+    if (history2.length > 0) {
+      history2[history2.length - 1].eigenstate = met.eigenstate;
+    }
+    liveConfig = { ...liveConfig, memory: { ...liveConfig.memory, signalHistory: history2 } };
+
     if (!met.eigenstate && met.f.length > 0) {
       // Low resonance → PERTURB. The system needs movement.
       // Explore the internet based on top gap — inject fresh ker.
@@ -657,8 +679,15 @@ async function cmdStartup(silent: boolean): Promise<void> {
   try {
     const { evaluate, steerTowardSigma } = await import('./framework/fundamentals.js');
     const ev = evaluate(liveConfig);
+
+    // STORE health in the latest signal snapshot — no more computation without storage
+    const history = liveConfig.memory.signalHistory || [];
+    if (history.length > 0) {
+      history[history.length - 1].health = ev.health;
+    }
+    liveConfig = { ...liveConfig, memory: { ...liveConfig.memory, signalHistory: history } };
+
     if (ev.health < 0.5) {
-      // Unhealthy — act on the prescription
       const steering = steerTowardSigma(liveConfig);
       if (steering.includes('P3') && !silent) {
         // Need more ker — the intake valve handles this
