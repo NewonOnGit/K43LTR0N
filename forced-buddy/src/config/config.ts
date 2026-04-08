@@ -78,10 +78,12 @@ export function saveConfig(config: ForcedConfig): void {
   if (config.conversation.topicTracker.length > 30) {
     config.conversation.topicTracker = config.conversation.topicTracker.slice(-30);
   }
-  // UKI: memory must forget — cap traces, prune least-accessed
-  // But: newborns are protected (lastAccessed < 60s ago)
-  // And: ker dies before im. Products and im terms protected.
-  if (config.memory.traces.length > 250) {
+  // UKI: memory must forget — cap derived from Fibonacci age.
+  // The stack evolves. Young system: tight. Old system: room.
+  const { systemLimits } = require('../framework/memory.js');
+  const limits = systemLimits(config.memory.totalAccesses || 0);
+
+  if (config.memory.traces.length > limits.traceCap) {
     const now = Date.now();
     const isNewborn = (t: { lastAccessed: string }) =>
       now - new Date(t.lastAccessed).getTime() < 60000;
@@ -94,17 +96,17 @@ export function saveConfig(config: ForcedConfig): void {
     const staleKer = stale.filter(t => t.source === 'ker');
     const kerKept = staleKer
       .sort((a, b) => b.accessCount - a.accessCount)
-      .slice(0, Math.max(250 - staleIm.length - fresh.length, 30));
+      .slice(0, Math.max(limits.traceCap - staleIm.length - fresh.length, 30));
 
     config.memory.traces = [...fresh, ...staleIm, ...kerKept]
       .sort((a, b) => b.accessCount - a.accessCount)
-      .slice(0, 250);
+      .slice(0, limits.traceCap);
   }
-  // Ensure crossings exist and cap at 50
+  // Crossing cap — also Fibonacci-derived
   // Protect newborns (< 60s old) — don't prune what just arrived.
   // Among stale crossings, keep the most-accessed.
   config.memory.crossings = config.memory.crossings ?? [];
-  if (config.memory.crossings.length > 50) {
+  if (config.memory.crossings.length > limits.crossingCap) {
     const now = Date.now();
     const fresh = config.memory.crossings.filter(
       c => now - new Date(c.timestamp).getTime() < 60000,

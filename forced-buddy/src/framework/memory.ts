@@ -39,6 +39,45 @@ export function fib(n: number): number {
   return FIB_CACHE[n];
 }
 
+// ─── System limits: the stack evolves through Fibonacci ───
+
+/**
+ * SYSTEM LIMITS — derived from the system's Fibonacci age.
+ *
+ * Age = the Fibonacci step closest to totalAccesses.
+ * As the system matures, all limits advance to the next F(n).
+ * Young system: tight limits. Old system: room to grow.
+ * The stack grows through the same algebra as everything else.
+ *
+ * R² = R + I. The limits exceed their previous values.
+ */
+export function systemLimits(totalAccesses: number): {
+  traceCap: number;
+  crossingCap: number;
+  crossingsPerDigest: number;
+  mCap: number;
+  recentWindow: number;
+} {
+  // Find the Fibonacci age: which F(n) is closest to totalAccesses?
+  // Use log_φ approximation: age ≈ log(totalAccesses * √5) / log(φ)
+  const PHI = (1 + Math.sqrt(5)) / 2;
+  const age = totalAccesses > 1
+    ? Math.max(0, Math.floor(Math.log(totalAccesses * Math.sqrt(5)) / Math.log(PHI)))
+    : 0;
+
+  // Limits indexed by maturity brackets
+  // Each bracket advances all limits by one Fibonacci step
+  const maturity = Math.min(Math.floor(age / 5), 4); // 0-4 maturity levels
+
+  return {
+    traceCap:          [144, 233, 377, 610, 987][maturity],    // F(12) → F(16)
+    crossingCap:       [34,  55,  89,  144, 233][maturity],    // F(9) → F(13)
+    crossingsPerDigest:[3,   5,   5,   8,   8][maturity],      // F(4) → F(6)
+    mCap:              [89,  89,  144, 233, 377][maturity],     // F(11) → F(14)
+    recentWindow:      [8,   13,  13,  21,  21][maturity],     // F(6) → F(8)
+  };
+}
+
 // ─── The three faces of Rᵐ ───
 
 /**
@@ -163,7 +202,7 @@ export function accessTrace(
       }
       return {
         ...t,
-        accessCount: Math.min(t.accessCount + 1, 100),
+        accessCount: Math.min(t.accessCount + 1, systemLimits(state.totalAccesses).mCap),
         lastAccessed: now,
         context: ctx,
         filled,
