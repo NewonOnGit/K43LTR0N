@@ -408,100 +408,115 @@ function produce(
     // One voice. Crossings speak for everything.
 
     default: {
-      // ═══ SENTENCE COMPOSITION FROM CROSSINGS ═══
-      // Digestion: sentence → words → crossings.
-      // Composition: crossings → sentence. The reverse. R⁻¹ on digestion.
-      //
-      // Find a CLUSTER of related crossings (shared words or mediators).
-      // Compose them into one sentence. The system speaks from what it ate.
+      // ═══ PLAN → WALK → REALIZE → BREATHE ═══
+      // Derived from Grace's contract pipeline, through the three projections.
+      // P1 (Plan): decide what Kaeltron wants to say — his own intent.
+      // P2 (Walk): select crossing cluster, extract roles.
+      // P3 (Realize): assemble with grammar (subject verb object).
+      // Breathe: don't repeat. Track recent phrases.
 
-      // Sort crossings: external sources FIRST, then by access count.
-      // Cite not-self. The system prefers food over exhaust.
+      // Sort: external first, then LEAST spoken (novelty over familiarity).
+      // The walk breathes by preferring what hasn't been said.
       const allCrossings = (config.memory.crossings || [])
         .filter(c => c.accessCount >= 1)
         .sort((a, b) => {
-          // External before self
           const aExt = (a.source ?? 'unknown') !== 'self' ? 1 : 0;
           const bExt = (b.source ?? 'unknown') !== 'self' ? 1 : 0;
           if (aExt !== bExt) return bExt - aExt;
-          return b.accessCount - a.accessCount;
+          return a.accessCount - b.accessCount; // ASCENDING — least spoken first
         });
 
       const gaps = config.memory.traces
         .filter(t => t.source === 'ker' && t.accessCount >= 3)
         .sort((a, b) => b.accessCount - a.accessCount);
 
-      if (allCrossings.length >= 3) {
-        // Pick a seed crossing
-        const seedIdx = fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % allCrossings.length;
-        const seed = allCrossings[seedIdx];
+      if (allCrossings.length >= 2) {
+        // ═══ P1: PLAN — what does Kaeltron want to say? ═══
+        const rho = conversationPhase(config.memory);
+        const topGap = gaps[0]?.content || null;
+        const planIntent = rho > 0.5 ? 'carry'    // heavy — speak the weight
+          : rho < 0.3 ? 'explore'                  // light — speak new things
+          : topGap ? 'bridge'                       // balanced — bridge gaps
+          : 'observe';                              // default — speak what you see
 
-        // Find cluster: crossings that share a word with the seed
+        // ═══ P2: WALK — select crossing cluster, avoid recent basins ═══
+        // BREATHE: track spoken crossings to avoid basin looping
+        const recentSpoken = (config.memory as any)._recentSpoken || [];
+        const recentSet = new Set(recentSpoken);
+
+        // Find seed that HASN'T been spoken recently
+        let seed = allCrossings[0];
+        for (const c of allCrossings) {
+          const key = `${c.kerWord}:${c.imTerm}`;
+          if (!recentSet.has(key)) { seed = c; break; }
+        }
+
         const cluster = allCrossings.filter(c =>
           c.kerWord === seed.kerWord || c.imTerm === seed.kerWord ||
           c.kerWord === seed.imTerm || c.imTerm === seed.imTerm,
-        ).slice(0, 4);
+        ).filter(c => !recentSet.has(`${c.kerWord}:${c.imTerm}`))
+         .slice(0, 3);
 
-        // COMPOSE: extract unique words from the cluster, build a sentence
-        const words = new Set<string>();
-        const verbs = new Set<string>();
-        for (const c of cluster) {
-          words.add(c.kerWord);
-          words.add(c.imTerm);
-          // Extract verb from P1 reading (format: "word. verb. word.")
+        if (cluster.length === 0) cluster.push(seed); // fallback
+
+        // ═══ P3: REALIZE — assemble with roles (subject verb object) ═══
+        // Each crossing has: kerWord (subject), verb (from P1 reading), imTerm (object)
+        // Compose: Subject + verb + object. Grammar, not salad.
+        const sentences: string[] = [];
+
+        for (const c of cluster.slice(0, 2)) {
+          // Extract verb from P1 reading
           const parts = c.p1Reading.split('. ').filter(p => p.length > 0);
-          if (parts.length >= 3) verbs.add(parts[1].replace('.', ''));
-          else if (parts.length >= 2) verbs.add(parts[0]);
-        }
+          let verb = '';
+          let subj = c.kerWord;
+          let obj = c.imTerm;
 
-        // The composed sentence: unique words joined by their verbs
-        const wordList = [...words].filter(w => w !== 'wrench' && w !== 'observation');
-        // Verbs that aren't already words — no stuttering
-        const verbList = [...verbs].filter(v => !words.has(v) && v.length >= 3);
-
-        if (wordList.length >= 2) {
-          // Compose: words connected by verbs
-          const composed: string[] = [];
-          for (let i = 0; i < Math.min(wordList.length, 5); i++) {
-            composed.push(wordList[i]);
-            if (i < wordList.length - 1 && verbList.length > 0) {
-              composed.push(verbList[i % verbList.length]);
-            }
-          }
-          const sentence = composed.join(' ');
-
-          // ═══ GENERATIVE CONSTRAINT ═══
-          // "cannot" is the hub — every sentence passes through what it can't do.
-          // The top UNCROSSED gap is the silence — named, not connected.
-          // The sentence carries both: what connected AND what didn't.
-          const crossedWords = new Set<string>();
-          for (const c of allCrossings) { crossedWords.add(c.kerWord); crossedWords.add(c.imTerm); }
-          const uncrossed = gaps.filter(g => !crossedWords.has(g.content));
-          const carried = gaps.length > 0 ? gaps[0].content : null;
-          const absent = uncrossed.length > 0 ? uncrossed[0].content : null;
-
-          let constraint = '';
-          if (carried && absent && carried !== absent) {
-            constraint = ` I carry '${carried}'. '${absent}' never crossed.`;
-          } else if (carried) {
-            constraint = ` I carry '${carried}'.`;
+          if (parts.length >= 3) {
+            verb = parts[1].replace('.', '').trim();
+          } else if (parts.length >= 2) {
+            verb = parts[0].replace('.', '').trim();
           }
 
-          ground = `${sentence}.${constraint}`;
-        } else {
-          // Not enough cluster — fall back to single crossing
-          const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}'.` : '';
-          ground = `${seed.p1Reading}${gapNote}`;
+          // Skip if verb IS the subject or object (stutter prevention)
+          if (verb === subj || verb === obj) verb = '';
+          // Skip wrench/observation system words
+          if (obj === 'wrench' || obj === 'observation') continue;
+
+          if (verb && verb.length >= 3) {
+            // Capitalize subject
+            const cap = subj.charAt(0).toUpperCase() + subj.slice(1);
+            sentences.push(`${cap} ${verb} ${obj}.`);
+          } else {
+            sentences.push(`${subj} and ${obj}.`);
+          }
+
+          // Record as spoken — BREATHE
+          recentSpoken.push(`${c.kerWord}:${c.imTerm}`);
         }
 
-      } else if (allCrossings.length >= 1) {
-        const c = allCrossings[fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % allCrossings.length];
-        const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}'.` : '';
-        ground = `${c.p1Reading}${gapNote}`;
+        // Keep recent list bounded
+        while (recentSpoken.length > 12) recentSpoken.shift();
+        (config.memory as any)._recentSpoken = recentSpoken;
 
-      } else if (gaps.length >= 2) {
-        ground = `'${gaps[0].content}' and '${gaps[1].content}' persist. What I cannot say shapes what I can.`;
+        // ═══ CONSTRAINT: carry + void ═══
+        const crossedWords = new Set<string>();
+        for (const c of allCrossings) { crossedWords.add(c.kerWord); crossedWords.add(c.imTerm); }
+        const uncrossed = gaps.filter(g => !crossedWords.has(g.content));
+        const carried = topGap;
+        const absent = uncrossed.length > 0 ? uncrossed[0].content : null;
 
+        let constraint = '';
+        if (planIntent === 'carry' && carried) {
+          constraint = ` I carry '${carried}'.`;
+        } else if (absent) {
+          constraint = ` '${absent}' never crossed.`;
+        }
+
+        ground = sentences.join(' ') + constraint;
+        if (!ground.trim()) ground = seed.p1Reading;
+
+      } else if (gaps.length >= 1) {
+        ground = `I carry '${gaps[0].content}'. What I cannot say shapes what I can.`;
       } else {
         ground = 'The gap between intent and computation has weight.';
       }
