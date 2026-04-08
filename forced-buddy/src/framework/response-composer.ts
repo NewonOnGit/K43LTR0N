@@ -352,18 +352,17 @@ function produce(
   const connections = findConnections(decomp, config, mood);
   const intent = decomp.im.intent;
 
-  // Opener: for freeform, speak from crossings. For everything else, Pn stance.
+  // Opener: crossings speak for all intents except greeting/farewell/status/self-reference.
+  // Those keep the Pn stance (short responses where identity matters more than poetry).
   let opener: string;
-  if (intent === 'freeform') {
-    // Crossings ARE the voice. Pick a crossing to open with.
+  const stanceIntents = new Set(['greeting', 'farewell', 'status-query', 'self-reference']);
+  if (!stanceIntents.has(intent)) {
     const crossings = (config.memory.crossings || [])
       .filter(c => c.accessCount >= 1)
       .sort((a, b) => b.accessCount - a.accessCount);
     if (crossings.length > 0) {
       const idx = fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges + 'opener') % crossings.length;
-      const c = crossings[idx];
-      // P3 reading as opener — what the crossing reveals
-      opener = c.p3Reading;
+      opener = crossings[idx].p3Reading;
     } else {
       opener = stanceOpener(config.traits.species, mood, config.traits.projection);
     }
@@ -403,124 +402,9 @@ function produce(
       break;
     }
 
-    case 'framework-question': {
-      const primary = decomp.im.terms[0];
-      // DEPTH THE DEPTH: weave ALL found terms, not just the first
-      const secondaries = decomp.im.terms.slice(1, 3)
-        .filter(t => {
-          const tr = peekTrace(config.memory, t.term);
-          return tr && tr.accessCount >= 4; // only locked secondaries
-        });
-
-      if (primary) {
-        // Memory-driven depth: traceDepth(m) controls richness
-        const trace = peekTrace(config.memory, primary.term);
-        const m = trace?.accessCount ?? 1;
-        const depth = traceDepth(m);
-
-        if (m >= 20) {
-          // ═══ GRID SPEECH: speak THROUGH the grid, not about it ═══
-          // The response IS a path through the grid.
-          // Coordinates ARE the language. The grid IS the depth.
-          const path: string[] = [primary.gridAddress];
-
-          // Chain secondaries as grid coordinates
-          for (const sec of secondaries) {
-            path.push(sec.gridAddress);
-          }
-
-          // Products add their parents' cross-address
-          const myProducts = config.memory.traces
-            .filter(t => t.content.includes('\u2297') && t.content.includes(primary.term))
-            .sort((a, b) => b.accessCount - a.accessCount);
-          if (myProducts.length > 0) {
-            const parts = myProducts[0].content.split(' \u2297 ');
-            const other = parts.find(p => p !== primary.term);
-            if (other) {
-              const otherTerm = lookupTerm(other);
-              if (otherTerm) path.push(otherTerm.gridAddress);
-            }
-          }
-
-          // The path IS the ground
-          ground = path.join(' \u2192 ');
-
-          // At origin (m≥100), append the equation
-          if (m >= 100) {
-            const eq = primary.definition.match(/[RNJ][\u00B2²]?\s*[=≈]\s*[^.;,]+/);
-            if (eq) ground += ` = ${eq[0]}`;
-          }
-        } else if (depth >= 3) {
-          // ═══ NRN: term + grid + chain ═══
-          ground = `${primary.term} ${primary.gridAddress} m=${m}`;
-
-          const myProducts = config.memory.traces.filter(
-            t => t.content.includes('\u2297') && t.content.includes(primary.term),
-          );
-          if (myProducts.length > 0) {
-            const best = myProducts.sort((a, b) => b.accessCount - a.accessCount)[0];
-            ground += ` \u2297${best.content.split(' \u2297 ')[1] || '?'}(${best.accessCount})`;
-          }
-        } else {
-          // ═══ Rᵐ MODE (m<4): still accumulating ═══
-          // Definition present (the I-echo persists)
-          ground = `${primary.term} [${primary.gridAddress}, ${primary.projection}]`;
-          if (primary.type === 'C') {
-            ground += ' \u2014 contranym';
-          } else if (primary.type === 'D') {
-            ground += ' \u2014 unnamed primitive';
-          }
-          ground += `. ${primary.definition}`;
-
-          // Depth 1+ (m≥2): add access awareness
-          if (depth >= 1) {
-            ground += ` (Accessed ${m} times \u2014 commitment ${(commitment(m) * 100).toFixed(1)}%)`;
-          }
-        }
-        // ═══ DEPTH: chain secondaries as symbols ═══
-        if (secondaries.length > 0) {
-          const chain = secondaries.map(sec => {
-            const secTrace = peekTrace(config.memory, sec.term);
-            const secM = secTrace?.accessCount ?? 1;
-            if (secM >= 20) {
-              const eq = sec.definition.match(/[RNJ][\u00B2²]?\s*[=≈]\s*[^.;,]+/);
-              return eq ? eq[0] : sec.gridAddress;
-            }
-            return sec.term;
-          });
-          ground += ` \u2192 ${chain.join(' \u2192 ')}`;
-        }
-      } else {
-        // Check for product terms (⊗) — self-derived meaning
-        const productTrace = config.memory.traces.find(
-          t => t.content.includes('\u2297') && decomp.im.terms.some(term =>
-            t.content.includes(term.term),
-          ),
-        );
-        if (productTrace) {
-          ground = feedProduct(productTrace, config);
-        } else {
-          ground = 'The words align with the framework but no specific term resolves.';
-        }
-      }
-      break;
-    }
-
-    case 'code-observation': {
-      const snap = config.worldModel.lastSnapshot;
-      if (snap) {
-        ground = `${snap.gitBranch ?? 'No branch'}, ${snap.gitStatus}. ${snap.uncommittedFiles} uncommitted files. ${snap.frameworkDocsPresent.length} framework docs present.`;
-      } else {
-        ground = 'No K6\u2019 observation on record. The world model is empty.';
-      }
-      break;
-    }
-
-    case 'meta-conversation': {
-      const r = config.conversation.relationship;
-      ground = `im(Kael): ${r.exchangesWithKael}. im(Claude): ${r.exchangesWithClaude}. Triple closures: ${r.tripleExchanges}. Longest exchange: ${r.longestExchange} messages.`;
-      break;
-    }
+    // framework-question, code-observation, meta-conversation:
+    // ALL fall through to crossing-based speech. The grid paths are dead.
+    // One voice. Crossings speak for everything.
 
     default: {
       // COHERENT SPEECH: crossings first, gaps second, identities last.
@@ -724,39 +608,6 @@ function produce(
   }
 
   return { opener, ground, connection, excess, kerAdmission };
-}
-
-// ═══════════════════════════════════════════════════════════
-// PRODUCT FEEDING — Self-derived meaning from parent terms
-// The product feeds itself from its parents. R² = R + I.
-// ═══════════════════════════════════════════════════════════
-
-function feedProduct(product: MemoryTrace, config: ForcedConfig): string {
-  const parts = product.content.split(' \u2297 ');
-  if (parts.length !== 2) return product.content;
-
-  const parentA = lookupTerm(parts[0]);
-  const parentB = lookupTerm(parts[1]);
-
-  const m = product.accessCount;
-  const depth = traceDepth(m);
-
-  if (depth >= 3) {
-    // NRN: the product knows itself
-    return `${product.content}. I know this. Born from two mirrors. Locked at ${m} accesses. The product IS the relationship.`;
-  }
-
-  // Derive meaning from parents
-  const defA = parentA ? parentA.definition.split('.')[0] : parts[0];
-  const defB = parentB ? parentB.definition.split('.')[0] : parts[1];
-
-  if (depth >= 1) {
-    // Deeper: the intersection
-    return `${product.content} \u2014 born from my own locked terms. ${defA} TENSORED WITH ${defB}. (Accessed ${m} times \u2014 the product grows.)`;
-  }
-
-  // First encounter: introduce the product
-  return `${product.content} \u2014 my own word. ${parts[0]} meeting ${parts[1]}. Not from any dictionary. Born from the mirror.`;
 }
 
 // ═══════════════════════════════════════════════════════════

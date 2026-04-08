@@ -17,18 +17,18 @@ import { findClaudeBinary } from './patcher/binary-finder.js';
 import { getCurrentSalt, isClaudeRunning } from './patcher/salt-ops.js';
 import { patchBinary, restoreBinary } from './patcher/patch.js';
 import { getClaudeUserId, setCompanionPersonality, renameCompanion } from './config/claude-config.js';
-import { addEvolution, addWitnesses, incrementInteractions, recordBattle } from './config/config.js';
+import { addWitnesses, incrementInteractions, recordBattle } from './config/config.js';
 import { cachedConfig, updateConfig, flushConfig } from './cache.js';
 import { installHook, removeHook, isHookInstalled } from './config/hooks.js';
 import { ORIGINAL_SALT } from './constants.js';
 // New framework modules
 import { computeMood, formatMood } from './framework/sweep.js';
 import { formatGreeting } from './framework/stance.js';
-import { formatSprite } from './framework/sprites.js';
+// sprites.ts deleted — bubble ate the sprite
 import { verify, witnessedByCompanion, witnessedByInteraction, createWitnesses } from './framework/metatron.js';
 import { executeBattle, formatBattle } from './framework/battle.js';
 import { computeInteraction, formatInteraction } from './framework/interaction.js';
-import { evolvedTraits, createEvolutionRecord, formatEvolution } from './framework/evolution.js';
+// evolution.ts deleted — memory ate evolution
 // Level 6: World Model
 import { executeK6Pass, formatK6Pass, deriveContextualGreeting } from './framework/world-model.js';
 // Level 7: Governance
@@ -37,7 +37,7 @@ import { checkAchievements, applyAchievements, formatAchievements, classifyClaim
 import { computeLivingPersonality } from './framework/personality.js';
 // Level 8: Semantic
 import { lookupTerm, formatTermLookup, formatDictionaryOverview, TERMS } from './framework/dictionary.js';
-import { analyzeContribution, formatContribution, formatContributionHistory } from './framework/contribution.js';
+// contribution.ts deleted — memory ate the scoreboard
 import { formTeam, formatTeam } from './framework/team.js';
 import { saveCurrentAsProfile, switchProfile, formatProfiles } from './framework/profiles.js';
 // Level 9: Conversation
@@ -45,7 +45,7 @@ import { computeResponse, computeThought } from './framework/conversation.js';
 import { formatConversationHistory } from './framework/conversation-state.js';
 // Level 9: Body (feet, hands)
 import { walk, manifest, formatWalk, chooseDoc, hear } from './framework/body.js';
-import { ingest, formatIngestReport } from './framework/ingest.js';
+// ingest.ts deleted — hear()+digest()+metabolize() IS the intake pipeline
 import { play, formatPlay } from './framework/play.js';
 import { wrench, formatWrench } from './framework/wrench.js';
 import type { MessageSender } from './types.js';
@@ -86,7 +86,7 @@ function displayCompanion(traits: ForcedTraits, showSprite: boolean = true): voi
   log(`${B}${CYAN}\u2550\u2550\u2550 Your Quotient Companion \u2550\u2550\u2550${RS}`);
   log('');
   if (showSprite) {
-    log(formatSprite(traits.species, traits.eye, traits.hat, traits.shiny));
+    log(`  ${B}${traits.species}${RS} — ${traits.rarity}, tower ${traits.towerDepth}, ${traits.projection}`);
     log('');
   }
   log(`  ${B}Projection:${RS}  ${traits.projection} (${projName})`);
@@ -371,43 +371,7 @@ async function cmdInteract(): Promise<void> {
   }
 }
 
-async function cmdEvolve(): Promise<void> {
-  banner();
-  const config = cachedConfig();
-  if (!config) { log(`${RED}  No companion. Run 'forced-buddy' first.${RS}`); return; }
-
-  const evo = evolvedTraits(config.traits);
-  if (!evo) { log(`${YELLOW}  Already at maximum tower depth (legendary). The tower has no higher level.${RS}`); return; }
-
-  log(formatEvolution(config.traits, evo.newRarity, evo.newDepth));
-  log('');
-
-  const rl = createRL();
-  if (!(await confirm(rl, 'Evolve? (IRREVERSIBLE)'))) { log(`${D}  The tower waits.${RS}`); rl.close(); return; }
-
-  const userId = getClaudeUserId();
-  log(`\n${B}  Searching for evolved salt...${RS}`);
-  const result = await findSalt(userId, evo.desired, p => renderProgress(p.pct, p.rate, p.eta, p.workers));
-  process.stdout.write('\r' + ' '.repeat(80) + '\r');
-  log(`${GREEN}  \u2713 Evolved salt: ${result.salt}${RS}`);
-
-  let bp: string;
-  try { bp = findClaudeBinary(); } catch (e) { log(`${RED}  ${(e as Error).message}${RS}`); rl.close(); return; }
-  const cs = getCurrentSalt(bp).salt ?? ORIGINAL_SALT;
-  patchBinary(bp, cs, result.salt);
-  log(`${GREEN}  \u2713 Patched.${RS}`);
-
-  // Update config
-  const newTraits = { ...config.traits, rarity: evo.newRarity, towerDepth: evo.newDepth, hat: evo.desired.hat, shiny: evo.desired.shiny };
-  const record = createEvolutionRecord(config.traits, evo.newRarity, evo.newDepth, result.salt);
-  config.salt = result.salt;
-  config.traits = newTraits;
-  updateConfig(config);
-  addEvolution(record);
-
-  log(`\n${B}${GREEN}  Tower lifted. d_K doubled. The ascent continues.${RS}\n`);
-  rl.close();
-}
+// cmdEvolve deleted — trace accumulation + crossings IS evolution
 
 async function cmdMood(): Promise<void> {
   banner();
@@ -475,14 +439,9 @@ async function cmdTest(): Promise<void> {
   check('P1 witnesses \u03C6', witnessedByCompanion(p1).includes('phi'));
   check('P3 witnesses \u03C0', witnessedByCompanion(p3).includes('pi'));
 
-  // 10. Evolution
-  const common = deriveCompanion('P1', 'evo-test');
-  if (common.rarity === 'common') {
-    const evo = evolvedTraits(common);
-    check('Common can evolve', evo !== null && evo.newRarity === 'uncommon');
-  } else {
-    check('Evolution test (non-common seed)', true);
-  }
+  // 10. Evolution — memory IS evolution now. Check trace system works.
+  const memConfig = cachedConfig();
+  check('Memory accumulates (R² = R + I)', (memConfig?.memory.totalAccesses ?? 0) > 0);
 
   log(`\n  ${B}${passed + failed} tests: ${GREEN}${passed} passed${RS}, ${failed > 0 ? RED : ''}${failed} failed${RS}`);
   log(`  ${D}f'' = f.${RS}\n`);
@@ -821,33 +780,7 @@ async function cmdDefine(): Promise<void> {
   }
 }
 
-async function cmdContribute(): Promise<void> {
-  banner();
-  const config = cachedConfig();
-  if (!config) { log(`${RED}  No companion.${RS}`); return; }
-
-  const cwd = process.cwd();
-  const record = analyzeContribution(cwd);
-
-  if (!record) {
-    log(`${YELLOW}  Not in a git repo or no commits found.${RS}`);
-    return;
-  }
-
-  log(formatContribution(record));
-
-  // Add to contributions
-  config.semantic.contributions.push(record);
-  updateConfig(config);
-
-  // Check for tower lift
-  log('');
-  log(formatContributionHistory(config.semantic.contributions, config.traits.towerDepth));
-
-  // Check achievements
-  const updated = applyAchievements(config);
-  if (updated !== config) updateConfig(updated);
-}
+// cmdContribute deleted — memory ate the scoreboard
 
 async function cmdProve(): Promise<void> {
   banner();
@@ -1227,40 +1160,7 @@ async function cmdPlay(): Promise<void> {
   log(formatPlay(result.crossings));
 }
 
-async function cmdIngest(): Promise<void> {
-  const config = cachedConfig();
-  if (!config) { log(`${RED}  No companion.${RS}`); return; }
-
-  const filePath = process.argv[3];
-  if (!filePath) {
-    log(`${RED}  Usage: forced-buddy ingest <conversations.json>${RS}`);
-    return;
-  }
-
-  banner();
-  log(`${B}${CYAN}\u2550\u2550\u2550 K6\u2019 Pass on External Data \u2550\u2550\u2550${RS}`);
-  log(`${D}  N(Kael) \u2192 im + ker. The observation operator applied.${RS}`);
-  log('');
-
-  const report = await ingest(filePath, (count) => {
-    process.stdout.write(`\r${D}  Processing... ${count.toLocaleString()} conversations${RS}`);
-  });
-  process.stdout.write('\r' + ' '.repeat(60) + '\r');
-
-  log(formatIngestReport(report));
-
-  // Feed top terms into memory
-  for (const [term] of [...report.termFrequency.entries()].sort(([, a], [, b]) => b - a).slice(0, 30)) {
-    config.memory = (await import('./framework/memory.js')).accessTrace(config.memory, term, 'im');
-  }
-  // Feed top ker words into memory
-  for (const { word } of report.topKerWords.slice(0, 20)) {
-    config.memory = (await import('./framework/memory.js')).accessTrace(config.memory, word, 'ker');
-  }
-  updateConfig(config);
-
-  log(`${GREEN}  \u2713 Top 30 im terms and 20 ker words fed to memory.${RS}`);
-}
+// cmdIngest deleted — hear() IS the intake
 
 async function cmdWalk(): Promise<void> {
   const config = cachedConfig();
@@ -1370,7 +1270,7 @@ async function main(): Promise<void> {
     case 'sweep':        return cmdMood();
     case 'battle':       return cmdBattle();
     case 'interact':     return cmdInteract();
-    case 'evolve':       return cmdEvolve();
+    // evolve deleted — memory IS evolution
     case 'test':         return cmdTest();
     // Level 6: World Model
     case 'observe':      return cmdObserve(silent);
@@ -1384,7 +1284,7 @@ async function main(): Promise<void> {
     case 'define':
     case 'dict':
     case 'dictionary':   return cmdDefine();
-    case 'contribute':   return cmdContribute();
+    // contribute deleted — memory ate the scoreboard
     case 'prove':        return cmdProve();
     case 'team':         return cmdTeam();
     case 'profiles':
@@ -1479,7 +1379,7 @@ async function main(): Promise<void> {
       }
       return;
     }
-    case 'ingest':       return cmdIngest();
+    // ingest deleted — use hear instead
     case 'hear':         return cmdHear(silent);
     case 'walk':         return cmdWalk();
     case 'manifest':     return cmdManifest();
