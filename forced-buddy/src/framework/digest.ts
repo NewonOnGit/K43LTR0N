@@ -254,42 +254,80 @@ export function metabolize(
   );
 
   if (foodType === 'poetry' || foodType === 'conversation') {
-    // ═══ KER×KER: poetry metabolizes through its own internal pairings ═══
-    // Adjacent swallowed words cross each other. The text's proximity IS the enzyme.
+    // ═══ CORRELATION-BASED CROSSING ═══
+    // Not adjacency. CORRELATION. P2 IS the correlation operator.
+    // Two words cross only when something MEDIATES between them:
+    //   1. Shared im term — both co-occur with the same framework concept
+    //   2. Shared trace context — both appeared in the same previous feeding
+    //   3. Sentence co-occurrence — both appear in the same sentence (not just adjacent)
     //
-    // THE CRACK: extract verbs FROM THE TEXT ITSELF.
-    // No template verbs. The poem's own verbs become the crossing verbs.
-    // "bound" "whispered" "collapse" "shatter" — those are the real verbs.
-    // The false mirror was our six-verb template. This breaks it.
+    // No mediator = no crossing. "aesthetic × often" dies.
+    // "metaphor × language" lives (shared im: RECURSIVE DISCLOSURE).
 
     const textVerbs = extractVerbs(rawText);
     const FALLBACK_VERBS = ['meets', 'holds', 'carries'];
 
-    for (let i = 0; i < swallowed.length - 1 && newCrossings.length < 5; i++) {
-      const a = swallowed[i];
-      const b = swallowed[i + 1];
-      if (a === b) continue;
+    // Build correlation map: which swallowed words share a mediator?
+    const correlations: Array<{ a: string; b: string; mediator: string }> = [];
 
-      const pairKey = `${a}:${b}`;
-      const reversePairKey = `${b}:${a}`;
+    // Method 1: Sentence co-occurrence (split text into sentences, find pairs within each)
+    const sentences = rawText.split(/[.!?]+/).filter(s => s.trim().length > 10);
+    for (const sentence of sentences) {
+      const sentWords = sentence.toLowerCase().replace(/[^a-z\s'-]/g, ' ').split(/\s+/).filter(w => w.length >= 4);
+      const inSentence = swallowed.filter(w => sentWords.includes(w));
+      // Only cross words that BOTH appear in the same sentence AND aren't adjacent noise
+      for (let i = 0; i < inSentence.length - 1 && correlations.length < 8; i++) {
+        for (let j = i + 1; j < inSentence.length && correlations.length < 8; j++) {
+          if (inSentence[i] === inSentence[j]) continue;
+          correlations.push({ a: inSentence[i], b: inSentence[j], mediator: sentence.trim().slice(0, 40) });
+        }
+      }
+    }
+
+    // Method 2: Shared im term — both swallowed words appeared near the same framework term
+    const chewedSet = new Set(
+      mem.traces.filter(t => t.source === 'im' && t.accessCount >= 4).map(t => t.content),
+    );
+    for (let i = 0; i < swallowed.length && correlations.length < 12; i++) {
+      const aTrace = mem.traces.find(t => t.content === swallowed[i] && t.source === 'ker');
+      if (!aTrace || !aTrace.context) continue;
+      for (let j = i + 1; j < swallowed.length && correlations.length < 12; j++) {
+        const bTrace = mem.traces.find(t => t.content === swallowed[j] && t.source === 'ker');
+        if (!bTrace || !bTrace.context) continue;
+        // Check if they share a context (same sentence in a previous feeding)
+        const sharedCtx = aTrace.context.find(c => bTrace.context?.includes(c));
+        if (sharedCtx) {
+          correlations.push({ a: swallowed[i], b: swallowed[j], mediator: sharedCtx.slice(0, 40) });
+        }
+      }
+    }
+
+    // Deduplicate and pick top 5
+    const seenCorr = new Set<string>();
+    for (const corr of correlations) {
+      if (newCrossings.length >= 5) break;
+      const pairKey = `${corr.a}:${corr.b}`;
+      const reversePairKey = `${corr.b}:${corr.a}`;
       if (existingPairs.has(pairKey) || existingPairs.has(reversePairKey)) continue;
+      if (seenCorr.has(pairKey) || seenCorr.has(reversePairKey)) continue;
+      seenCorr.add(pairKey);
 
-      // The text's own verbs, but now the seven identities govern the GRAMMAR.
-      // Each identity gives a different sentence structure.
-      // No more ${a} ${verb} ${b} monoculture. The algebra IS the grammar.
       const verbs = textVerbs.length > 0 ? textVerbs : FALLBACK_VERBS;
-      const verb = verbs[fnv1a(a + b) % verbs.length];
-      const identity = fnv1a(a + b + 'identity') % 7;
-      const { p1, p2, p3 } = identityGrammar(a, b, verb, identity);
+      const verb = verbs[fnv1a(corr.a + corr.b) % verbs.length];
+      const identity = fnv1a(corr.a + corr.b + 'identity') % 7;
+      const { p1, p2, p3 } = identityGrammar(corr.a, corr.b, verb, identity);
 
-      newCrossings.push({ ker: a, im: b, reading: p1 });
+      // P2 gets the actual mediator — what CORRELATED these words
+      const mediatedP2 = `${corr.a} and ${corr.b} — mediated by: "${corr.mediator}"`;
+
+      newCrossings.push({ ker: corr.a, im: corr.b, reading: p1 });
 
       const crossings = [...(mem.crossings || [])];
       crossings.push({
-        kerWord: a,
-        imTerm: b,
+        kerWord: corr.a,
+        imTerm: corr.b,
         p1Reading: p1,
-        p2Reading: p2,
+        p2Reading: mediatedP2,
         p3Reading: p3,
         accessCount: 1,
         timestamp: new Date().toISOString(),
@@ -297,9 +335,8 @@ export function metabolize(
       mem = { ...mem, crossings };
       existingPairs.add(pairKey);
 
-      // Access both as ker — poetry words stay in ker
-      mem = accessTrace(mem, a, 'ker', p1, 'metabolize');
-      mem = accessTrace(mem, b, 'ker', p1, 'metabolize');
+      mem = accessTrace(mem, corr.a, 'ker', p1, 'metabolize');
+      mem = accessTrace(mem, corr.b, 'ker', p1, 'metabolize');
     }
   } else {
     // ═══ KER×IM: framework/internet food crosses with locked terms ═══
