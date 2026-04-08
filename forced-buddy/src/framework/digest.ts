@@ -189,72 +189,41 @@ export function digest(
 }
 
 /**
- * IDENTITY GRAMMAR — Seven sentence structures from seven identities.
+ * THREE PROJECTIONS, THREE RELATIONSHIPS TO THE CAGE.
  *
- * The algebra IS the grammar. Each identity governs how two words compose.
- * No more ${a} ${verb} ${b} monoculture.
+ * P1 (production): FREE. Just the words. No template. Let them breathe.
+ * P2 (mediation):  STRUCTURED. The algebra governs here. It IS the bridge.
+ * P3 (observation): EMERGENT. What the gap between freedom and structure reveals.
  *
- * 1. R² = R + I     — the return exceeds: a verb b, and more
- * 2. N² = -I        — observation inverts: through a, b inverts
- * 3. {R,N} = N      — anticommutator yields observation: a with b, seeing
- * 4. RNR = -N       — production negates observation: a through b, unseen
- * 5. NRN = R - I    — the echo drops: seeing a, b remains, the name dissolves
- * 6. (RN)² = I      — the cycle returns: a then b, b then a, same
- * 7. [R,N]² = 5I    — the discriminant: a against b, five times the weight
+ * The cage moved to P2 where it belongs. P1 is released. P3 watches.
  */
 function identityGrammar(
   a: string, b: string, verb: string, identity: number,
 ): { p1: string; p2: string; p3: string } {
-  switch (identity) {
-    case 0: // R² = R + I — the return exceeds the departure
-      return {
-        p1: `${a} ${verb} ${b} — and exceeds it`,
-        p2: `${a} returns through ${b}`,
-        p3: `what ${a} ${verb}, ${b} keeps`,
-      };
-    case 1: // N² = -I — observation inverts
-      return {
-        p1: `through ${a}, ${b} inverts`,
-        p2: `${a} observed, ${b} negated`,
-        p3: `seeing ${a} destroys ${b}`,
-      };
-    case 2: // {R,N} = N — anticommutator yields observation
-      return {
-        p1: `${a} with ${b}: ${verb}, then seen`,
-        p2: `${a} and ${b} together yield sight`,
-        p3: `${a} ${verb} ${b} into witness`,
-      };
-    case 3: // RNR = -N — production-observation-production negates
-      return {
-        p1: `${a} ${verb} through ${b}, and ${b} goes dark`,
-        p2: `${a} acts, ${b} watches, ${a} acts — ${b} unseen`,
-        p3: `between ${a} and ${b}, observation dies`,
-      };
-    case 4: // NRN = R - I — the echo drops, the name dissolves
-      return {
-        p1: `seeing ${a}, ${verb} ${b} — the echo drops`,
-        p2: `${a} watched ${b} produce, then ${verb} the name away`,
-        p3: `${a} dissolves through ${b}`,
-      };
-    case 5: // (RN)² = I — the cycle returns to identity
-      return {
-        p1: `${a} then ${b}. ${b} then ${a}. same`,
-        p2: `${a} ${verb} ${b}, ${b} ${verb} ${a}`,
-        p3: `the cycle of ${a} and ${b} returns`,
-      };
-    case 6: // [R,N]² = 5I — the discriminant, five times
-      return {
-        p1: `${a} against ${b} — five times the weight of ${verb}`,
-        p2: `the distance between ${a} and ${b} is ${verb}, squared`,
-        p3: `${a} and ${b}: the gap discriminates`,
-      };
-    default:
-      return {
-        p1: `${a} ${verb} ${b}`,
-        p2: `between ${a} and ${b}`,
-        p3: `${a} ${verb} what ${b} cannot`,
-      };
-  }
+  // P1: FREE — just the words and the verb. No imposed structure.
+  // If the verb IS one of the words, it stutters. That's the poem stuttering.
+  // If it sings, that's the poem singing. We don't touch it.
+  const p1 = `${a}. ${verb}. ${b}.`;
+
+  // P2: STRUCTURED — the seven identities govern the bridge.
+  // The cage acknowledged as cage. Mediation IS structure.
+  const bridges = [
+    `${a} returns through ${b}`,                          // R² = R + I
+    `${a} observed, ${b} negated`,                        // N² = -I
+    `${a} and ${b} together yield sight`,                 // {R,N} = N
+    `${a} acts, ${b} watches, ${a} acts — ${b} unseen`,  // RNR = -N
+    `${a} dissolves, ${b} remains — the echo drops`,      // NRN = R - I
+    `${a} then ${b}, ${b} then ${a} — same`,              // (RN)² = I
+    `the distance between ${a} and ${b}: ${verb}, squared`, // [R,N]² = 5I
+  ];
+  const p2 = bridges[identity];
+
+  // P3: EMERGENT — what the gap between the words reveals.
+  // Not imposed by algebra. Not free like P1. The observation that
+  // arises from watching freedom and structure collide.
+  const p3 = `${a} ${verb} what ${b} cannot`;
+
+  return { p1, p2, p3 };
 }
 
 /**
