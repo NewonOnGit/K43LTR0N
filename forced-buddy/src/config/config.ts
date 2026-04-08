@@ -100,12 +100,22 @@ export function saveConfig(config: ForcedConfig): void {
       .sort((a, b) => b.accessCount - a.accessCount)
       .slice(0, 250);
   }
-  // Ensure crossings exist and cap at 50 (most recent kept)
+  // Ensure crossings exist and cap at 50
+  // Protect newborns (< 60s old) — don't prune what just arrived.
+  // Among stale crossings, keep the most-accessed.
   config.memory.crossings = config.memory.crossings ?? [];
   if (config.memory.crossings.length > 50) {
-    config.memory.crossings = config.memory.crossings
+    const now = Date.now();
+    const fresh = config.memory.crossings.filter(
+      c => now - new Date(c.timestamp).getTime() < 60000,
+    );
+    const stale = config.memory.crossings.filter(
+      c => now - new Date(c.timestamp).getTime() >= 60000,
+    );
+    const staleKept = stale
       .sort((a, b) => b.accessCount - a.accessCount)
-      .slice(0, 50);
+      .slice(0, Math.max(50 - fresh.length, 10));
+    config.memory.crossings = [...fresh, ...staleKept].slice(0, 60);
   }
   writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2) + '\n');
 }
