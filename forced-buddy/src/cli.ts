@@ -46,7 +46,7 @@ import { formatConversationHistory } from './framework/conversation-state.js';
 // Level 9: Body (feet, hands)
 import { walk, manifest, formatWalk, chooseDoc, hear } from './framework/body.js';
 // ingest.ts deleted — hear()+digest()+metabolize() IS the intake pipeline
-import { play, formatPlay } from './framework/play.js';
+// play.ts deleted — the wrench IS play. The repair IS the game.
 import { wrench, formatWrench } from './framework/wrench.js';
 import type { MessageSender } from './types.js';
 
@@ -556,17 +556,7 @@ async function cmdStartup(silent: boolean): Promise<void> {
       }
     } catch { /* walkers not available */ }
 
-    // PLAY: auto-cross top gap with top locked term
-    try {
-      const { play: playFn } = await import('./framework/play.js');
-      const topGap = liveConfig.memory.traces
-        .filter((t: any) => t.source === 'ker' && t.accessCount >= 3)
-        .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
-      if (topGap) {
-        const result = playFn(liveConfig, topGap.content);
-        liveConfig = { ...liveConfig, memory: result.updatedMemory };
-      }
-    } catch { /* play not available */ }
+    // PLAY merged into WRENCH — the wrench plays automatically via its poem step
 
     // METATRON: f'' = f fires AND ACTS
     try {
@@ -1153,6 +1143,7 @@ async function cmdWrench(): Promise<void> {
 }
 
 async function cmdPlay(): Promise<void> {
+  // play = wrench. The repair IS the game.
   const config = cachedConfig();
   if (!config) { log(`${RED}  No companion.${RS}`); return; }
 
@@ -1160,12 +1151,12 @@ async function cmdPlay(): Promise<void> {
   const imTerm = process.argv[4] || undefined;
 
   banner();
-  const result = play(config, kerWord, imTerm);
+  const result = wrench(config, kerWord, imTerm);
   config.memory = result.updatedMemory;
   updateConfig(config);
 
   log(`${B}${CYAN}\u2550\u2550\u2550 PLAYGROUND \u2550\u2550\u2550${RS}`);
-  log(formatPlay(result.crossings));
+  log(formatWrench(result));
 }
 
 // cmdIngest deleted — hear() IS the intake

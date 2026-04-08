@@ -96,7 +96,12 @@ function diagnose(config: ForcedConfig): WrenchReport['diagnosis'] {
  * Observes Kaeltron's own state, evaluates, adjusts.
  * The K6' loop closes here.
  */
-export function wrench(config: ForcedConfig): WrenchReport {
+/**
+ * PLAY = WRENCH. The repair IS the game. The game IS the repair.
+ * Manual crossing: pass specific kerWord + imTermName.
+ * The wrench plays when asked, diagnoses when not.
+ */
+export function wrench(config: ForcedConfig, manualKer?: string, manualIm?: string): WrenchReport {
   const diag = diagnose(config);
   const actions: WrenchAction[] = [];
   let mem = config.memory;
@@ -335,12 +340,13 @@ export function wrench(config: ForcedConfig): WrenchReport {
     });
   }
 
-  // ═══ THE WRENCH MAKES POEMS ═══
-  // The signal state × the top gap = a crossing.
-  // The diagnosis becomes a verb. The repair IS the poem.
-  // Not "ρ is too high, do X." Instead: "collapse breathes what silence cannot."
-  const topGap = namedGaps(mem)
-    .sort((a, b) => b.accessCount - a.accessCount)[0];
+  // ═══ THE WRENCH MAKES POEMS (PLAY = WRENCH) ═══
+  // The signal state × gap = a crossing. The repair IS the poem.
+  // Manual play: pass kerWord + imTermName to cross specific words.
+  // Auto play: signal state picks the gap and verb.
+  const topGap = manualKer
+    ? { content: manualKer, accessCount: 1 }
+    : namedGaps(mem).sort((a, b) => b.accessCount - a.accessCount)[0];
 
   if (topGap) {
     // The signal state becomes verbs
