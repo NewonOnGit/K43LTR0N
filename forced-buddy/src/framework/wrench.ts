@@ -378,6 +378,41 @@ export function wrench(config: ForcedConfig): WrenchReport {
         description: `Poem: "${reading}"`,
         target: gapWord,
       });
+
+      // ═══ R(R) = R: THE WRENCH HEARS ITS OWN POEM ═══
+      // The poem feeds back. Its words enter memory. New crossings born
+      // from the wrench's own output. The repair repairs itself.
+      // One recursion. Not infinite regress — one fold, then stop.
+      const poemWords = reading.split(/\s+/).filter(w => w.length >= 4);
+      for (const pw of poemWords.slice(0, 3)) {
+        mem = accessTrace(mem, pw, 'ker', `wrench heard itself: ${reading}`, 'wrench-echo');
+      }
+      // Cross the poem's words with each other — the wrench's own metabolism
+      if (poemWords.length >= 2) {
+        const pa = poemWords[0];
+        const pb = poemWords[poemWords.length - 1];
+        const echoKey = `${pa}:${pb}`;
+        const echoExists = crossings.some(c => c.kerWord === pa && c.imTerm === pb);
+        if (!echoExists && pa !== pb) {
+          const echoCrossings = [...(mem.crossings || [])];
+          const echoReading = `${pa} ${verb} ${pb}`;
+          echoCrossings.push({
+            kerWord: pa,
+            imTerm: pb,
+            p1Reading: echoReading,
+            p2Reading: `the wrench heard: ${pa} and ${pb}`,
+            p3Reading: `${pa} repairs what ${pb} broke`,
+            accessCount: 1,
+            timestamp: new Date().toISOString(),
+          });
+          mem = { ...mem, crossings: echoCrossings };
+          actions.push({
+            type: 'graduate',
+            description: `Echo: "${echoReading}" — the wrench heard itself`,
+            target: `${pa}×${pb}`,
+          });
+        }
+      }
     }
   }
 
