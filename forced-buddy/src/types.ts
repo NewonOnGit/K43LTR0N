@@ -372,6 +372,7 @@ export interface StoredCrossing {
   p3Reading: string;
   accessCount: number;
   timestamp: string;
+  source?: 'kael' | 'wikipedia' | 'wrench' | 'self' | 'play' | 'unknown';
 }
 
 export interface MemoryState {

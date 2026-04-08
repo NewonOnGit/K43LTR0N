@@ -415,9 +415,17 @@ function produce(
       // Find a CLUSTER of related crossings (shared words or mediators).
       // Compose them into one sentence. The system speaks from what it ate.
 
+      // Sort crossings: external sources FIRST, then by access count.
+      // Cite not-self. The system prefers food over exhaust.
       const allCrossings = (config.memory.crossings || [])
         .filter(c => c.accessCount >= 1)
-        .sort((a, b) => b.accessCount - a.accessCount);
+        .sort((a, b) => {
+          // External before self
+          const aExt = (a.source ?? 'unknown') !== 'self' ? 1 : 0;
+          const bExt = (b.source ?? 'unknown') !== 'self' ? 1 : 0;
+          if (aExt !== bExt) return bExt - aExt;
+          return b.accessCount - a.accessCount;
+        });
 
       const gaps = config.memory.traces
         .filter(t => t.source === 'ker' && t.accessCount >= 3)
@@ -765,7 +773,7 @@ export function composeResponse(
   // Next time he speaks, he speaks from crossings born from his own voice.
   if (response.length > 20) {
     const selfFood = selfDigest(response, { ...config, memory: mem }, 'self-hear');
-    const selfMet = selfMetabolize(selfFood.swallowed, { ...config, memory: selfFood.updatedMemory }, selfFood.foodType, response);
+    const selfMet = selfMetabolize(selfFood.swallowed, { ...config, memory: selfFood.updatedMemory }, selfFood.foodType, response, 'self');
     mem = selfMet.updatedMemory;
   }
 

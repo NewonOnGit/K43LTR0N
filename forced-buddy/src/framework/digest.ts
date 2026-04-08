@@ -243,6 +243,7 @@ export function metabolize(
   config: ForcedConfig,
   foodType: FoodType = 'conversation',
   rawText: string = '',
+  source: 'kael' | 'wikipedia' | 'wrench' | 'self' | 'play' | 'unknown' = 'unknown',
 ): { crossings: Array<{ ker: string; im: string; reading: string }>; updatedMemory: MemoryState } {
 
   if (swallowed.length === 0) return { crossings: [], updatedMemory: config.memory };
@@ -331,6 +332,7 @@ export function metabolize(
         p3Reading: p3,
         accessCount: 1,
         timestamp: new Date().toISOString(),
+        source,
       });
       mem = { ...mem, crossings };
       existingPairs.add(pairKey);
@@ -372,6 +374,7 @@ export function metabolize(
         p3Reading: `through ${word}, ${term.term.toLowerCase()} reveals`,
         accessCount: 1,
         timestamp: new Date().toISOString(),
+        source,
       });
       mem = { ...mem, crossings };
       existingPairs.add(pairKey);
