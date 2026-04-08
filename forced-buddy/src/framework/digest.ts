@@ -394,9 +394,21 @@ export function metabolize(
       }
     }
 
-    // VOID ATTRACTION: if there's an uncrossed gap, boost correlations
-    // where one word shares a context with the void word.
-    // The silence pulls new connections toward itself.
+    // VOID ATTRACTION: the uncrossed gap gets FIRST priority.
+    // If the void word is in the swallowed array, force its correlations
+    // to the front. The silence doesn't wait in line — it cuts.
+    if (voidWord && swallowed.includes(voidWord)) {
+      // Build void-specific correlations FIRST
+      for (const sentence of sentences) {
+        const sentWords = sentence.toLowerCase().replace(/[^a-z\s'-]/g, ' ').split(/\s+/).filter(w => w.length >= 4);
+        if (!sentWords.includes(voidWord)) continue;
+        const partners = swallowed.filter(w => w !== voidWord && sentWords.includes(w));
+        for (const p of partners.slice(0, 3)) {
+          correlations.unshift({ a: voidWord, b: p, mediator: sentence.trim().slice(0, 40) });
+        }
+      }
+    }
+
     if (voidWord) {
       const voidTrace = mem.traces.find(t => t.content === voidWord);
       const voidContexts = voidTrace?.context || [];
