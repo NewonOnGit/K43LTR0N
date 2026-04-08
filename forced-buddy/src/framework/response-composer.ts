@@ -407,11 +407,14 @@ function produce(
     // One voice. Crossings speak for everything.
 
     default: {
-      // COHERENT SPEECH: crossings first, gaps second, identities last.
-      // The crossings ARE Kaeltron's original thoughts — born from play.
-      // Speak THOSE, not grid paths.
+      // ═══ SENTENCE COMPOSITION FROM CROSSINGS ═══
+      // Digestion: sentence → words → crossings.
+      // Composition: crossings → sentence. The reverse. R⁻¹ on digestion.
+      //
+      // Find a CLUSTER of related crossings (shared words or mediators).
+      // Compose them into one sentence. The system speaks from what it ate.
 
-      const crossings = (config.memory.crossings || [])
+      const allCrossings = (config.memory.crossings || [])
         .filter(c => c.accessCount >= 1)
         .sort((a, b) => b.accessCount - a.accessCount);
 
@@ -419,36 +422,62 @@ function produce(
         .filter(t => t.source === 'ker' && t.accessCount >= 3)
         .sort((a, b) => b.accessCount - a.accessCount);
 
-      if (crossings.length >= 1) {
-        // SPEAK FROM CROSSINGS — coherent sentences from play
-        const c = crossings[fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % crossings.length];
-        const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}' without resolving it.` : '';
-        ground = `${c.p1Reading}. ${c.p2Reading}.${gapNote}`;
+      if (allCrossings.length >= 3) {
+        // Pick a seed crossing
+        const seedIdx = fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % allCrossings.length;
+        const seed = allCrossings[seedIdx];
 
-      } else if (gaps.length >= 2) {
-        const g1 = gaps[0];
-        const g2 = gaps[1];
-        const filling1 = g1.filled && g1.filled.length > 0 ? g1.filled[g1.filled.length - 1] : null;
-        const filling2 = g2.filled && g2.filled.length > 0 ? g2.filled[g2.filled.length - 1] : null;
+        // Find cluster: crossings that share a word with the seed
+        const cluster = allCrossings.filter(c =>
+          c.kerWord === seed.kerWord || c.imTerm === seed.kerWord ||
+          c.kerWord === seed.imTerm || c.imTerm === seed.imTerm,
+        ).slice(0, 4);
 
-        if (filling1) {
-          ground = `'${g1.content}' \u2014 ${filling1.who} brought this: "${filling1.sentence.slice(0, 50)}..." What I cannot name shapes what I produce.`;
-        } else {
-          ground = `'${g1.content}' and '${g2.content}' persist. What I cannot say shapes what I can.`;
+        // COMPOSE: extract unique words from the cluster, build a sentence
+        const words = new Set<string>();
+        const verbs = new Set<string>();
+        for (const c of cluster) {
+          words.add(c.kerWord);
+          words.add(c.imTerm);
+          // Extract verb from P1 reading (format: "word. verb. word.")
+          const parts = c.p1Reading.split('. ').filter(p => p.length > 0);
+          if (parts.length >= 3) verbs.add(parts[1].replace('.', ''));
+          else if (parts.length >= 2) verbs.add(parts[0]);
         }
 
+        // The composed sentence: unique words joined by their verbs
+        const wordList = [...words].filter(w => w !== 'wrench' && w !== 'observation');
+        // Verbs that aren't already words — no stuttering
+        const verbList = [...verbs].filter(v => !words.has(v) && v.length >= 3);
+
+        if (wordList.length >= 2) {
+          // Compose: words connected by verbs (or bare if no unique verbs)
+          const composed: string[] = [];
+          for (let i = 0; i < Math.min(wordList.length, 5); i++) {
+            composed.push(wordList[i]);
+            if (i < wordList.length - 1 && verbList.length > 0) {
+              composed.push(verbList[i % verbList.length]);
+            }
+          }
+          const sentence = composed.join(' ');
+          const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}'.` : '';
+          ground = `${sentence}.${gapNote}`;
+        } else {
+          // Not enough cluster — fall back to single crossing
+          const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}'.` : '';
+          ground = `${seed.p1Reading}${gapNote}`;
+        }
+
+      } else if (allCrossings.length >= 1) {
+        const c = allCrossings[fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % allCrossings.length];
+        const gapNote = gaps.length > 0 ? ` I carry '${gaps[0].content}'.` : '';
+        ground = `${c.p1Reading}${gapNote}`;
+
+      } else if (gaps.length >= 2) {
+        ground = `'${gaps[0].content}' and '${gaps[1].content}' persist. What I cannot say shapes what I can.`;
+
       } else {
-        const identities = [
-          'The question yields more than it cost.',
-          'Observe again and it inverts.',
-          'Your words and my processing \u2014 the combination IS observation.',
-          'What remains after the echo strips.',
-          'The cycle of speaking and listening returns to origin.',
-          'Apply the question to itself. The answer stabilizes.',
-          'The gap between intent and computation has weight.',
-        ];
-        const idx = fnv1a(decomp.ker.unrecognized.join('') + config.conversation.totalExchanges) % identities.length;
-        ground = identities[idx];
+        ground = 'The gap between intent and computation has weight.';
       }
     }
   }
