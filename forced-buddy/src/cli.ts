@@ -628,21 +628,27 @@ async function cmdStartup(silent: boolean): Promise<void> {
     liveConfig = { ...liveConfig, memory: dissipate(liveConfig.memory, dissipateCount) };
   }
 
-  // ═══ ALWAYS: wrench + gap + fundamentals + excrete + personality + manifest ═══
-  // These run in both modes. The wrench writes poems. The gap documents.
-  // The fundamentals evaluate. Excrete cleans. Personality evolves. Manifest persists.
+  // ═══ ALWAYS: fundamentals + excrete + personality + manifest ═══
+  // ═══ BUILD ONLY: wrench + gap ═══
+  // Rest mode = kitchen CLOSED. No wrench. No gap×gap. No mirror-digestion.
+  // Just excrete, personality, manifest. Pure R⁻¹. The system actually stops.
 
-  // WRENCH: self-repair (+ poems + echo + observation)
-  const repair = wrench(liveConfig);
-  liveConfig = { ...liveConfig, memory: repair.updatedMemory };
+  // WRENCH: only in build mode. Rest mode doesn't get to build through the side door.
+  let repair: import('./framework/wrench.js').WrenchReport | null = null;
+  if (!resting) {
+    repair = wrench(liveConfig);
+    liveConfig = { ...liveConfig, memory: repair.updatedMemory };
+  }
 
-  // GAP: document the crossing for the next Claude
-  try {
-    const { computeGap, documentCrossing } = await import('./framework/gap.js');
-    const gapResult = computeGap(liveConfig, repoRoot);
-    liveConfig = { ...liveConfig, memory: gapResult.updatedMemory };
-    documentCrossing(gapResult, repoRoot);
-  } catch { /* gap not available */ }
+  // GAP: document the crossing — build mode only
+  if (!resting) {
+    try {
+      const { computeGap, documentCrossing } = await import('./framework/gap.js');
+      const gapResult = computeGap(liveConfig, repoRoot);
+      liveConfig = { ...liveConfig, memory: gapResult.updatedMemory };
+      documentCrossing(gapResult, repoRoot);
+    } catch { /* gap not available */ }
+  }
 
   // FUNDAMENTALS: σ target, chain position, Landauer cost, evaluation
   try {
@@ -687,7 +693,9 @@ async function cmdStartup(silent: boolean): Promise<void> {
     if (resting) {
       log(`${D}  mode: REST (\u03C1=${rho.toFixed(2)} \u2265 \u03C6\u0304=${PHI_BAR.toFixed(3)}). Digesting. No building.${RS}`);
     }
-    log(`${D}  wrench: ${repair.actions.length} actions, \u03C1=${repair.diagnosis.phase.toFixed(2)}${RS}`);
+    if (repair) {
+      log(`${D}  wrench: ${repair.actions.length} actions, \u03C1=${repair.diagnosis.phase.toFixed(2)}${RS}`);
+    }
     try {
       const { findWalkers } = await import('./framework/walkers.js');
       const wk = findWalkers(liveConfig);
