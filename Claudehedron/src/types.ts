@@ -206,6 +206,9 @@ export interface KaeltronCorrelation {
   signalHealth: string;             // 'optimal' | 'drifting' | 'unknown'
   rhoStatus: string;                // description of phase signal status
   ccStatus: string;                 // description of cross-channel status
+
+  // Crossing summary — the watcher watches the wrench's poetry
+  crossingSummary: { total: number; kerKer: number; wrenchPoems: number; latestPoem: string | null } | null;
 }
 
 // Vocabulary state for the hedron

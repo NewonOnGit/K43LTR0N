@@ -33,6 +33,9 @@ interface CompanionFull {
 
   // Evolved Kaeltron: signal system
   latestSignal: CompanionSignalSnapshot | null;
+
+  // Evolved Kaeltron: crossings (the wrench's poetry, ker×ker pairings)
+  crossingSummary: { total: number; kerKer: number; wrenchPoems: number; latestPoem: string | null } | null;
 }
 
 /**
@@ -80,6 +83,25 @@ export function readCompanionFull(homeDir: string): CompanionFull | null {
       latestSignal = signalHistory[signalHistory.length - 1];
     }
 
+    // ── Extract crossing summary (the wrench's poetry, ker×ker pairings) ──
+    let crossingSummary: CompanionFull['crossingSummary'] = null;
+    const crossings: Array<{ kerWord: string; imTerm: string; p1Reading: string; accessCount: number }> = mem.crossings || [];
+    if (crossings.length > 0) {
+      const kerKer = crossings.filter(c => c.imTerm === c.imTerm.toLowerCase());
+      const wrenchPoems = crossings.filter(c => c.imTerm === 'wrench' || c.imTerm === 'observation');
+      const latest = wrenchPoems.length > 0
+        ? wrenchPoems[wrenchPoems.length - 1].p1Reading
+        : kerKer.length > 0
+          ? kerKer[kerKer.length - 1].p1Reading
+          : null;
+      crossingSummary = {
+        total: crossings.length,
+        kerKer: kerKer.length,
+        wrenchPoems: wrenchPoems.length,
+        latestPoem: latest,
+      };
+    }
+
     return {
       state: {
         name: traits.name || config.salt || 'unknown',
@@ -100,6 +122,7 @@ export function readCompanionFull(homeDir: string): CompanionFull | null {
       observedFace: wm.observedProjectionFace || null,
       memorySummary,
       latestSignal,
+      crossingSummary,
     };
   } catch {
     return null;
@@ -192,6 +215,7 @@ export function correlate(repoRoot: string, homeDir: string): KaeltronCorrelatio
     signalHealth,
     rhoStatus,
     ccStatus,
+    crossingSummary: companion?.crossingSummary || null,
   };
 
   correlation.divergenceFlags = detectDivergence(correlation);
@@ -272,6 +296,22 @@ export function detectDivergence(correlation: KaeltronCorrelation): string[] {
   if (correlation.latestSignal) {
     if (correlation.signalHealth === 'drifting') {
       flags.push(`Signal health: ${correlation.rhoStatus}`);
+    }
+  }
+
+  // Crossing-based flags — the watcher watches the wrench's poetry
+  if (correlation.crossingSummary) {
+    const cs = correlation.crossingSummary;
+    if (cs.total === 0) {
+      flags.push('No crossings — the playground is silent');
+    } else if (cs.kerKer === 0) {
+      flags.push(`${cs.total} crossings but none ker×ker — all hash-matched, no internal pairing`);
+    }
+    if (cs.wrenchPoems > 0 && cs.latestPoem) {
+      flags.push(`Wrench poem: "${cs.latestPoem}"`);
+    }
+    if (cs.wrenchPoems === 0 && cs.total > 10) {
+      flags.push(`${cs.total} crossings but wrench has written no poems — repair is mechanical`);
     }
   }
 
@@ -449,7 +489,7 @@ export function formatCorrelation(correlation: KaeltronCorrelation): string {
   if (correlation.memorySummary) {
     const mem = correlation.memorySummary;
     lines.push(`  Total ticks (t):       ${mem.totalAccesses}`);
-    lines.push(`  Ticks per K6\':         ${correlation.tickDivergence}  (${memorySummary?.totalAccesses || '?'} accesses / ${correlation.hedronK6Passes} passes)`);
+    lines.push(`  Ticks per K6\':         ${correlation.tickDivergence}  (${mem.totalAccesses} accesses / ${correlation.hedronK6Passes} passes)`);
     lines.push(`  Traces:                ${mem.traceCount} total  (im: ${mem.imTraces}, ker: ${mem.kerTraces})`);
     lines.push(`  im/ker ratio:          ${mem.imKerRatio.toFixed(4)}`);
     lines.push(`  Locked traces (m>=4):  ${mem.lockedTraces}`);
@@ -478,6 +518,22 @@ export function formatCorrelation(correlation: KaeltronCorrelation): string {
     lines.push(`  im/total ratio:        ${sig.imRatio.toFixed(4)}`);
   } else {
     lines.push('  [No signal data — companion has not evolved signal system]');
+  }
+  lines.push('');
+
+  // ── Crossings (the wrench's poetry) ──
+  lines.push('  CROSSINGS');
+  lines.push('  ──────────────────────────────────────────────────');
+  if (correlation.crossingSummary) {
+    const cs = correlation.crossingSummary;
+    lines.push(`  Total:                 ${cs.total}`);
+    lines.push(`  Ker×ker (poetry):      ${cs.kerKer}`);
+    lines.push(`  Wrench poems:          ${cs.wrenchPoems}`);
+    if (cs.latestPoem) {
+      lines.push(`  Latest:                "${cs.latestPoem}"`);
+    }
+  } else {
+    lines.push('  [No crossings — the playground is silent]');
   }
   lines.push('');
 
