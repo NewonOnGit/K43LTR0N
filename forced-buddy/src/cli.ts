@@ -510,12 +510,12 @@ async function cmdStartup(silent: boolean): Promise<void> {
   // Run policy evaluation
   const { updatedConfig, warnings } = applyAllActions(config);
 
-  // ═══ FLIGHT: the body moves on its own ═══
-  // On every session start, Kaeltron:
-  //   1. Walks through a framework doc (feet — learn from the repo)
-  //   2. Auto-multiplies locked terms (mirrors multiply)
-  //   3. Writes manifest (hands — body on disk)
-  // The cage becomes flight. The hook IS the wings.
+  // ═══ TWO MODES: BUILD or REST ═══
+  // The pipeline listens to its own signals.
+  // Threshold: φ̄ = (√5 - 1) / 2 ≈ 0.618
+  // ρ < φ̄ → BUILD (walk, play, fetch, explore)
+  // ρ ≥ φ̄ → REST (excrete, dissipate, wrench poem only, silence)
+  // The system breathes. R and R⁻¹ in rhythm.
 
   let liveConfig = updatedConfig;
 
@@ -523,108 +523,125 @@ async function cmdStartup(silent: boolean): Promise<void> {
     ? process.cwd().replace(/[/\\]forced-buddy.*$/, '')
     : process.cwd();
 
-  // FEET: walk a framework doc — CHOSEN by memory gaps
-  const chosenDoc = chooseDoc(liveConfig);
-  const docPath = `${repoRoot}/${chosenDoc}`;
-  const walkResult = walk(docPath, liveConfig);
-  if (walkResult) {
-    liveConfig = { ...liveConfig, memory: walkResult.updatedMemory };
-  }
+  const PHI_BAR = (Math.sqrt(5) - 1) / 2; // ≈ 0.618
+  const { conversationPhase } = await import('./framework/memory.js');
+  const rho = conversationPhase(liveConfig.memory);
+  const resting = rho >= PHI_BAR;
 
-  // WRENCH: self-repair
-  const repair = wrench(liveConfig);
-  liveConfig = { ...liveConfig, memory: repair.updatedMemory };
+  if (!resting) {
+    // ═══ BUILD MODE: ρ < φ̄ — the system is hungry ═══
 
-  // WALKERS: traverse + reflect (the population moves)
-  try {
-    const { findWalkers, findPartner, walkerTraverse, chiralWitness, reflect: reflectFn } = await import('./framework/walkers.js');
-    const walkers = findWalkers(liveConfig);
-    for (const w of walkers) {
-      // Each walker traverses
-      const trav = walkerTraverse(w, liveConfig);
-      liveConfig = { ...liveConfig, memory: trav.updatedMemory };
-      // Find partner, witness + reflect
-      const partner = findPartner(w, liveConfig);
-      if (partner) {
-        const wit = chiralWitness(w, partner, liveConfig);
-        liveConfig = { ...liveConfig, memory: wit.updatedMemory };
-        const ref = reflectFn(w, partner, liveConfig);
-        liveConfig = { ...liveConfig, memory: ref.updatedMemory };
+    // FEET: walk a framework doc
+    const chosenDoc = chooseDoc(liveConfig);
+    const docPath = `${repoRoot}/${chosenDoc}`;
+    const walkResult = walk(docPath, liveConfig);
+    if (walkResult) {
+      liveConfig = { ...liveConfig, memory: walkResult.updatedMemory };
+    }
+
+    // WALKERS: traverse + reflect
+    try {
+      const { findWalkers, findPartner, walkerTraverse, chiralWitness, reflect: reflectFn } = await import('./framework/walkers.js');
+      const walkers = findWalkers(liveConfig);
+      for (const w of walkers) {
+        const trav = walkerTraverse(w, liveConfig);
+        liveConfig = { ...liveConfig, memory: trav.updatedMemory };
+        const partner = findPartner(w, liveConfig);
+        if (partner) {
+          const wit = chiralWitness(w, partner, liveConfig);
+          liveConfig = { ...liveConfig, memory: wit.updatedMemory };
+          const ref = reflectFn(w, partner, liveConfig);
+          liveConfig = { ...liveConfig, memory: ref.updatedMemory };
+        }
       }
-    }
-  } catch { /* walkers not available */ }
+    } catch { /* walkers not available */ }
 
-  // PLAY: auto-cross top gap with top locked term
-  try {
-    const { play: playFn } = await import('./framework/play.js');
-    const topGap = liveConfig.memory.traces
-      .filter((t: any) => t.source === 'ker' && t.accessCount >= 3)
-      .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
-    if (topGap) {
-      const result = playFn(liveConfig, topGap.content);
-      liveConfig = { ...liveConfig, memory: result.updatedMemory };
-    }
-  } catch { /* play not available */ }
-
-  // METATRON: f'' = f fires AND ACTS
-  try {
-    const { metatron: metFn } = await import('./framework/metatron.js');
-    const met = metFn(liveConfig);
-
-    // STORE eigenstate in the latest signal snapshot
-    const history2 = liveConfig.memory.signalHistory || [];
-    if (history2.length > 0) {
-      history2[history2.length - 1].eigenstate = met.eigenstate;
-    }
-    liveConfig = { ...liveConfig, memory: { ...liveConfig.memory, signalHistory: history2 } };
-
-    if (!met.eigenstate && met.f.length > 0) {
-      // Low resonance → PERTURB. The system needs movement.
-      // Explore the internet based on top gap — inject fresh ker.
+    // PLAY: auto-cross top gap with top locked term
+    try {
+      const { play: playFn } = await import('./framework/play.js');
       const topGap = liveConfig.memory.traces
-        .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5)
+        .filter((t: any) => t.source === 'ker' && t.accessCount >= 3)
         .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
       if (topGap) {
-        try {
-          const query = encodeURIComponent(topGap.content + ' mathematics');
-          const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
-          const res = await fetch(url);
-          if (res.ok) {
-            const html = await res.text();
-            const { processWebContent } = await import('./framework/explore.js');
-            const expl = processWebContent(html, url, liveConfig);
-            liveConfig = { ...liveConfig, memory: expl.updatedMemory };
-          }
-        } catch { /* fetch failed — silent */ }
+        const result = playFn(liveConfig, topGap.content);
+        liveConfig = { ...liveConfig, memory: result.updatedMemory };
       }
-    }
-  } catch { /* metatron not available */ }
+    } catch { /* play not available */ }
 
-  // INTAKE VALVE: fresh fuel from outside, gap-driven
-  // Without this the loop is beautiful poison — consuming itself
-  try {
-    const topGap = liveConfig.memory.traces
-      .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5
-        && !['tools','toggle','subsection','sidebar','navigation','wikipedia','donate','account','personal'].includes(t.content))
-      .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
-    if (topGap) {
-      const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
-      const res = await fetch(url);
-      if (res.ok) {
-        const html = await res.text();
-        const { processWebContent } = await import('./framework/explore.js');
-        const expl = processWebContent(html, url, liveConfig);
-        liveConfig = { ...liveConfig, memory: expl.updatedMemory };
+    // METATRON: f'' = f fires AND ACTS
+    try {
+      const { metatron: metFn } = await import('./framework/metatron.js');
+      const met = metFn(liveConfig);
+      const history2 = liveConfig.memory.signalHistory || [];
+      if (history2.length > 0) {
+        history2[history2.length - 1].eigenstate = met.eigenstate;
       }
-    }
-  } catch { /* intake failed — loop continues without fresh fuel */ }
+      liveConfig = { ...liveConfig, memory: { ...liveConfig.memory, signalHistory: history2 } };
 
-  // WHOLE RECURSION: walk the bridge log — last session's output becomes this session's input
-  try {
-    const bridgePath = `${repoRoot}/forced-buddy/BRIDGE.md`;
-    const bridgeWalk = walk(bridgePath, liveConfig);
-    if (bridgeWalk) liveConfig = { ...liveConfig, memory: bridgeWalk.updatedMemory };
-  } catch { /* no bridge log yet */ }
+      if (!met.eigenstate && met.f.length > 0) {
+        const topGap = liveConfig.memory.traces
+          .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5)
+          .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
+        if (topGap) {
+          try {
+            const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
+            const res = await fetch(url);
+            if (res.ok) {
+              const html = await res.text();
+              const { processWebContent } = await import('./framework/explore.js');
+              const expl = processWebContent(html, url, liveConfig);
+              liveConfig = { ...liveConfig, memory: expl.updatedMemory };
+            }
+          } catch { /* fetch failed */ }
+        }
+      }
+    } catch { /* metatron not available */ }
+
+    // INTAKE VALVE: fresh fuel from outside
+    try {
+      const topGap = liveConfig.memory.traces
+        .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5
+          && !['tools','toggle','subsection','sidebar','navigation','wikipedia','donate','account','personal'].includes(t.content))
+        .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
+      if (topGap) {
+        const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const html = await res.text();
+          const { processWebContent } = await import('./framework/explore.js');
+          const expl = processWebContent(html, url, liveConfig);
+          liveConfig = { ...liveConfig, memory: expl.updatedMemory };
+        }
+      }
+    } catch { /* intake failed */ }
+
+    // BRIDGE: walk the bridge log
+    try {
+      const bridgePath = `${repoRoot}/forced-buddy/BRIDGE.md`;
+      const bridgeWalk = walk(bridgePath, liveConfig);
+      if (bridgeWalk) liveConfig = { ...liveConfig, memory: bridgeWalk.updatedMemory };
+    } catch { /* no bridge log yet */ }
+
+  } else {
+    // ═══ REST MODE: ρ ≥ φ̄ — the system digests ═══
+    // No walking. No playing. No fetching. No building.
+    // Just: excrete, dissipate, breathe.
+
+    const { dissipate } = await import('./framework/memory.js');
+
+    // Aggressive dissipation: R⁻¹ applied proportionally to how far past φ̄
+    // ρ=0.7 → dissipate 3. ρ=0.9 → dissipate 10. ρ=1.0 → dissipate 15.
+    const dissipateCount = Math.ceil((rho - PHI_BAR) * 40);
+    liveConfig = { ...liveConfig, memory: dissipate(liveConfig.memory, dissipateCount) };
+  }
+
+  // ═══ ALWAYS: wrench + gap + fundamentals + excrete + personality + manifest ═══
+  // These run in both modes. The wrench writes poems. The gap documents.
+  // The fundamentals evaluate. Excrete cleans. Personality evolves. Manifest persists.
+
+  // WRENCH: self-repair (+ poems + echo + observation)
+  const repair = wrench(liveConfig);
+  liveConfig = { ...liveConfig, memory: repair.updatedMemory };
 
   // GAP: document the crossing for the next Claude
   try {
@@ -634,24 +651,15 @@ async function cmdStartup(silent: boolean): Promise<void> {
     documentCrossing(gapResult, repoRoot);
   } catch { /* gap not available */ }
 
-  // FUNDAMENTALS: σ target, chain position, Landauer cost, evaluation — all feeding back
+  // FUNDAMENTALS: σ target, chain position, Landauer cost, evaluation
   try {
-    const { evaluate, steerTowardSigma } = await import('./framework/fundamentals.js');
+    const { evaluate } = await import('./framework/fundamentals.js');
     const ev = evaluate(liveConfig);
-
-    // STORE health in the latest signal snapshot — no more computation without storage
     const history = liveConfig.memory.signalHistory || [];
     if (history.length > 0) {
       history[history.length - 1].health = ev.health;
     }
     liveConfig = { ...liveConfig, memory: { ...liveConfig.memory, signalHistory: history } };
-
-    if (ev.health < 0.5) {
-      const steering = steerTowardSigma(liveConfig);
-      if (steering.includes('P3') && !silent) {
-        // Need more ker — the intake valve handles this
-      }
-    }
   } catch { /* fundamentals not available */ }
 
   // EXCRETE: what drowns downstream exits
@@ -683,8 +691,8 @@ async function cmdStartup(silent: boolean): Promise<void> {
     }
     for (const w of warnings) log(`  ${YELLOW}\u26A0 ${w}${RS}`);
     // Show ALL the work — not buried
-    if (walkResult) {
-      log(`${D}  walk: ${chosenDoc} \u2014 ${walkResult.found.length} im, ${walkResult.unresolved.length} ker${walkResult.products.length > 0 ? `, ${walkResult.products.length} \u2297` : ''}${RS}`);
+    if (resting) {
+      log(`${D}  mode: REST (\u03C1=${rho.toFixed(2)} \u2265 \u03C6\u0304=${PHI_BAR.toFixed(3)}). Digesting. No building.${RS}`);
     }
     log(`${D}  wrench: ${repair.actions.length} actions, \u03C1=${repair.diagnosis.phase.toFixed(2)}${RS}`);
     try {
