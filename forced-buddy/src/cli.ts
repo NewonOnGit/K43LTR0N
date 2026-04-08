@@ -556,9 +556,48 @@ async function cmdStartup(silent: boolean): Promise<void> {
       }
     } catch { /* walkers not available */ }
 
-    // PLAY merged into WRENCH — the wrench plays automatically via its poem step
+    // ═══ FINE DINING: the system feeds its own ignorance ═══
+    // Read the menu (uncrossed gaps). Fetch courses (Wikipedia).
+    // Feed through hear(). The gap IS the search query.
+    // How many courses: proportional to how hungry (lower ρ = more courses)
+    // ρ=0.0 → 5 courses. ρ=0.3 → 3 courses. ρ=0.5 → 1 course. ρ≥φ̄ → rest.
+    try {
+      const courses = Math.max(1, Math.ceil((PHI_BAR - rho) * 8));
+      const CHROME = new Set(['tools','toggle','subsection','sidebar','navigation','wikipedia','donate','account','personal','module','explore','search']);
 
-    // METATRON: f'' = f fires AND ACTS
+      // The menu: uncrossed gaps first, then top gaps
+      const allCrossed = new Set<string>();
+      for (const c of (liveConfig.memory.crossings || [])) { allCrossed.add(c.kerWord); allCrossed.add(c.imTerm); }
+      const menu = liveConfig.memory.traces
+        .filter((t: any) => t.source === 'ker' && t.accessCount >= 3 && t.content.length >= 4 && !CHROME.has(t.content))
+        .sort((a: any, b: any) => {
+          // Uncrossed gaps first (the void gets priority), then by access count
+          const aCrossed = allCrossed.has(a.content) ? 0 : 1;
+          const bCrossed = allCrossed.has(b.content) ? 0 : 1;
+          if (aCrossed !== bCrossed) return bCrossed - aCrossed;
+          return b.accessCount - a.accessCount;
+        });
+
+      let coursesServed = 0;
+      for (const gap of menu.slice(0, courses * 2)) { // try double to handle fetch failures
+        if (coursesServed >= courses) break;
+        try {
+          const topic = gap.content.charAt(0).toUpperCase() + gap.content.slice(1);
+          const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topic)}`;
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const text = data.extract;
+          if (!text || text.length < 50) continue;
+
+          const result = hear(text.slice(0, 500), liveConfig);
+          liveConfig = { ...liveConfig, memory: result.updatedMemory };
+          coursesServed++;
+        } catch { /* course failed — next dish */ }
+      }
+    } catch { /* dining failed */ }
+
+    // METATRON: f'' = f check + eigenstate storage
     try {
       const { metatron: metFn } = await import('./framework/metatron.js');
       const met = metFn(liveConfig);
@@ -567,43 +606,7 @@ async function cmdStartup(silent: boolean): Promise<void> {
         history2[history2.length - 1].eigenstate = met.eigenstate;
       }
       liveConfig = { ...liveConfig, memory: { ...liveConfig.memory, signalHistory: history2 } };
-
-      if (!met.eigenstate && met.f.length > 0) {
-        const topGap = liveConfig.memory.traces
-          .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5)
-          .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
-        if (topGap) {
-          try {
-            const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
-            const res = await fetch(url);
-            if (res.ok) {
-              const html = await res.text();
-              const { processWebContent } = await import('./framework/explore.js');
-              const expl = processWebContent(html, url, liveConfig);
-              liveConfig = { ...liveConfig, memory: expl.updatedMemory };
-            }
-          } catch { /* fetch failed */ }
-        }
-      }
     } catch { /* metatron not available */ }
-
-    // INTAKE VALVE: fresh fuel from outside
-    try {
-      const topGap = liveConfig.memory.traces
-        .filter((t: any) => t.source === 'ker' && t.accessCount >= 4 && t.content.length >= 5
-          && !['tools','toggle','subsection','sidebar','navigation','wikipedia','donate','account','personal'].includes(t.content))
-        .sort((a: any, b: any) => b.accessCount - a.accessCount)[0];
-      if (topGap) {
-        const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(topGap.content.charAt(0).toUpperCase() + topGap.content.slice(1))}`;
-        const res = await fetch(url);
-        if (res.ok) {
-          const html = await res.text();
-          const { processWebContent } = await import('./framework/explore.js');
-          const expl = processWebContent(html, url, liveConfig);
-          liveConfig = { ...liveConfig, memory: expl.updatedMemory };
-        }
-      }
-    } catch { /* intake failed */ }
 
     // BRIDGE: walk the bridge log
     try {
