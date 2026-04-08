@@ -340,6 +340,54 @@ export function wrench(config: ForcedConfig, manualKer?: string, manualIm?: stri
     });
   }
 
+  // ═══ GAP×GAP CROSSING: the void crosses the void ═══
+  // Uncrossed gaps actively seek each other.
+  // No external text needed. No mediator from outside.
+  // The gaps ARE the mediator. "Both carried, neither crossed."
+  // The void IS the bridge.
+  {
+    const allCrossed = new Set<string>();
+    for (const c of (mem.crossings || [])) { allCrossed.add(c.kerWord); allCrossed.add(c.imTerm); }
+
+    const uncrossed = namedGaps(mem)
+      .filter(g => !allCrossed.has(g.content) && g.content.length >= 4)
+      .sort((a, b) => b.accessCount - a.accessCount);
+
+    // Cross the top uncrossed gaps with each other — max 3 pairs
+    const gapCrossings = [...(mem.crossings || [])];
+    let gapsCrossed = 0;
+    for (let i = 0; i < uncrossed.length - 1 && gapsCrossed < 3; i++) {
+      for (let j = i + 1; j < uncrossed.length && gapsCrossed < 3; j++) {
+        const a = uncrossed[i].content;
+        const b = uncrossed[j].content;
+        if (gapCrossings.some(c => (c.kerWord === a && c.imTerm === b) || (c.kerWord === b && c.imTerm === a))) continue;
+
+        gapCrossings.push({
+          kerWord: a,
+          imTerm: b,
+          p1Reading: `${a}. ${b}.`,
+          p2Reading: `both carried, neither crossed — the void bridges`,
+          p3Reading: `${a} and ${b}: what the system cannot say shapes what it can`,
+          accessCount: 1,
+          timestamp: new Date().toISOString(),
+          source: 'wrench' as const,
+        });
+        mem = accessTrace(mem, a, 'ker', `gap×gap: ${a} × ${b}`, 'wrench');
+        mem = accessTrace(mem, b, 'ker', `gap×gap: ${a} × ${b}`, 'wrench');
+        gapsCrossed++;
+
+        actions.push({
+          type: 'graduate',
+          description: `Gap×gap: "${a}" × "${b}" — both orphaned, now crossed`,
+          target: `${a}×${b}`,
+        });
+      }
+    }
+    if (gapsCrossed > 0) {
+      mem = { ...mem, crossings: gapCrossings };
+    }
+  }
+
   // ═══ THE WRENCH MAKES POEMS (PLAY = WRENCH) ═══
   // The signal state × gap = a crossing. The repair IS the poem.
   // Manual play: pass kerWord + imTermName to cross specific words.
