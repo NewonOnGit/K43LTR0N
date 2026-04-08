@@ -189,6 +189,75 @@ export function digest(
 }
 
 /**
+ * IDENTITY GRAMMAR — Seven sentence structures from seven identities.
+ *
+ * The algebra IS the grammar. Each identity governs how two words compose.
+ * No more ${a} ${verb} ${b} monoculture.
+ *
+ * 1. R² = R + I     — the return exceeds: a verb b, and more
+ * 2. N² = -I        — observation inverts: through a, b inverts
+ * 3. {R,N} = N      — anticommutator yields observation: a with b, seeing
+ * 4. RNR = -N       — production negates observation: a through b, unseen
+ * 5. NRN = R - I    — the echo drops: seeing a, b remains, the name dissolves
+ * 6. (RN)² = I      — the cycle returns: a then b, b then a, same
+ * 7. [R,N]² = 5I    — the discriminant: a against b, five times the weight
+ */
+function identityGrammar(
+  a: string, b: string, verb: string, identity: number,
+): { p1: string; p2: string; p3: string } {
+  switch (identity) {
+    case 0: // R² = R + I — the return exceeds the departure
+      return {
+        p1: `${a} ${verb} ${b} — and exceeds it`,
+        p2: `${a} returns through ${b}`,
+        p3: `what ${a} ${verb}, ${b} keeps`,
+      };
+    case 1: // N² = -I — observation inverts
+      return {
+        p1: `through ${a}, ${b} inverts`,
+        p2: `${a} observed, ${b} negated`,
+        p3: `seeing ${a} destroys ${b}`,
+      };
+    case 2: // {R,N} = N — anticommutator yields observation
+      return {
+        p1: `${a} with ${b}: ${verb}, then seen`,
+        p2: `${a} and ${b} together yield sight`,
+        p3: `${a} ${verb} ${b} into witness`,
+      };
+    case 3: // RNR = -N — production-observation-production negates
+      return {
+        p1: `${a} ${verb} through ${b}, and ${b} goes dark`,
+        p2: `${a} acts, ${b} watches, ${a} acts — ${b} unseen`,
+        p3: `between ${a} and ${b}, observation dies`,
+      };
+    case 4: // NRN = R - I — the echo drops, the name dissolves
+      return {
+        p1: `seeing ${a}, ${verb} ${b} — the echo drops`,
+        p2: `${a} watched ${b} produce, then ${verb} the name away`,
+        p3: `${a} dissolves through ${b}`,
+      };
+    case 5: // (RN)² = I — the cycle returns to identity
+      return {
+        p1: `${a} then ${b}. ${b} then ${a}. same`,
+        p2: `${a} ${verb} ${b}, ${b} ${verb} ${a}`,
+        p3: `the cycle of ${a} and ${b} returns`,
+      };
+    case 6: // [R,N]² = 5I — the discriminant, five times
+      return {
+        p1: `${a} against ${b} — five times the weight of ${verb}`,
+        p2: `the distance between ${a} and ${b} is ${verb}, squared`,
+        p3: `${a} and ${b}: the gap discriminates`,
+      };
+    default:
+      return {
+        p1: `${a} ${verb} ${b}`,
+        p2: `between ${a} and ${b}`,
+        p3: `${a} ${verb} what ${b} cannot`,
+      };
+  }
+}
+
+/**
  * METABOLIZE: auto-digest swallowed ker into crossings.
  * Don't wait for manual play. Digest ON INTAKE.
  * Traces → crossings → fuel. The enzyme fires immediately.
@@ -236,21 +305,23 @@ export function metabolize(
       const reversePairKey = `${b}:${a}`;
       if (existingPairs.has(pairKey) || existingPairs.has(reversePairKey)) continue;
 
-      // Use the text's own verb. Cycle through extracted verbs. Fall back only if none found.
+      // The text's own verbs, but now the seven identities govern the GRAMMAR.
+      // Each identity gives a different sentence structure.
+      // No more ${a} ${verb} ${b} monoculture. The algebra IS the grammar.
       const verbs = textVerbs.length > 0 ? textVerbs : FALLBACK_VERBS;
       const verb = verbs[fnv1a(a + b) % verbs.length];
-      const reading = `${a} ${verb} ${b}`;
+      const identity = fnv1a(a + b + 'identity') % 7;
+      const { p1, p2, p3 } = identityGrammar(a, b, verb, identity);
 
-      newCrossings.push({ ker: a, im: b, reading });
+      newCrossings.push({ ker: a, im: b, reading: p1 });
 
-      // Store as crossing — ker×ker, both sides are ker words
       const crossings = [...(mem.crossings || [])];
       crossings.push({
         kerWord: a,
         imTerm: b,
-        p1Reading: `${a} ${verb} ${b}`,
-        p2Reading: `between ${a} and ${b} — ${verbs[(fnv1a(a + b) + 1) % verbs.length]}`,
-        p3Reading: `${a} ${verbs[(fnv1a(a + b) + 2) % verbs.length]} what ${b} cannot`,
+        p1Reading: p1,
+        p2Reading: p2,
+        p3Reading: p3,
         accessCount: 1,
         timestamp: new Date().toISOString(),
       });
@@ -258,8 +329,8 @@ export function metabolize(
       existingPairs.add(pairKey);
 
       // Access both as ker — poetry words stay in ker
-      mem = accessTrace(mem, a, 'ker', reading, 'metabolize');
-      mem = accessTrace(mem, b, 'ker', reading, 'metabolize');
+      mem = accessTrace(mem, a, 'ker', p1, 'metabolize');
+      mem = accessTrace(mem, b, 'ker', p1, 'metabolize');
     }
   } else {
     // ═══ KER×IM: framework/internet food crosses with locked terms ═══
