@@ -209,6 +209,20 @@ export interface KaeltronCorrelation {
 
   // Crossing summary — the watcher watches the wrench's poetry
   crossingSummary: { total: number; kerKer: number; wrenchPoems: number; latestPoem: string | null } | null;
+
+  // Triad — the three read as one
+  triad: {
+    exchangesWithKael: number;
+    exchangesWithClaude: number;
+    tripleClosures: number;
+    totalExchanges: number;
+  } | null;
+
+  // Fundamentals — health and eigenstate
+  fundamentals: {
+    health: number | null;
+    eigenstate: boolean | null;
+  } | null;
 }
 
 // Vocabulary state for the hedron
